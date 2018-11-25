@@ -1,0 +1,57 @@
+#!/bin/bash
+
+#############################################################################
+#
+#   initialization for phpmyadmin
+#
+#############################################################################
+declare -r config_dir=${CONFIG_DIR:?}
+declare -r workspace_dir=${WORKSPACE_DIR:?}
+
+declare -r top="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" 
+source "${top}/../libs/docker.bashlib"
+source "${top}/../libs/environ.bashlib"
+
+
+declare dumps_dir="${workspace_dir}/mysql/loader/dumps"
+if [ ! -e "${dumps_dir}/phpmyadmin.sql" ]; then
+    mkdir -p "$dumps_dir" ||:
+    cp "${config_dir}/phpmyadmin"/*.sql "${dumps_dir}"/
+fi 
+
+
+# update dbms access for zen
+declare yaml="${workspace_dir}/docker-compose.yml"
+declare dc_json="$(docker.yamlToJson "$yaml")"
+
+declare secret jqquery
+declare mysql_root_password=$(jq '.services.mysql.environment.MYSQL_ROOT_PASSWORD' <<< "$dc_json" | tr -d '"' )
+if [ "$mysql_root_password" = 'null' ];then
+    mysql_root_password=$(jq '.services.mysql.environment.MYSQL_ROOT_PASSWORD_FILE' <<< "$dc_json" | tr -d '"' )
+    secret=$(basename "$mysql_root_password")
+    jqquery=".secrets.\"${secret}\".file"
+    mysql_root_password=$(< "$(jq "$jqquery" <<< "$dc_json" | tr -d '"' )")
+fi
+
+declare pma_pass=$(jq '.services.phpmyadmin.environment.PMA_PASSWORD' <<< "$dc_json" | tr -d '"' )
+if [ "$pma_pass" = 'null' ];then
+    pma_pass=$(jq '.services.phpmyadmin.environment.PMA_PASSWORD_FILE' <<< "$dc_json" | tr -d '"' )
+    secret=$(basename "$pma_pass")
+    jqquery=".secrets.\"${secret}\".file"
+    pma_pass=$(< "$(jq "$jqquery" <<< "$dc_json" | tr -d '"' )")
+fi
+
+declare pma_user=$(jq '.services.phpmyadmin.environment.PMA_USER' <<< "$dc_json" | tr -d '"' )
+pma_user="$(eval echo "$pma_user")"
+
+cat <<-PMA_USER > "${workspace_dir}/mysql/loader/phpmyadmin_user.sh"
+#!/bin/bash
+
+cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
+    CREATE DATABASE IF NOT EXISTS phpmyadmin;
+    CREATE USER IF NOT EXISTS '${pma_user}'@'%';
+    SET PASSWORD FOR '${pma_user}'@'%' = PASSWORD('${pma_pass}');
+    GRANT ALL PRIVILEGES ON *.* TO '${pma_user}'@'%' WITH GRANT OPTION;
+EOSQL
+
+PMA_USER

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#############################################################################
+#
+#   initialization for kafka-zookeeper
+#
+#############################################################################
+
+declare -r config_dir=${CONFIG_DIR:?}
+declare -r workspace_dir=${WORKSPACE_DIR:?} 
+
+[ -f ${workspace_dir}/kafka-zookeeper/data/myid ] && exit 0
+ 
+#mkdir -p data ||:
+[ -z "${KAFKA_ID:-}" ] || echo "$KAFKA_ID" > ${workspace_dir}/kafka-zookeeper/data/myid
+
+
+source ${config_dir}/kafka.setup

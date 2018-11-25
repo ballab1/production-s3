@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#############################################################################
+#
+#   initialization for nginx
+#
+#############################################################################
+
+declare -r config_dir=${CONFIG_DIR:?}
+declare -r workspace_dir=${WORKSPACE_DIR:?} 
+
+declare -r index="${workspace_dir}/www/index.html"
+if [ ! -e "$index" ]; then
+    mkdir -p "${workspace_dir}/www" ||:
+    cp -r "${config_dir}/nginx"/* "${workspace_dir}/www"/
+
+    echo 'unpacking recipes'
+    tar -xzf ~/xsrc/recipes.tgz -C "${workspace_dir}/www"
+
+    workspace.replaceIpAddresses "$index" "$(environ.ipAddress)"
+fi

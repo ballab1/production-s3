@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#############################################################################
+#
+#   initialization for kafka
+#
+#############################################################################
+
+#declare -r config_dir=${CONFIG_DIR:?}
+#declare -r workspace_dir=${WORKSPACE_DIR:?} 
+
+declare -r bin_dir="${workspace_dir}/bin"
+mkdir -p "$bin_dir" ||:
+while read -r f; do
+    target="${bin_dir}/$(basename "$f")"
+    [ -e "$target" ] && continue
+    cp "$f" "$target"
+    chmod 755 "$target"
+done < <(find "${config_dir}/kafka" -mindepth 1 -maxdepth 1 -type f ! -name '.*')
+

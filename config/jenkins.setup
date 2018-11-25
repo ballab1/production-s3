@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#############################################################################
+#
+#   initialization for jenkins
+#
+#############################################################################
+
+#declare -r config_dir=${CONFIG_DIR:?}
+declare -r workspace_dir=${WORKSPACE_DIR:?} 
+
+declare -r jenkins_home="${workspace_dir}/jenkins/jenkins_home"
+[ -d "$jenkins_home" ] || exit 0
+
+git clone https://github.com/ballab1/jenkins-files.git "$jenkins_home"
+pushd "$jenkins_home" >/dev/null || exit 0
+
+declare -a nfiles
+mapfile -t nfiles < <(ls -1A)
+[ ${#nfiles[*]} -gt 0 ] || exit 0
+
+declare -r host_ip=$(environ.ipAddress)
+
+while read -r xml; do
+
+    sudo sed -i -e "s|10\\.1\\.3\\.\\d{1:3}|${host_ip}|g" "$xml"
+
+done < <(sudo grep -crH '10\.1\.3\.' ./* | \
+         grep -v ':0' | \
+         grep '.xml:' | \
+         grep -v '/builds/' | \
+         grep -v 'config-history/' | \
+         grep -v 'scm-sync-configuration/' | \
+         awk -F ':' '{print $1}' ||:
+        )
+
+[ ! -f .git ] || rm .git
+
+popd >/dev/null

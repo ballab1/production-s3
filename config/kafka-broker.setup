@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#############################################################################
+#
+#   initialization for kafka-broker
+#
+#############################################################################
+
+declare -r config_dir=${CONFIG_DIR:?}
+declare -r workspace_dir=${WORKSPACE_DIR:?} 
+
+source ${config_dir}/kafka.setup

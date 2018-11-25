@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#############################################################################
+#
+#   initialization for postgresql
+#
+#############################################################################
+
+declare -r config_dir=${CONFIG_DIR:?}
+declare -r workspace_dir=${WORKSPACE_DIR:?} 
+
+declare initdb="${workspace_dir}/postgresql/postgres-initdb"
+if [ ! -e "${initdb}/.setup-CTD_data.sql" ]; then
+
+    mkdir -p "${workspace_dir}/bin" ||:
+    while read -r f; do
+        cp "$f" "${workspace_dir}/bin"/
+        chmod 755 "${workspace_dir}/bin/$(basename "$f")"
+    done < <(find "${config_dir}/postgresql/bin" -type f ! -name '.*')
+
+    mkdir -p "$initdb" ||:
+    while read -r f; do
+        cp "$f" "$initdb"/
+    done < <(find "${config_dir}/postgresql" -type f)
+
+    chmod 755 "${initdb}/04.setup-CTD_data.sh"
+fi
