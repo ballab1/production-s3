@@ -27,5 +27,6 @@ scanned.paths
 *.loaded
 **/log.txt
 
-versions
-workspace
+**/versions
+config/versions
+workspace*

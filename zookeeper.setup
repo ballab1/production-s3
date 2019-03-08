@@ -2,12 +2,19 @@
 
 #############################################################################
 #
-#   initialization for kafka
+#   initialization for kafka zookeeper
 #
 #############################################################################
 
-#declare -r config_dir=${CONFIG_DIR:?}
-#declare -r workspace_dir=${WORKSPACE_DIR:?} 
+declare -r config_dir=${CONFIG_DIR:?}
+declare -r workspace_dir=${WORKSPACE_DIR:?} 
+
+[ -f ${workspace_dir}/.zookeeper.init ] && exit 0 
+touch ${workspace_dir}/.zookeeper.init
+
+[ "${KAFKA_ID:-}" ] || trap.die 'KAFKA_ID has not been configured.'
+echo "$KAFKA_ID" > ${workspace_dir}/kafka-zookeeper/data/myid
+
 
 declare -r bin_dir="${workspace_dir}/bin"
 mkdir -p "$bin_dir" ||:

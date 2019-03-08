@@ -1,1 +1,0 @@
-ALTER USER c4dev WITH PASSWORD 'c4dev!';
