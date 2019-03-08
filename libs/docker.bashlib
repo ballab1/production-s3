@@ -5,27 +5,48 @@
 #   docker.bashlib; basic functions to get info about docker containers
 #
 #############################################################################
+function docker.UID()
+{
+    local -r user_name="${1:-docker}"
+    local -r default_uid=${2:-999}
 
+    lib.lookupId "$user_name" 'passwd' "$default_uid"
+}
+export -f docker.UID
+
+#----------------------------------------------------------------------------------------------
+function docker.GID()
+{
+    local -r group_name="${1:-docker}"
+    local -r default_gid=${2:-999}
+
+    lib.lookupId "$group_name" 'group' "$default_gid"
+}
+export -f docker.GID
+
+#----------------------------------------------------------------------------------------------
 function docker.containerVersion()
 {
     local -r line=${1:?}
     local -r json=${2:?}
 
-    local -r image="${line#*image: }"
-    while read -r service; do
-        local service=$(jq ".services.$service" <<< "$json")
-        [ $(jq '.image' <<< "$service" | tr -d '"') = "$image" ] || continue
+    local -r image="$(sed -E 's|\s+image:\s+(.+)$|\1|' <<< "$line")"
+    while read -r srvc; do
+        local service=$(jq ".services.$srvc" <<< "$json")
+        [ $(jq -r '.image' <<< "$service") = "$image" ] || continue
 
-        local container=$(jq '.container_name' <<< "$service" | tr -d '"')
-        local version=$(docker inspect "$container" | jq '.[].Config.Labels."container.origin"' | tr -d '"')
-        local newimage="$(docker inspect "$container" | jq '.[].Config.Image' | tr -d '"'):$version"
+        local container=$(jq -r '.container_name' <<< "$service")
+        local version=$(docker inspect "$container" | jq -r '.[].Config.Labels."container.fingerprint"')
+        [ "$version" != 'null' ] || break
+        local newimage="$(docker inspect "$container" | jq -r '.[].Config.Image')"
+        newimage="${newimage%:*}:$version"
 
         echo -n '{"orgline":"'${line}'","orgimage":"'$(eval echo $image)'",'
         echo -n '"version":"'$version'",'
         echo '"newline":"'${line%\${CONTAINER_TAG*}'${CONTAINER_TAG:-'$version'}","newimage":"'$newimage'"}'
         break
 
-    done < <(jq '.services|keys[]' <<< "$json" | tr -d '"')
+    done < <(jq -r '.services|keys[]' <<< "$json")
 }
 export -f docker.containerVersion
 
@@ -34,9 +55,8 @@ function docker.networks()
 {
     local -a networks=( $( docker network ls | grep 'default' | awk "{ print \$1 }" ) )
     docker network inspect "${networks[@]}" \
-    | jq ".[].Containers|.[]|[.IPv4Address + \" : \" + .Name]|.[]" \
-    | sort -t "." -k 4g \
-    | tr -d '"'
+    | jq -r ".[].Containers|.[]|[.IPv4Address + \" : \" + .Name]|.[]" \
+    | sort -t "." -k 4g
 }
 export -f docker.networks
 
@@ -87,12 +107,12 @@ function docker.rmOldContainers()
 }
 export -f docker.rmOldContainers
 
-#----------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------
 function docker.services()
 {
     local -r dc_yaml="${1:?'no docker-compose.yml specified'}"
 
-    docker.yamlToJson "$dc_yaml" | jq '.services|keys[]' | tr -d '"'
+    docker.yamlToJson "$dc_yaml" | jq -r '.services|keys[]?'
 }
 export -f docker.services
 
@@ -102,7 +122,7 @@ function docker.showProcessReport()
     local -r opts=${1:-}
 
     local fmt='table {{.Names}}\t{{.ID}}\t{{.Size}}\t{{.Status}}\t{{.RunningFor}}'
-    [ "opts" ] || fmt="$fmt"'\t{{.Ports}}'
+    [ "$opts" ] || fmt="$fmt"'\t{{.Ports}}'
 
     # show process report
     echo

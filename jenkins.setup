@@ -6,7 +6,6 @@
 #
 #############################################################################
 
-#declare -r config_dir=${CONFIG_DIR:?}
 declare -r workspace_dir=${WORKSPACE_DIR:?} 
 
 declare -r jenkins_home="${workspace_dir}/jenkins/jenkins_home"

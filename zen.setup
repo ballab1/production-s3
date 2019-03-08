@@ -9,8 +9,6 @@ declare -r config_dir=${CONFIG_DIR:?}
 declare -r workspace_dir=${WORKSPACE_DIR:?}
 
 declare -r top="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" 
-source "${top}/../libs/docker.bashlib"
-source "${top}/../libs/environ.bashlib"
 
 
 echo 'Unpacking photos'

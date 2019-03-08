@@ -2,20 +2,13 @@ version: '3.3'
 
 services:
     broker:
+        command: kafka broker
         container_name: broker
         depends_on:
             - zookeeper
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             KAFKA_ADVERTISED_HOST_NAME: 255.255.255.255
-#            KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-#            KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
-#            KAFKA_USER_NAME: kafka
-#            KAFKA_USER_DIR: /usr/local/kafka
-#            KAFKA_USER_HOME: /usr/local/kafka
-#            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-#            ZOOKEEPER_HOST: zookeeper
-#            ZOOKEEPER_PORT: 2181
             KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://255.255.255.255:9092
             KAFKA_BROKER_ID: 3
             KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
@@ -25,21 +18,25 @@ services:
             KAFKA_ZOOKEEPER_CONNECT: ubuntu-s1:2181,ubuntu-s4:2181,ubuntu-s3:2181
             ZOOKEEPER_TIMEOUT: 6000
         extra_hosts:
+            - "cable-modem:192.168.1.100"
+            - "router:10.1.3.1"
+            - "printer:10.1.3.2"
+            - "wdmycloud:10.1.3.5"
+            - "ubuntu-s3:10.1.3.6"
             - "ubuntu-s1:10.1.3.11"
             - "ubuntu-s2:10.1.3.12"
-            - "ubuntu-s3:10.1.3.6"
             - "ubuntu-s4:10.1.3.10"
         hostname: broker
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-broker/${KAFKA_VERSION:-2.0.0}:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.0.0}:${CONTAINER_TAG:-b99a916606dab5ea76dcd3133522ffa4a79eebc91c36c757c9a99ce91edc6f43}
         logging:
             driver: json-file
             options:
-                max-size: "10m"
                 max-file: "3"
+                max-size: "10m"
         links:
            - zookeeper
         ports:
-            - 9092:9092
+            - "9092:9092"
         restart: unless-stopped
         volumes:
             - ./kafka-broker/data:/usr/local/kafka/data
@@ -48,7 +45,7 @@ services:
     grafana:
         container_name: grafana
         environment:
-            GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.6,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.4,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.3,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.5,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.5,savantly-heatmap-panel 0.2.0
+            GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.6,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.4,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.6,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0
 #            GF_SECURITY_ADMIN_PASSWORD: $CFG_PASS
             GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
             GF_SERVER_ROOT_URL: http://255.255.255.255:3000/grafana
@@ -63,7 +60,7 @@ services:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 8004:3000
+            - "8004:3000"
         restart: unless-stopped
         secrets:
             - grafana_admin.pwd    
@@ -86,17 +83,17 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: $CFG_USER
         hostname: hubot
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-8ad5202f19c75f547c70eb273c3352f7001a893123852e24588737e9ebdd99ba}
         logging:
             driver: json-file
             options:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 5858:5858
-            - 8081:8080
-            - 8123:8123
-            - 9004:9001
+            - "5858:5858"
+            - "8081:8080"
+            - "8123:8123"
+            - "9004:9001"
         restart: unless-stopped
         secrets:
             - slack.token
@@ -112,18 +109,18 @@ services:
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             JENKINS_GITHUB_CREDENTIALS_FILE: /run/secrets/github.credentials
-            JENKINS_GITHUB_EMAIL: $CFG_GITHUB_EMAIL
-            JENKINS_GITHUB_NAME: $CFG_GITHUB_NAME
+            JENKINS_GITHUB_EMAIL: $CFG_EMAIL
+            JENKINS_GITHUB_NAME: $CFG_NAME
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.138.1}:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.138.1}:${CONTAINER_TAG:-dfb28d415f19c3782f4544d237c8622621efa5a65d24c8a431d98c27336df087}
         logging:
             driver: json-file
             options:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 8080:8080
+            - "8080:8080"
         restart: unless-stopped
         secrets:
             - github.credentials
@@ -132,7 +129,8 @@ services:
             - ~/.ssh:/var/ssh
             - ./jenkins/log:/var/log/jenkins
             - /var/run/docker.sock:/var/run/docker.sock
-            - /usr/bin/docker:/usr/bin/docker
+#            - /usr/bin/docker:/usr/bin/docker
+            - /var/lib/docker:/var/lib/docker
 
 
     kafkamgr:
@@ -150,7 +148,7 @@ services:
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.11:2181,10.1.3.10:2181,255.255.255.255:2181
         hostname: kafkamgr
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-1.3.3.18}:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-1.3.3.18}:${CONTAINER_TAG:-2bd714ad8a5210fb0827033a99689b0cb7a9300274f5366d53b73fc3111bdc6d}
         links:
             - zookeeper:zookeeper
         logging:
@@ -159,7 +157,7 @@ services:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 9000:9000
+            - "9000:9000"
         restart: unless-stopped
         secrets:
             - kafka.secret
@@ -189,7 +187,7 @@ services:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 3306:3306
+            - "3306:3306"
         restart: unless-stopped
         secrets:
             - mysql.pwd
@@ -206,8 +204,8 @@ services:
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             NAGIOS_GITHUB_CREDENTIALS_FILE: /run/secrets/github.credentials
-            NAGIOS_GITHUB_EMAIL: $CFG_GITHUB_EMAIL
-            NAGIOS_GITHUB_NAME: $CFG_GITHUB_NAME
+            NAGIOS_GITHUB_EMAIL: $CFG__EMAIL
+            NAGIOS_GITHUB_NAME: $CFG__NAME
             NAGIOS_PASS_FILE: /run/secrets/nagios.pwd
             NAGIOS_REPO: github.com/ballab1/DBMS-backup
             NAGIOS_USER: $CFG_USER
@@ -218,7 +216,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd         
             SUPERVISORD_USER: $CFG_USER
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.2}:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.2}:${CONTAINER_TAG:-f43656b8f64ba7f3febed4a989ee43755ce4dfc35913d003df79c924a00ad043}
         links:
             - mysql:mysql
         logging:
@@ -227,9 +225,9 @@ services:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 25:25
-            - 8001:80
-            - 9001:9001
+            - "25:25"
+            - "8001:80"
+            - "9001:9001"
         restart: unless-stopped
         secrets:
             - github.credentials
@@ -258,7 +256,7 @@ services:
             - "ubuntu-s3:10.1.3.6"
             - "ubuntu-s4:10.1.3.10"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.15.3}:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.15.3}:${CONTAINER_TAG:-6fda90558e5a7d8bd4b67a93882441dbc45ad6243f502f419b04c2bf5de1b12b}
         links:
             - jenkins:jenkins
             - kafkamgr:kafkamgr
@@ -272,9 +270,9 @@ services:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 80:80
-            - 443:443
-            - 9005:9001
+            - "80:80"
+            - "443:443"
+            - "9005:9001"
         restart: unless-stopped
         secrets:
             - supervisord.pwd
@@ -304,8 +302,8 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: $CFG_USER
             USER: www-data
-        hostname: phpadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.8.3}:${CONTAINER_TAG:-latest}
+        hostname: phpmyadmin
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.8.3}:${CONTAINER_TAG:-02914c79f2d290565c46e2ed4f9e7a8456590151dff68485e565ea8cbc5c3f74}
         links:
             - mysql:mysql
         logging:
@@ -314,9 +312,9 @@ services:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 8002:80
-            - 9102:9000
-            - 9002:9001
+            - "8002:80"
+            - "9102:9000"
+            - "9002:9001"
         restart: unless-stopped
         secrets:
 #            - mysql.pwd
@@ -334,15 +332,15 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: $CFG_USER
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2_api}:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.6}:${CONTAINER_TAG:-120cc61d21b8aebd05e49b22c1e43cc51f7dd776adc171a541d72eefacded160}
         logging:
             driver: json-file
             options:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 8008:5000
-            - 9008:9001
+            - "8008:5000"
+            - "9008:9001"
         restart: unless-stopped
         secrets:
             - supervisord.pwd
@@ -356,14 +354,14 @@ services:
             WEBDAV_USER: $CFG_USER
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-c88e85dddc982e76ef427aee282d7002d5795ff703a0329b22cc7733f9285cc5}
         logging:
             driver: json-file
             options:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 8007:80
+            - "8007:80"
         restart: unless-stopped
         secrets:
             - webdav.pwd
@@ -383,7 +381,7 @@ services:
             ZEN_USER: $CFG_USER
 #            WWW_UID: '1000'
         hostname: zen
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5}:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5}:${CONTAINER_TAG:-749dfcc354a6de60a64a4366dd31e8b68c4511b88d696039210b350393fb0a3b}
         links:
             - mysql
         logging:
@@ -392,8 +390,8 @@ services:
                 max-file: "3"
                 max-size: "10m"
         ports:
-            - 8003:80
-            - 9003:9001
+            - "8003:80"
+            - "9003:9001"
         restart: unless-stopped
         secrets:
             - supervisord.pwd
@@ -403,39 +401,33 @@ services:
             - ./zen/photos:/var/www/albums
 
     zookeeper:
+        command: kafka zookeeper
         container_name: zookeeper
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
-            ZOOKEEPER_USER_NAME: zookeeper
-            ZOOKEEPER_USER_DIR: /usr/local/zookeeper
-            ZOOKEEPER_HOME_DIR: /usr/local/zookeeper
-            ZOOKEEPER_CONF_DIR: /usr/local/zookeeper/conf
-            ZOOKEEPER_DATA_DIR: /usr/local/zookeeper/data
-            ZOOKEEPER_LOG_DIR: /usr/local/zookeeper/logs
             ZOOKEEPER_MY_ID: 3
             ZOOKEEPER_PORT: 2181
             ZOOKEEPER_TICK_TIME: 2000
             ZOOKEEPER_INIT_LIMIT: 10
             ZOOKEEPER_SYNC_LIMIT: 5
-#            ZOOKEEPER_SERVERS: server.1=ubuntu-s1:2888:3888 server.3=ubuntu-s3:2888:3888 server.4=ubuntu-s4:2888:3888
         extra_hosts:
             - "ubuntu-s1:10.1.3.11"
             - "ubuntu-s2:10.1.3.12"
             - "ubuntu-s3:10.1.3.6"
             - "ubuntu-s4:10.1.3.10"
         hostname: zookeeper
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-zookeeper/${ZOOKEEPER_VERSION:-3.4.13}:${CONTAINER_TAG:-latest}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.0.0}:${CONTAINER_TAG:-b99a916606dab5ea76dcd3133522ffa4a79eebc91c36c757c9a99ce91edc6f43}
         logging:
             driver: json-file
             options:
                 max-size: "10m"
                 max-file: "3"
         ports:
-            - 2181:2181
+            - "2181:2181"
         restart: unless-stopped
         volumes:
-            - ./kafka-zookeeper/data:/usr/local/zookeeper/data
-            - ./kafka-zookeeper/log:/usr/local/zookeeper/logs 
+            - ./kafka-zookeeper/data:/usr/local/kafka/data
+            - ./kafka-zookeeper/log:/usr/local/kafka/logs 
 
 secrets:
    github.credentials:
