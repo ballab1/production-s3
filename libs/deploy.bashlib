@@ -431,15 +431,19 @@ function deploy.updateContainerReference()
     local -r dc_yaml=${1:?}
 
     local -r json=$(docker.yamlToJson "$dc_yaml")
-    local line
+    local line newline
     while read -r line; do
-        [ $(grep -EcH '^\s+image:\s+.*CONTAINER_TAG' <<< "$line" | awk -F ':' '{print $2}') -gt 0 ] || continue
-
-        local releaseJSON=$(docker.containerVersion "$line" "$json")
-        # update workspace/docker-compose.yml when we pull latest images
-        local newline=$(jq -r '.newline' <<< "$releaseJSON")
-        [ -z "$newline" ] || [ "$line" = "$newline" ] || eval sed -i -e "'s|$line|$newline|'" "'$dc_yaml'"
-
+        if [ $(grep -EcH '^\s+image:\s+.*CONTAINER_TAG' <<< "$line" | awk -F ':' '{print $2}') -gt 0 ]; then
+            local releaseJSON=$(docker.containerVersion "$line" "$json")
+            # update workspace/docker-compose.yml when we pull latest images
+            newline=$(jq -r '.newline' <<< "$releaseJSON")
+            [ -z "$newline" ] || [ "$line" = "$newline" ] || eval sed -i -e "'s|$line|$newline|'" "'$dc_yaml'"
+        fi
+        if [ $(grep -EcH '^\s+.+\${[A-Z0-9]+_VERSION:-' <<< "$line" | awk -F ':' '{print $2}') -gt 0 ]; then
+            local keyName=$(sed -E 's|^\s+.+\$\{([A-Z0-9]+_VERSION):-[^}]+}.*$|\1|' <<< "$line")
+            newline=$(sed -E 's|^(\s+.*\$\{'${keyName}':-)[^\}]+(}.*)$|\1'${!keyName}'\2|' <<< "$line")
+            [ -z "$newline" ] || [ "$line" = "$newline" ] || eval sed -i -e "'s|$line|$newline|'" "'$dc_yaml'"
+        fi
     done < <(cat "$dc_yaml")
 }
 export -f deploy.updateContainerReference

@@ -18,16 +18,12 @@ services:
             KAFKA_ZOOKEEPER_CONNECT: ubuntu-s1:2181,ubuntu-s4:2181,ubuntu-s3:2181
             ZOOKEEPER_TIMEOUT: 6000
         extra_hosts:
-            - "cable-modem:192.168.1.100"
-            - "router:10.1.3.1"
-            - "printer:10.1.3.2"
-            - "wdmycloud:10.1.3.5"
             - "ubuntu-s3:10.1.3.6"
             - "ubuntu-s1:10.1.3.11"
             - "ubuntu-s2:10.1.3.12"
             - "ubuntu-s4:10.1.3.10"
         hostname: broker
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.0.0}:${CONTAINER_TAG:-b99a916606dab5ea76dcd3133522ffa4a79eebc91c36c757c9a99ce91edc6f43}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.1.0}:${CONTAINER_TAG:-b99a916606dab5ea76dcd3133522ffa4a79eebc91c36c757c9a99ce91edc6f43}
         logging:
             driver: json-file
             options:
@@ -51,7 +47,7 @@ services:
             GF_SERVER_ROOT_URL: http://255.255.255.255:3000/grafana
             TZ: "America/New_York"
         hostname: grafana
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}grafana:${GRAFANA_VERSION:-5.2.4}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}grafana:${GRAFANA_VERSION:-6.0.1}
         links:
             - mysql
         logging:
@@ -112,8 +108,14 @@ services:
             JENKINS_GITHUB_EMAIL: $CFG_EMAIL
             JENKINS_GITHUB_NAME: $CFG_NAME
             JENKINS_OPTS: "--prefix=/jenkins"
+        extra_hosts:
+            - "ubuntu-s1:10.1.3.11"
+            - "ubuntu-s2:10.1.3.12"
+            - "ubuntu-s3:10.1.3.6"
+            - "ubuntu-s4:10.1.3.10"
+            - "ubuntu-s5:10.1.3.14"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.138.1}:${CONTAINER_TAG:-dfb28d415f19c3782f4544d237c8622621efa5a65d24c8a431d98c27336df087}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.150.3}:${CONTAINER_TAG:-076bddddaa1da542f3b0a5487c0d423f58dfd467283f646b194c20e888ae0e63}
         logging:
             driver: json-file
             options:
@@ -148,7 +150,7 @@ services:
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.11:2181,10.1.3.10:2181,255.255.255.255:2181
         hostname: kafkamgr
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-1.3.3.18}:${CONTAINER_TAG:-2bd714ad8a5210fb0827033a99689b0cb7a9300274f5366d53b73fc3111bdc6d}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-1.3.3.22}:${CONTAINER_TAG:-2bd714ad8a5210fb0827033a99689b0cb7a9300274f5366d53b73fc3111bdc6d}
         links:
             - zookeeper:zookeeper
         logging:
@@ -204,8 +206,8 @@ services:
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             NAGIOS_GITHUB_CREDENTIALS_FILE: /run/secrets/github.credentials
-            NAGIOS_GITHUB_EMAIL: $CFG__EMAIL
-            NAGIOS_GITHUB_NAME: $CFG__NAME
+            NAGIOS_GITHUB_EMAIL: $CFG_EMAIL
+            NAGIOS_GITHUB_NAME: $CFG_NAME
             NAGIOS_PASS_FILE: /run/secrets/nagios.pwd
             NAGIOS_REPO: github.com/ballab1/DBMS-backup
             NAGIOS_USER: $CFG_USER
@@ -215,6 +217,16 @@ services:
             NCONF_DBUSER: $CFG_USER
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd         
             SUPERVISORD_USER: $CFG_USER
+        extra_hosts:
+            - "cable-modem:192.168.1.100"
+            - "router:10.1.3.1"
+            - "printer:10.1.3.2"
+            - "wdmycloud:10.1.3.5"
+            - "ubuntu-s1:10.1.3.11"
+            - "ubuntu-s2:10.1.3.12"
+            - "ubuntu-s3:10.1.3.6"
+            - "ubuntu-s4:10.1.3.10"
+            - "ubuntu-s5:10.1.3.14"
         hostname: nagios
         image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.2}:${CONTAINER_TAG:-f43656b8f64ba7f3febed4a989ee43755ce4dfc35913d003df79c924a00ad043}
         links:
@@ -255,8 +267,9 @@ services:
             - "ubuntu-s2:10.1.3.12"
             - "ubuntu-s3:10.1.3.6"
             - "ubuntu-s4:10.1.3.10"
+            - "ubuntu-s5:10.1.3.14"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.15.3}:${CONTAINER_TAG:-6fda90558e5a7d8bd4b67a93882441dbc45ad6243f502f419b04c2bf5de1b12b}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.14.2}:${CONTAINER_TAG:-6fda90558e5a7d8bd4b67a93882441dbc45ad6243f502f419b04c2bf5de1b12b}
         links:
             - jenkins:jenkins
             - kafkamgr:kafkamgr
@@ -303,7 +316,7 @@ services:
             SUPERVISORD_USER: $CFG_USER
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.8.3}:${CONTAINER_TAG:-02914c79f2d290565c46e2ed4f9e7a8456590151dff68485e565ea8cbc5c3f74}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.8.5}:${CONTAINER_TAG:-02914c79f2d290565c46e2ed4f9e7a8456590151dff68485e565ea8cbc5c3f74}
         links:
             - mysql:mysql
         logging:
@@ -332,7 +345,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: $CFG_USER
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.6}:${CONTAINER_TAG:-120cc61d21b8aebd05e49b22c1e43cc51f7dd776adc171a541d72eefacded160}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.6}:${CONTAINER_TAG:-0a66fe6c88052a499854a60610ca68b9185a661e9dbe235cbaf93138711324de}
         logging:
             driver: json-file
             options:
@@ -415,8 +428,9 @@ services:
             - "ubuntu-s2:10.1.3.12"
             - "ubuntu-s3:10.1.3.6"
             - "ubuntu-s4:10.1.3.10"
+            - "ubuntu-s5:10.1.3.14"
         hostname: zookeeper
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.0.0}:${CONTAINER_TAG:-b99a916606dab5ea76dcd3133522ffa4a79eebc91c36c757c9a99ce91edc6f43}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.1.0}:${CONTAINER_TAG:-b99a916606dab5ea76dcd3133522ffa4a79eebc91c36c757c9a99ce91edc6f43}
         logging:
             driver: json-file
             options:

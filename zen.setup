@@ -25,22 +25,8 @@ fi
 declare yaml="${workspace_dir}/docker-compose.yml"
 declare dc_json="$(docker.yamlToJson "$yaml")"
 
-declare secret jqquery
-declare mysql_root_password=$(jq '.services.mysql.environment.MYSQL_ROOT_PASSWORD' <<< "$dc_json" | tr -d '"' )
-if [ "$mysql_root_password" = 'null' ];then
-    mysql_root_password=$(jq '.services.mysql.environment.MYSQL_ROOT_PASSWORD_FILE' <<< "$dc_json" | tr -d '"' )
-    secret=$(basename "$mysql_root_password")
-    jqquery=".secrets.\"${secret}\".file"
-    mysql_root_password=$(< "$(jq "$jqquery" <<< "$dc_json" | tr -d '"' )")
-fi
-
-declare zen_pass=$(jq '.services.zen.environment.ZEN_PASS' <<< "$dc_json" | tr -d '"' )
-if [ "$zen_pass" = 'null' ];then
-    zen_pass=$(jq '.services.zen.environment.ZEN_PASS_FILE' <<< "$dc_json" | tr -d '"' )
-    secret=$(basename "$zen_pass")
-    jqquery=".secrets.\"${secret}\".file"
-    zen_pass=$(< "$(jq "$jqquery" <<< "$dc_json" | tr -d '"' )")
-fi
+declare -r mysql_root_password="$(deploy.passwordSecret "${dc_json}" 'mysql' 'MYSQL_ROOT_PASSWORD' )"
+declare -r zen_pass="$(deploy.passwordSecret "${dc_json}" 'zen' 'ZEN_PASS' )"
 
 declare zen_user=$(jq '.services.zen.environment.ZEN_USER' <<< "$dc_json" | tr -d '"' )
 zen_user="$(eval echo "$zen_user")"

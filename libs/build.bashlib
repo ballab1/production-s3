@@ -83,7 +83,7 @@ function build.canPush()
     local -r revision=${1:?}
 
     [ "${BUILD_PUSH:-0}" != 0 ] && return 0
-    if [[ "$revision" = *dirty ]]; then
+    if [[ "$revision" = *dirty* ]]; then
         echo -n '    '
         echo -en '\e[93m'
         echo -n 'This image will not be pushed to the docker registry because it was built from a dirty repo'
