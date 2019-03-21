@@ -456,13 +456,43 @@ function registry.rename()
 export -f registry.rename
 
 #----------------------------------------------------------------------------------------------
+function registry.reportCatalog()
+{
+    export OUTPUT_FILE
+
+    local -i retval=0
+    lib.args 'help,Help,HELP,ouptput:' \
+             'Hhb:o:' \
+             'registry.reportCatalogArgs' \
+             'registry.reportCatalogUsage' \
+             "$@"  && retval=$? || retval=$?
+    [ $retval -eq 0 ] || shift $retval
+    local -a catalog=( "$@" )
+    [ $# -eq 0 ] && mapfile -t catalog < <(registry.catalog)
+
+echo "OUTPUT_FILE: ${OUTPUT_FILE:-}" >&2
+    if [ "${OUTPUT_FILE:-}" ]; then
+        registry.reportCatalogAsJson "${catalog[@]}" > "$OUTPUT_FILE"
+    else
+        registry.reportCatalogAsJson "${catalog[@]}"
+    fi
+}
+export -f registry.reportCatalog
+
+#----------------------------------------------------------------------------------------------
+function registry.reportCatalogArgs()
+{
+    case "${1:-}" in
+        -o|--o|--output)      OUTPUT_FILE="$2"; return 2;;
+    esac
+    return 0
+}
+export -f registry.reportCatalogArgs
+
+#----------------------------------------------------------------------------------------------
 function registry.reportCatalogAsJson()
 {
-    local -a catalog=( "$@" )
-    [ ${#catalog[*]} -eq 0 ] && mapfile -t catalog < <(registry.catalog)
-
     local -i index=0
-
     echo -n '['
     for entry in "${catalog[@]}"; do
         (( index++ )) && echo -n ','
@@ -476,23 +506,11 @@ function registry.reportCatalogAsJson()
 export -f registry.reportCatalogAsJson
 
 #----------------------------------------------------------------------------------------------
-function registry.reportCatalog()
+function registry.reportCatalogUsage()
 {
-    local -a catalog=( "$@" )
-    [ ${#catalog[*]} -eq 0 ] && mapfile -t catalog < <(registry.catalog)
-
-    local -i index=0
-    for entry in "${catalog[@]}"; do
-        (( index++ )) || true
-
-        local digests="$(registry.digests "$entry")"
-        echo -en '\e[92m'
-        printf '%05d,%d,%s:\n' "$index" "$(jq '.|length' <<< "$digests")" "$entry"
-        echo -en '\e[0m'
-        [ -z "$digests" ] || registry.printTags "$digests" '    '
-    done
+    exit 0;
 }
-export -f registry.reportCatalog
+export -f registry.reportCatalogUsage
 
 #----------------------------------------------------------------------------------------------
 function registry.secretsFile()
