@@ -11,26 +11,29 @@
 #----------------------------------------------------------------------------------------------
 function lib.args()
 {
-    local longopts=${1:?}
-    local shortopts=${2:?}
-    local argsproc=${3:?}
-    local usage=${4:?}
+    local argsproc=${1:?}
+    local usage=${2:?}
+    local longopts=${3:?}
+    local shortopts=${4:?}
     shift 4
 
     # Parse command-line options into above variable
     local -r progname="$( basename "${BASH_SOURCE[0]}" )"
-    local -r options=$(getopt --longoptions "$longopts" --options "$shortopts" --name "$progname" -- "$@") || $usage $?
+    local -r options=$(getopt --longoptions "help,Help,HELP,$longopts" --options "Hh$shortopts" --name "$progname" -- "$@") || "$usage" $?
     eval set -- "$options"
 
-    local -i retval=0
+    local -i retval=0 shVal
     while true; do
         case "${1:-}" in
-            -h|--h|--help|-help)  $usage; exit 0;;
-            -H|--H|--HELP|-HELP)  $usage; exit 0;;
-            --Help|-Help)         $usage; exit 0;;
-            --)                   shift; break;;
-            *)  $argsproc "$1" "$2" && retval=$(( retval + $? )) || retval=$(( retval + $? ));;
+            -h|--h|--help|-help)  "$usage"; exit 0;;
+            -H|--H|--HELP|-HELP)  "$usage"; exit 0;;
+            --Help|-Help)         "$usage"; exit 0;;
+            --)                     return $retval;;
+            *)  $argsproc "$1" "$2" && shVal=$? || shVal=$?;;
         esac
+        retval=$(( retval + shVal )) ||:
+        [ "$shVal" -eq 0 ] || shift "$shVal"
+        [ $# -gt 0 ] || return $retval
     done
     return $retval
 }

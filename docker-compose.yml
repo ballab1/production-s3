@@ -23,7 +23,7 @@ services:
             - "ubuntu-s2:10.1.3.12"
             - "ubuntu-s4:10.1.3.10"
         hostname: broker
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.1.0}:${CONTAINER_TAG:-fbbc96e7150aa5e405dd3a9f885feea05d27362bb5022d909f8ff3d340b4ef38}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.1.1}:${CONTAINER_TAG:-85c589f2d2b950847b122e261ca2c4e0512d653ad8d6f02a31f70ed6f499fa6d}
         logging:
             driver: json-file
             options:
@@ -41,7 +41,7 @@ services:
     grafana:
         container_name: grafana
         environment:
-            GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.6,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.4,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.6,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0
+            GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.6,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.5,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.6,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0
 #            GF_SECURITY_ADMIN_PASSWORD: $CFG_PASS
             GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
             GF_SERVER_ROOT_URL: http://255.255.255.255:3000/grafana
@@ -79,7 +79,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: $CFG_USER
         hostname: hubot
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-27bafee0bea7324e92f5793ed803c3a2201985f44f0e04b7b48d75dd1aa9aa3a}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-057d89b288fecf9b622ec29f251032b92dd0f507baa1964c6fb960267e796e28}
         logging:
             driver: json-file
             options:
@@ -114,8 +114,9 @@ services:
             - "ubuntu-s3:10.1.3.6"
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
+            - "ubuntu-s6:10.1.3.15"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.150.3}:${CONTAINER_TAG:-f54dc93b9cc0acd7827e9548cffa35b8223ae68a3d89549e06aeaef9cd06ba34}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.164.1}:${CONTAINER_TAG:-603c8d64783ea663c5e3afdd5ae80a9370dc69458f1131476c81fa789132acdb}
         logging:
             driver: json-file
             options:
@@ -150,7 +151,7 @@ services:
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.11:2181,10.1.3.10:2181,255.255.255.255:2181
         hostname: kafkamgr
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-1.3.3.22}:${CONTAINER_TAG:-7efa9e69599e96a18e3aaac9cf56516c30a4b54395e0c45e6b383be872a7b077}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-1.3.3.23}:${CONTAINER_TAG:-78b515f091cb358561b857d09f659ab808d24dc5e88d3f90d71cba8582bbab5d}
         links:
             - zookeeper:zookeeper
         logging:
@@ -228,7 +229,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.2}:${CONTAINER_TAG:-b5d7087bc4f7f509e3725de74e79e7d37636da60732be18669459f6772d582e7}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.3}:${CONTAINER_TAG:-a87e34592a2ab07be36048b696997435f3246d5dbcad69c1ed0f13b2953a529b}
         links:
             - mysql:mysql
         logging:
@@ -269,7 +270,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.14.2}:${CONTAINER_TAG:-18b8da26b3a568adf32bf9200a02cc3388bc8c94763cfa702d15334b217dcd57}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.14.2}:${CONTAINER_TAG:-2491c7a9b3271ed0b132d6ecadde645d96b0a78e838ed3086335f16b5519c843}
         links:
             - jenkins:jenkins
             - kafkamgr:kafkamgr
@@ -296,6 +297,7 @@ services:
         volumes:
             - ./nginx/log:/var/log
             - ./www:/var/www
+            - ./.secrets/EMC:/mnt/data/ca-certificates
 #            - ./nginx/etc:/etc/nginx
 
     phpmyadmin:
@@ -316,7 +318,7 @@ services:
             SUPERVISORD_USER: $CFG_USER
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.8.5}:${CONTAINER_TAG:-eae8ad1e63c70c488280a9f52c5f75cc0362b83014ea119c8338593b16d4ada9}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.8.5}:${CONTAINER_TAG:-fab48a95cd4a8c6ccadfab5a858f714dfb62c58e08df289bd531b1057098b341}
         links:
             - mysql:mysql
         logging:
@@ -345,7 +347,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: $CFG_USER
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.6}:${CONTAINER_TAG:-190b9fc22730990e0d5a46876c91271c30b81d3cd5942549e92c9e2fdeb8bb34}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-8ff222b973594aa76361f4a817c9e095c67b1a47553adb3b03f165214941601e}
         logging:
             driver: json-file
             options:
@@ -367,7 +369,7 @@ services:
             WEBDAV_USER: $CFG_USER
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-5d4c831a3529a42f647623252bbc84db26516aa2dfc292427ba22efe246e618f}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-96a17d7cb4f797ee206298aa6fe6e45a95f095c82f9b8c2eb972ed7612ca8eb6}
         logging:
             driver: json-file
             options:
@@ -394,7 +396,7 @@ services:
             ZEN_USER: $CFG_USER
 #            WWW_UID: '1000'
         hostname: zen
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5}:${CONTAINER_TAG:-749dfcc354a6de60a64a4366dd31e8b68c4511b88d696039210b350393fb0a3b}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.1}:${CONTAINER_TAG:-54b69caa8405d07402582ad49a155cdd612e739505ed8434c50b5ba7880f7006}
         links:
             - mysql
         logging:
@@ -430,7 +432,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: zookeeper
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.1.0}:${CONTAINER_TAG:-fbbc96e7150aa5e405dd3a9f885feea05d27362bb5022d909f8ff3d340b4ef38}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.1.1}:${CONTAINER_TAG:-85c589f2d2b950847b122e261ca2c4e0512d653ad8d6f02a31f70ed6f499fa6d}
         logging:
             driver: json-file
             options:
@@ -445,36 +447,36 @@ services:
 
 secrets:
    github.credentials:
-     file: .secrets/credentials.github
+     file: .secrets/secrets/credentials.github
    grafana_admin.pwd:
-     file: .secrets/grafana_admin.pwd
+     file: .secrets/secrets/grafana_admin.pwd
    kafka.secret:
-     file: .secrets/kafkamgr.secret
+     file: .secrets/secrets/kafkamgr.secret
    kafka_manager.pwd:
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
    mysql.pwd:
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
    mysql_root.pwd:
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
    nagios.pwd:
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
    pma.pwd:
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
 #   github.token:
-#     file: .secrets/hubot_token.github
+#     file: .secrets/secrets/hubot_token.github
    slack.token:
-     file: .secrets/hubot_token.slack
+     file: .secrets/secrets/hubot_token.slack
    supervisord.pwd:      
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
    web_user.pwd:
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
    webdav.pwd:
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
    zenphoto.pwd:
-     file: .secrets/bobb.pwd
+     file: .secrets/secrets/bobb.pwd
    certificate.crt:
-     file: .secrets/server.crt
+     file: .secrets/ssl/server.crt
    server.key:
-     file: .secrets/server.key
+     file: .secrets/ssl/server.key
    dhparam.pem:
-     file: .secrets/dhparam.pem
+     file: .secrets/ssl/dhparam.pem
