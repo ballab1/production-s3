@@ -183,6 +183,24 @@ function git.remoteUrl()
 export -f git.remoteUrl
 
 #----------------------------------------------------------------------------------------------
+function git.repoName()
+{
+    basename "$(git rev-parse --show-toplevel)"
+}
+export -f git.repoName
+
+#----------------------------------------------------------------------------------------------
+function git.reset()
+{
+    local -r commit=${1:?}
+    shift
+    local -r flags=( "$@" )
+
+    git reset ${flags[*]:-} "$commit"
+}
+export -f git.reset
+
+#----------------------------------------------------------------------------------------------
 function git.status()
 {
     local -r flags=( "$@" )
@@ -190,13 +208,6 @@ function git.status()
     git status ${flags[*]:-}
 }
 export -f git.status
-
-#----------------------------------------------------------------------------------------------
-function git.repoName()
-{
-    basename "$(git rev-parse --show-toplevel)"
-}
-export -f git.repoName
 
 #----------------------------------------------------------------------------------------------
 function git.toHTTPS()

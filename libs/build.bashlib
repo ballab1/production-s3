@@ -359,6 +359,8 @@ export -f build.logger
 function build.logImageInfo()
 {
     local -r image=${1:?}
+    local -r dc_yaml=${2:?}
+
     local containerOS="${image#*/}"
     containerOS="${containerOS%%/*}"
 
@@ -374,6 +376,8 @@ function build.logImageInfo()
     echo '    revision:       '$(jq -r '."container.origin"' <<< "$json") >> "$depLog"
     echo '    build.time:     '$(jq -r '."container.build.time"' <<< "$json") >> "$depLog"
     echo '    original.name:  '$(jq -r '."container.original.name"' <<< "$json") >> "$depLog"
+
+    build.dependencyInfo "$(build.dockerCompose "$dc_yaml")" >> "$depLog"
     printf '\n\n\n' >> "$depLog"
 }
 export -f build.logImageInfo
@@ -618,7 +622,7 @@ function build.updateContainer()
         if docker pull "$actualImage" 2>/dev/null; then
             # downloaded image from registry
             build.changeImage "$taggedImage" "$actualImage"
-            build.logImageInfo "$taggedImage"
+            build.logImageInfo "$taggedImage" "$compose_yaml"
             if [ "${BUILD_PUSH:-0}" != 0 ]; then
                 build.logger "pushing ${taggedImage} to registry"
                 build.pushImage "$taggedImage" "$actualImage"
@@ -654,6 +658,7 @@ function build.verifyModules()
     local -r skip_builds_file='skip.build'
 
     local -a modules=( $(grep -Ev '^\s*#' "$(versions.DIRECTORY)/${containerOS}.modules") )
+    local retval=1
     for defMod in "${modules[@]}"; do
         [ -d "$defMod" ] && [ -e "${defMod}/docker-compose.yml" ] || continue
         [ -e "$skip_builds_file" ] && [ $(grep -cHE "^$defMod\s*$" "$skip_builds_file" 2>/dev/null | cut -d':' -f2) -gt 0 ] && continue
@@ -663,27 +668,37 @@ function build.verifyModules()
 
         if [ "${#requestedModules[*]}" -eq 0 ]; then
             echo "$defMod"
+            retval=0
             continue
         fi
 
         for reqMod in "${requestedModules[@]}"; do
             [ "$reqMod" = "$defMod" ] || continue
+            retval=0
             echo "$defMod"
         done
     done
+    return "$retval"
 }
 export -f build.verifyModules
 
 #----------------------------------------------------------------------------------------------
 function build.wrapper()
 {
-    if [ -z "${BUILD_URL:-}" ]; then
-        local logFile="$(pwd)/bld.log"
-        echo 'build.all "$@" 2>&1 | tee '"$logFile"
-        build.all "$@" 2>&1 | tee "$logFile" ||:
+    local -A opts
+    eval opts=( $1 )
+    shift
+
+    [ "${opts['force']:-}" ] && export BUILD_ALWAYS="${opts['force']}"
+    [ "${opts['push']:-}" ]  && export BUILD_PUSH="${opts['push']}"
+    [ "${opts['os']:-}" ]    && export CONTAINER_OS="${opts['os']}"
+
+    if [ "${opts['logfile']:-}" ]; then
+        eval echo 'build.all "${opts['base']}" "$@" 2>&1 | tee '"${opts['logfile']}"
+        build.all "${opts['base']}" "$@" 2>&1 | tee "$logFile" ||:
     else
-        echo 'build.all "$@"'
-        build.all "$@"
+        eval echo 'build.all "${opts['base']}" "$@"'
+        build.all "${opts['base']}" "$@"
     fi
 }
 export -f build.wrapper

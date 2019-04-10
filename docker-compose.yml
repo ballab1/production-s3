@@ -23,7 +23,7 @@ services:
             - "ubuntu-s2:10.1.3.12"
             - "ubuntu-s4:10.1.3.10"
         hostname: broker
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.1.1}:${CONTAINER_TAG:-85c589f2d2b950847b122e261ca2c4e0512d653ad8d6f02a31f70ed6f499fa6d}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.2.0}:${CONTAINER_TAG:-30b44efaba44e9ca62e79ad73343fbd46ab1a4a542c35dcfe271c0cd011eb135}
         logging:
             driver: json-file
             options:
@@ -37,6 +37,7 @@ services:
         volumes:
             - ./kafka-broker/data:/usr/local/kafka/data
             - ./kafka-broker/logs:/usr/local/kafka/logs
+            - ./kafka-broker/log:/var/log
 
     grafana:
         container_name: grafana
@@ -47,7 +48,7 @@ services:
             GF_SERVER_ROOT_URL: http://255.255.255.255:3000/grafana
             TZ: "America/New_York"
         hostname: grafana
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}grafana:${GRAFANA_VERSION:-6.0.2}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}grafana:${GRAFANA_VERSION:-6.1.3}
         links:
             - mysql
         logging:
@@ -79,7 +80,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: $CFG_USER
         hostname: hubot
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-057d89b288fecf9b622ec29f251032b92dd0f507baa1964c6fb960267e796e28}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-d02a1d8137dea6eecf2a9b87fb321fdb2c51e66158c9ac11f3666cc70b222c12}
         logging:
             driver: json-file
             options:
@@ -116,7 +117,7 @@ services:
             - "ubuntu-s5:10.1.3.14"
             - "ubuntu-s6:10.1.3.15"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.164.1}:${CONTAINER_TAG:-603c8d64783ea663c5e3afdd5ae80a9370dc69458f1131476c81fa789132acdb}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.164.1}:${CONTAINER_TAG:-97155a63544fea920d3895e0d9702153c008dc67da4fb11a05e65ec9fd0f73fd}
         logging:
             driver: json-file
             options:
@@ -130,7 +131,7 @@ services:
         volumes:
             - ./jenkins/jenkins_home:/var/jenkins_home
             - ~/.ssh:/var/ssh
-            - ./jenkins/log:/var/log/jenkins
+            - ./jenkins/log:/var/log
             - /var/run/docker.sock:/var/run/docker.sock
 #            - /usr/bin/docker:/usr/bin/docker
             - /var/lib/docker:/var/lib/docker
@@ -151,7 +152,7 @@ services:
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.11:2181,10.1.3.10:2181,255.255.255.255:2181
         hostname: kafkamgr
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-1.3.3.23}:${CONTAINER_TAG:-78b515f091cb358561b857d09f659ab808d24dc5e88d3f90d71cba8582bbab5d}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-1.3.3.23}:${CONTAINER_TAG:-3b668b7c0b0a062a95e0c8019798712e8a9754c658c2d5876538cac360de8d56}
         links:
             - zookeeper:zookeeper
         logging:
@@ -167,6 +168,7 @@ services:
 #            - kafka_manager.pwd
         volumes:
             - ./kafka-manager/log:/usr/local/kafka-manager/home
+            - ./kafka-manager/log:/var/log
 
 
     mysql:
@@ -229,7 +231,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.3}:${CONTAINER_TAG:-a87e34592a2ab07be36048b696997435f3246d5dbcad69c1ed0f13b2953a529b}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.3}:${CONTAINER_TAG:-7ec74a109edff3b7c3d94aaafcdf29352a42a05fdfe13c6f07b28ec0fd853f97}
         links:
             - mysql:mysql
         logging:
@@ -270,7 +272,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.14.2}:${CONTAINER_TAG:-2491c7a9b3271ed0b132d6ecadde645d96b0a78e838ed3086335f16b5519c843}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.14.2}:${CONTAINER_TAG:-748cb42912fd37d1e8bcdb30df5aa7c79f629464bfbf8a66ae922425b3f49e83}
         links:
             - jenkins:jenkins
             - kafkamgr:kafkamgr
@@ -318,7 +320,7 @@ services:
             SUPERVISORD_USER: $CFG_USER
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.8.5}:${CONTAINER_TAG:-fab48a95cd4a8c6ccadfab5a858f714dfb62c58e08df289bd531b1057098b341}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.8.5}:${CONTAINER_TAG:-0843a76632105ec4a5c842862e3fd9bffcb897f899ae9aee88f35a1a9858ebc7}
         links:
             - mysql:mysql
         logging:
@@ -347,7 +349,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: $CFG_USER
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-8ff222b973594aa76361f4a817c9e095c67b1a47553adb3b03f165214941601e}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-d0c7ec7bcce85899ee4cabe0f43c1a2bf373a664c440e948c91d00b46f664b82}
         logging:
             driver: json-file
             options:
@@ -369,7 +371,7 @@ services:
             WEBDAV_USER: $CFG_USER
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-96a17d7cb4f797ee206298aa6fe6e45a95f095c82f9b8c2eb972ed7612ca8eb6}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-136aac2d882119ef6fbc6136c65e1b72d9fdd58560ba9bd40004ad99cc60c0f2}
         logging:
             driver: json-file
             options:
@@ -396,7 +398,7 @@ services:
             ZEN_USER: $CFG_USER
 #            WWW_UID: '1000'
         hostname: zen
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.1}:${CONTAINER_TAG:-54b69caa8405d07402582ad49a155cdd612e739505ed8434c50b5ba7880f7006}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.1}:${CONTAINER_TAG:-d2e8ae91d62d0770bb2ac569739174ecbeed811ced09a49820e3512218dfbc42}
         links:
             - mysql
         logging:
@@ -432,7 +434,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: zookeeper
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.1.1}:${CONTAINER_TAG:-85c589f2d2b950847b122e261ca2c4e0512d653ad8d6f02a31f70ed6f499fa6d}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka/${KAFKA_VERSION:-2.2.0}:${CONTAINER_TAG:-30b44efaba44e9ca62e79ad73343fbd46ab1a4a542c35dcfe271c0cd011eb135}
         logging:
             driver: json-file
             options:
@@ -443,7 +445,8 @@ services:
         restart: unless-stopped
         volumes:
             - ./kafka-zookeeper/data:/usr/local/kafka/data
-            - ./kafka-zookeeper/log:/usr/local/kafka/logs 
+            - ./kafka-zookeeper/logs:/usr/local/kafka/logs 
+            - ./kafka-zookeeper/log:/var/log
 
 secrets:
    github.credentials:

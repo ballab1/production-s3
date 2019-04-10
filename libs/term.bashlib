@@ -54,9 +54,8 @@ function term.elog()
     local msg_type=${2:-}
     if [ "${DEBUG:-}" ] || [ "${DEBUG_TRACE:-}" ];then
         term.log "$msg" "$msg_type" >&2
-#    else
-#        term.log "$msg" "$msg_type" > /dev/null
     fi
+    term.log "$msg" "$msg_type" >> /var/log/cbf.log
 }
 export -f term.elog
 

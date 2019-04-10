@@ -1,10 +1,9 @@
 #!/bin/bash
 
-declare doClean doInit doLatest top
-
+declare TOP
 
 #----------------------------------------------------------------------------------------------
-function my.deployUsage()
+function my.usage()
 {
     local -i exit_status=${1:-1}
 
@@ -18,33 +17,54 @@ Usage:
                                1:clean environment before build (default)
         -i --init              only initialize the environment
         -l --latest            update to latest versions of jars rather than using those defined in docker-compose.yml
+
 EOF
     exit "$exit_status"
 }
-export -f my.deployUsage
+export -f my.usage
 
 #----------------------------------------------------------------------------------------------
-function my.deployArgs()
+function my.cmdLineArgs()
 {
-    case "${1:-}" in
-        -c|--c|--clean)       doClean=1; return 1;;
-        -i|--i|--init)        doInit=1; return 1;;
-        -l|--l|--latest)      doLatest=1; return 1;;
-    esac
-    return 0
-}
-export -f my.deployArgs
+    local base="${1:?}"
+    shift
+    local usage='my.usage'
 
-#----------------------------------------------------------------------------------------------
-function my.environment()
-{
-    export HOST_IP=$(hostname -i)
-    export HOST_NAME=$(hostname -s)
-    export HOST_FQDN=$(hostname -f)
-    export CFG_USER_SECRETS=${CFG_USER_SECRETS:-}
-    export CRYPT_FILE=~/.crypt-key
+    # Parse command-line options into above variable
+    local -r progname="$( basename "${BASH_SOURCE[0]}" )"
+    local -r options=$(getopt --longoptions "help,Help,HELP,clean,init,latest" --options "Hhcil" --name "$progname" -- "$@") || "$usage" $?
+    eval set -- "$options"
+
+    local -A opts=()
+    [ "$base" ] && opts['base']="$base" 
+    while true; do
+        case "${1:-}" in
+            -h|--h|--help|-help)  "$usage" 1;;
+            -H|--H|--HELP|-HELP)  "$usage" 1;;
+            --Help|-Help)         "$usage" 1;;
+            -c|--c|--clean)       opts['clean']=1; shift;;
+            -i|--i|--init)        opts['init']=1; shift;;
+            -l|--l|--latest)      opts['latest']=1; shift;;
+            --)                   shift; break;;
+        esac
+    done
+    
+    local val
+    if [ ${#opts[*]} -gt 0 ]; then
+        local -i i=0
+        for val in "${!opts[@]}"; do
+            [ $(( i++ )) -gt 0 ] && echo -n ' '
+            printf '['\''%s'\'']='\''%s'\' "$val" "${opts[$val]}"
+        done
+    fi
+    echo
+    if [ $# -gt 0 ]; then
+        for val in "$@"; do
+            echo "$val"
+        done
+    fi
 }
-export -f my.environment
+export -f my.cmdLineArgs
 
 #----------------------------------------------------------------------------------------------
 function my.loadLibs()
@@ -55,10 +75,11 @@ function my.loadLibs()
         top="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
         if [ "$top" = '/usr/local/bin' ] && [ -e /usr/local/crf/bin/loadLibraries.sh ]; then       
             source /usr/local/crf/bin/loadLibraries.sh
-            top =/opt
+            TOP=/opt
         elif [ -e "${top}/libs/loadLibraries.sh" ]; then
             source "${top}/libs/loadLibraries.sh"
-            my.environment
+            TOP="$top"
+            environ.container
         else
             echo '***ERROR unable to locate libraries'; exit 1
         fi
@@ -68,19 +89,11 @@ export -f my.loadLibs
 
 #----------------------------------------------------------------------------------------------
 
+declare -i status
+declare -a args
 declare fn=deploy.main
 
 my.loadLibs "$fn"
-
-declare -i shVal=0
-lib.args 'my.deployArgs' 'my.deployUsage' 'clean,init,latest' 'cil' "$@" && shVal=$? || shVal=$?
-if [ "${shVal:-}" -gt 0 ];then
-    if [ "${shVal:-}" -gt $# ]; then
-        echo '***ERROR failure while loading libraries'
-        exit 1
-    fi
-    shift "${shVal:-}"
-fi
-
 : ${BASE_TAG:=latest}
-"$fn" "['base']='${top:-}' ['clean']='${doClean:-}' ['init']='${doInit:-}' ['latest']='${doLatest:-}'" "$@" 
+args=( $( my.cmdLineArgs "$TOP" "$@" ) ) && status=$? || status=$?
+[ $status -eq 0 ] && "$fn" "${args[@]}" 

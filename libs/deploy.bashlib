@@ -318,6 +318,16 @@ function deploy.refreshContainers()
 export -f deploy.refreshContainers
 
 #----------------------------------------------------------------------------------------------
+function deploy.removeCBFlogs()
+{
+    for dir in $(find "$WORKSPACE_DIR" -mindepth 2 -maxdepth 2 -type d -name log); do
+        [ -f "${dir}/cbf.log" ] || continue
+        sudo rm "${dir}/cbf.log"
+    done
+}
+export -f deploy.removeCBFlogs
+
+#----------------------------------------------------------------------------------------------
 function deploy.replaceIpAddresses()
 {
     local -r filename=${1:?}
@@ -340,7 +350,7 @@ function deploy.restart()
     # initialize workspace if required 'docker-compose.yml' is missing
     local -r dc_yaml="${WORKSPACE_DIR}/docker-compose.yml"
     [ -f "$dc_yaml" ] || deploy.initialize "$base"
-
+    deploy.removeCBFlogs
 
     # restart our environment
     if ! deploy.restartContainers "$dc_yaml" ; then

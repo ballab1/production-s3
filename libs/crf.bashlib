@@ -103,15 +103,15 @@ function crf.alreadyFixed()
     local -r previous="$(lib.getProperty "$dir" "$cache_file")"
     if [ "$previous" ]; then
         if [ "$previous" = "$uid" ]; then
-            term.elog "    ${dir} already fixed up. Skipping request\n"
+            term.log "    ${dir} already fixed up. Skipping request\n"
         else
-            term.elog "    ${dir} already fixed up. Skipping request to change to user: $(lib.getUserInfo "$user" 'extended')\n" 'lt_yellow'
+            term.log "    ${dir} already fixed up. Skipping request to change to user: $(lib.getUserInfo "$user" 'extended')\n" 'lt_yellow'
         fi
         return 0
     fi
 
     # user not found. Add to cache
-    term.elog "    adding dir: ${dir}, uid: $uid to cache_file: ${cache_file}\n" 'lt_gray'
+    term.log "    adding dir: ${dir}, uid: $uid to cache_file: ${cache_file}\n" 'lt_gray'
 
     lib.updatePropertyFile "$dir" "$uid" "$cache_file" 'must_exist'
     return 1
@@ -186,7 +186,7 @@ function crf.fixupDirectory()
     [ -z "$user" ] && trap.die "Must specify a user when fixing up a directory"
 
     if [ ! "$dir" != '/' ]; then
-        term.elog "Attempt to fix up '${dir}' is not permitted.\n" 'warn'
+        term.log "Attempt to fix up '${dir}' is not permitted.\n" 'warn'
         return 1
     fi
 
@@ -194,7 +194,7 @@ function crf.fixupDirectory()
     (crf.alreadyFixed "$dir" "$user") && return 0
 
     # set access on specificed directory
-    term.elog "    Fixing up directory: ${dir}  for user: $(lib.getUserInfo "$user" 'extended')\n"
+    term.log "    Fixing up directory: ${dir}  for user: $(lib.getUserInfo "$user" 'extended')\n"
 
     [ -d "$dir" ] || mkdir -p "$dir"
     find "$dir" -type d ! -perm 777 ! -name '.*' -exec chmod a+xr '{}' \; || :  # (use || :) to inhibit error
@@ -206,14 +206,14 @@ function crf.fixupDirectory()
     # set owner to uid & login group for uid
     local group="$( uidgid.verifyUserExists "$user" )"
     if [ "${group:-}" ]; then
-        term.elog "     - changing ownership for directory: ${dir}  to ${user}:${group}\n" 'lt_gray'
+        term.log "     - changing ownership for directory: ${dir}  to ${user}:${group}\n" 'lt_gray'
         find "$dir" ! -user "$user" ! -name '.*' -exec chown "${user}:$group" '{}' \; || :
     else
-        term.elog "     - changing ownership for directory: ${dir}  to ${user}\n" 'lt_gray'
+        term.log "     - changing ownership for directory: ${dir}  to ${user}\n" 'lt_gray'
         find "$dir" ! -user "$user" ! -name '.*' -exec chown "$user" '{}' \; || :
     fi
 
-#    term.elog "    crf.fixupDirectory returning\n" 'lt_gray'
+#    term.log "    crf.fixupDirectory returning\n" 'lt_gray'
     return 0
 }
 export -f crf.fixupDirectory
@@ -221,17 +221,17 @@ export -f crf.fixupDirectory
 #############################################################################
 function crf.logEnvironment()
 {
-    term.elog "${CONTAINER_NAME:-}"' starting.\n'
+    term.log "${CONTAINER_NAME:-}"' starting.\n'
     local env_file="$(crf.RT_ENVIRON)"
     [ -e "$env_file" ] || trap.die "No CRF environment definition file: $env_file"
-    term.elog '\nrt.environment:\n'
+    term.log '\nrt.environment:\n'
     for ln in $(cat "$env_file" | sort); do
-        [ "${ln:0:6}" = 'export' ] && term.elog '    '${ln:7}'\n'
+        [ "${ln:0:6}" = 'export' ] && term.log '    '${ln:7}'\n'
     done
-    term.elog '\n'
-    term.elog '    Current user info: '$(getent 'passwd' "$UID")'\n'
+    term.log '\n'
+    term.log '    Current user info: '$(getent 'passwd' "$UID")'\n'
     uidgid.verifyUserExists "$USER" > /dev/null
-    term.elog '    Target  user info: '$(getent 'passwd' "$USER")'\n\n'
+    term.log '    Target  user info: '$(getent 'passwd' "$USER")'\n\n'
 }
 export -f crf.logEnvironment
 
@@ -283,7 +283,7 @@ function crf.runScript()
     local file=${1:?"Input parameter 'file' must be passed to 'function ${FUNCNAME[0]}()'"}
     local tmp_script="/tmp/crfScript.$( basename "$file" )"
 
-    term.elog "..executing ${file}\n" 'info'
+    term.log "..executing ${file}\n" 'info'
 
 cat << EOF > "$tmp_script"
 #!/bin/bash
@@ -299,8 +299,8 @@ function sourcingMessage()
 {
     local -r src=\$1
     local -r name="\$(basename "\$src")"
-    [ \$(( __env_count++ )) -eq 0 ] && (term.elog '    sourcing (CRF):  '; term.elog 'CRF' 'magenta')
-    term.elog "\$name" 'magenta'
+    [ \$(( __env_count++ )) -eq 0 ] && (term.log '    sourcing (CRF):  '; term.log 'CRF' 'magenta')
+    term.log "\$name" 'magenta'
 }
 
 
@@ -322,16 +322,12 @@ EOF
     chmod a+xr "$file"
     chmod a+xr "$tmp_script"
     local -i status
-    if [ "${DEBUG:-}" ] || [ "${DEBUG_TRACE:-}" ]; then
-        ( command "$tmp_script" 1>&2 ) && status=$? || status=$?
-    else
-        ( command "$tmp_script" &>/dev/null ) && status=$? || status=$?
-    fi
+    ( command "$tmp_script" ) && status=$? || status=$?
     if [ $status -ne 0 ]; then
-        term.elog '-------------------------------------------------------------\n'
-        term.elog "$(< "$file")"
-        term.elog '\n-------------------------------------------------------------\n'
-        term.elog ">>>>> issue while executing $( basename "$file" ) <<<<<\n" 'warn'
+        term.log '-------------------------------------------------------------\n'
+        term.log "$(< "$file")"
+        term.log '\n-------------------------------------------------------------\n'
+        term.log ">>>>> issue while executing $( basename "$file" ) <<<<<\n" 'warn'
     fi
     [ -z "${DEBUG:-}" ] && rm "$tmp_script" ||:
     return $status
