@@ -1,7 +1,5 @@
 #!/bin/bash
 
-declare TOP
-
 #----------------------------------------------------------------------------------------------
 function my.usage()
 {
@@ -21,7 +19,6 @@ Usage:
 EOF
     exit "$exit_status"
 }
-export -f my.usage
 
 #----------------------------------------------------------------------------------------------
 function my.cmdLineArgs()
@@ -64,28 +61,6 @@ function my.cmdLineArgs()
         done
     fi
 }
-export -f my.cmdLineArgs
-
-#----------------------------------------------------------------------------------------------
-function my.loadLibs()
-{
-    local fn="${1:?}"
-
-    if [ "$(env | grep -c "BASH_FUNC_${fn}%%")" -eq 0 ]; then
-        top="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-        if [ "$top" = '/usr/local/bin' ] && [ -e /usr/local/crf/bin/loadLibraries.sh ]; then       
-            source /usr/local/crf/bin/loadLibraries.sh
-            TOP=/opt
-        elif [ -e "${top}/libs/loadLibraries.sh" ]; then
-            source "${top}/libs/loadLibraries.sh"
-            TOP="$top"
-            environ.container
-        else
-            echo '***ERROR unable to locate libraries'; exit 1
-        fi
-    fi
-}
-export -f my.loadLibs
 
 #----------------------------------------------------------------------------------------------
 
@@ -93,7 +68,14 @@ declare -i status
 declare -a args
 declare fn=deploy.main
 
-my.loadLibs "$fn"
+declare loader="$(dirname "${BASH_SOURCE[0]}")/libs/appenv.bashlib"
+if [ ! -e "$loader" ]; then
+    echo 'Unable to load libraries'
+    exit 1
+fi
+source "$loader"
+appenv.loader "$fn"
+
 : ${BASE_TAG:=latest}
 args=( $( my.cmdLineArgs "$TOP" "$@" ) ) && status=$? || status=$?
 [ $status -eq 0 ] && "$fn" "${args[@]}" 
