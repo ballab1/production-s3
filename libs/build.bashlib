@@ -1,8 +1,13 @@
 #!/bin/bash
 
-export MAX_IMAGES_TO_KEEP=10
-export PROGRESS_LOG
+#############################################################################
+#
+#   build.bashlib; basic functions to build a submodules distribution repo
+#
+#############################################################################
 
+
+export PROGRESS_LOG
 
 #----------------------------------------------------------------------------------------------
 function build.all()
@@ -28,7 +33,7 @@ function build.all()
     local cbf_version="${CBF_VERSION:-}"
     if [ -z "${CBF_VERSION:-}" ]; then
         if [ -d "${top}/container_build_framework" ]; then
-            cbf_version="$(build.cbfVersion)" || trap.die "Unable to save CBF to Artifactory."'\n'
+            cbf_version="$(build.cbfVersion)" || trap.die "Unable to save CBF to $(custom.storage)."'\n'
         else
             cbf_version='master'
         fi
@@ -52,30 +57,23 @@ function build.all()
     echo
     echo
     TZ='America/New_York' date
-    local build_time=$(date +%Y%m%d-%H%M%S.%N -u)
-    local fingerprint="n/a"
-    local git_commit=$(git.HEAD)
-    local git_url="$(git.remoteUrl)"
-    local origin=$(git.origin)
-    local git_refs="$(git.refs)"
     local allEndTime=$(timer.getTimestamp)
     local -i allElapsed=$(( allEndTime - allStartTime ))
     local allDuration="$(timer.fmtElapsed $allElapsed)"
     printf 'Time elapsed for overall build: %s\n' "$allDuration"
 
-    build.logToKafka "$build_time" \
-                     "$fingerprint" \
-                     "$git_commit" \
-                     "$git_url" \
-                     "$origin" \
+    build.logToKafka "$(date +%Y%m%d-%H%M%S.%N -u)" \
+                     'n/a' \
+                     "$(git.HEAD)" \
+                     "$(git.remoteUrl)" \
+                     "$(git.origin)" \
                      "$allDuration" \
                      "$allElapsed" \
-                     "$git_refs" \
+                     "$(git.refs)" \
                      'overall build'
 
     [ -d "$logDir" ] && [ $(ls -1A "$logDir" | wc -l) -gt 0 ] || rmdir "$logDir"
 }
-export -f build.all
 
 #----------------------------------------------------------------------------------------------
 function build.canPush()
@@ -92,7 +90,6 @@ function build.canPush()
     fi
     return 0
 }
-export -f build.canPush
 
 #----------------------------------------------------------------------------------------------
 function build.cbfVersion()
@@ -106,7 +103,6 @@ function build.cbfVersion()
     custom.cbfVersion
     return 0
 }
-export -f build.cbfVersion
 
 #----------------------------------------------------------------------------------------------
 function build.changeImage()
@@ -121,7 +117,6 @@ function build.changeImage()
     [ -z "$(docker images --format '{{.Repository}}:{{.Tag}}' --filter "reference=$actualImage")" ] || \
         docker tag "$actualImage" "$taggedImage"
 }
-export -f build.changeImage
 
 #----------------------------------------------------------------------------------------------
 function build.containersForOS()
@@ -135,18 +130,6 @@ function build.containersForOS()
     local osStartTime=$(timer.getTimestamp)
 
     export CBF_VERSION
-    export CFG_EMAIL=''
-    export CFG_HUBOT_TOKEN=''
-    export CFG_JENKINS_EMAIL=''
-    export CFG_JENKINS_NAME=''
-    export CFG_JENKINS_TOKEN=''
-    export CFG_JENKINS_USER=''
-    export CFG_NAME=''
-    export CFG_TOKEN=''
-    export CFG_USER=''
-    export CFG_PASS=''
-    export CFG_SLACK_HUBOT_TOKEN=''
-    export CFG_USER=''
     export CONTAINER_OS="$containerOS"
     export DEV_TEAM="${DEV_TEAM:-devops/}"
     export DOCKER_REGISTRY=$(registry.SERVER)
@@ -215,7 +198,6 @@ function build.containersForOS()
 
     return $status
 }
-export -f build.containersForOS
 
 #----------------------------------------------------------------------------------------------
 function build.dependencyInfo()
@@ -243,11 +225,7 @@ function build.dependencyInfo()
 
 
     # container digest of layer that we are building on top of
-    local base=$(eval echo $( jq '.build.args.FROM_BASE?' <<< "$config" ))
-    if [ -z "$(docker images --format '{{.Repository}}:{{.Tag}}' --filter "reference=$base")" ]; then
-        echo pulling parent image: "$base" >&2
-        [ "$(docker image ls "$base" | awk 'NR != 1')" ] || docker pull "$base" >&2 || return 0
-    fi
+    local base=$(build.getImageParent "$config")
     docker inspect "$base" | jq '.[].Id?'          # digest sha from parent
 
 
@@ -285,7 +263,6 @@ function build.dependencyInfo()
         docker inspect "$base" | jq -r '.[].Config.Labels."version.cbf"?'
     fi
 }
-export -f build.dependencyInfo
 
 #----------------------------------------------------------------------------------------------
 function build.dirChecksum()
@@ -297,7 +274,6 @@ function build.dirChecksum()
         sha256sum "$file"
     done < <(find "$dir" -type f -name '*' 2>/dev/null ||:)
 }
-export -f build.dirChecksum
 
 #----------------------------------------------------------------------------------------------
 function build.dockerCompose()
@@ -310,7 +286,6 @@ function build.dockerCompose()
         [ -z "${service:-}" ] || jq $(eval echo "'.\"$service\"?'") <<< "$jsonConfig"
     fi
 }
-export -f build.dockerCompose
 
 #----------------------------------------------------------------------------------------------
 function build.findIdsWithFingerprint()
@@ -321,7 +296,24 @@ function build.findIdsWithFingerprint()
          --unix-socket /var/run/docker.sock http://localhost/images/json \
          | jq -r ".[]|select(.Labels.\"container.fingerprint\" == \"$fingerprint\").RepoTags[]?"
 }
-export -f build.findIdsWithFingerprint
+
+#----------------------------------------------------------------------------------------------
+function build.getImageParent()
+{
+    local -r config=${1:?}
+    local -r unique=${2:-}
+
+    local base=$(eval echo $( jq '.build.args.FROM_BASE?' <<< "$config" ))
+    if [ -z "$(docker images --format '{{.Repository}}:{{.Tag}}' --filter "reference=$base")" ]; then
+        echo pulling parent image: "$base" >&2
+        [ "$(docker image ls "$base" | awk 'NR != 1')" ] || docker pull "$base" >&2 ||: return 0
+    fi
+    if [ "${unique:-}" ]; then
+        local tag="$(docker inspect "$base" | jq -r '.[].Config.Labels."container.fingerprint"' )"
+        [ -z "${tag:-}" ] || [ "$tag" =  'null' ] || [ "$tag" = "${base##*:}" ] || base="${base%:*}:$tag"
+    fi
+    echo "$base"
+}
 
 #----------------------------------------------------------------------------------------------
 function build.jsonParentChild()
@@ -336,7 +328,17 @@ function build.jsonParentChild()
         def rootImages: composeTree[]|select(.parent|length == 0)|.image;
         dependentTree'
 }
-export -f build.jsonParentChild
+
+#----------------------------------------------------------------------------------------------
+function build.loadCustomSettings()
+{
+    if [ -e custom.properties ]; then
+       # import our setup configuration
+        while read -r line; do
+            eval "export $line"
+        done < <(cat custom.properties)
+    fi
+}
 
 #----------------------------------------------------------------------------------------------
 function build.logger()
@@ -353,7 +355,6 @@ function build.logger()
     fi
     echo "    $msg"
 }
-export -f build.logger
 
 #----------------------------------------------------------------------------------------------
 function build.logImageInfo()
@@ -369,18 +370,18 @@ function build.logImageInfo()
     [ -e "$depLog" ] || touch "$depLog"
 
     printf '%s :: pulling %s\n' "$(TZ='America/New_York' date)" "$image" >> "$depLog"
-    echo '    refs:           '$(jq -r '."container.git.refs"' <<< "$json") >> "$depLog"
-    echo '    commitId:       '$(jq -r '."container.git.commit"' <<< "$json") >> "$depLog"
-    echo '    repo:           '$(jq -r '."container.git.url"' <<< "$json") >> "$depLog"
-    echo '    fingerprint:    '$(jq -r '."container.fingerprint"' <<< "$json") >> "$depLog"
-    echo '    revision:       '$(jq -r '."container.origin"' <<< "$json") >> "$depLog"
-    echo '    build.time:     '$(jq -r '."container.build.time"' <<< "$json") >> "$depLog"
-    echo '    original.name:  '$(jq -r '."container.original.name"' <<< "$json") >> "$depLog"
+    echo '    refs:             '$(jq -r '."container.git.refs"' <<< "$json") >> "$depLog"
+    echo '    commitId:         '$(jq -r '."container.git.commit"' <<< "$json") >> "$depLog"
+    echo '    repo:             '$(jq -r '."container.git.url"' <<< "$json") >> "$depLog"
+    echo '    fingerprint:      '$(jq -r '."container.fingerprint"' <<< "$json") >> "$depLog"
+    echo '    parent:           '$(jq -r '."container.parent"' <<< "$json") >> "$depLog"
+    echo '    revision:         '$(jq -r '."container.origin"' <<< "$json") >> "$depLog"
+    echo '    build.time:       '$(jq -r '."container.build.time"' <<< "$json") >> "$depLog"
+    echo '    original.name:    '$(jq -r '."container.original.name"' <<< "$json") >> "$depLog"
 
     build.dependencyInfo "$(build.dockerCompose "$dc_yaml")" >> "$depLog"
     printf '\n\n\n' >> "$depLog"
 }
-export -f build.logImageInfo
 
 #----------------------------------------------------------------------------------------------
 function build.logToKafka()
@@ -433,7 +434,6 @@ function build.logToKafka()
                        --value "$( json.encodeHash '--' "${build_data[@]}" )" &) || :
     return 0
 }
-export -f build.logToKafka
 
 #----------------------------------------------------------------------------------------------
 function build.module()
@@ -453,14 +453,17 @@ function build.module()
     export CONTAINER_GIT_REFS="($(git.refs))"
     export CONTAINER_GIT_URL="$(git.remoteUrl)"
     export CONTAINER_ORIGIN="$(git.origin)"
+    export CONTAINER_PARENT="$(build.getImageParent "$config" 'unique')"
+
 
     # generate fingerprint from all our dependencies
     local branch=$(git.branch)
-    export BASE_TAG="${BASE_TAG:-${branch}-latest}"
+    export BASE_TAG="${BASE_TAG:-${branch//\//-}}"
     local -r dependencies="$(build.dependencyInfo "$config")"
     export CONTAINER_FINGERPRINT="$( sha256sum <<< "$dependencies" | cut -d' ' -f1 )"
 
     local taggedImage="$(eval echo $(jq '.image?' <<< $config))"
+    [ "$branch" = 'HEAD' ] && term.log 'git.tag returned HEAD for '$image  'warn'
     taggedImage="${taggedImage%:*}:${BASE_TAG}"
 
     echo
@@ -473,6 +476,7 @@ function build.module()
     echo "    repo:           ${CONTAINER_GIT_URL:-}"
     echo "    fingerprint:    ${CONTAINER_FINGERPRINT:-}"
     echo "    revision:       ${CONTAINER_ORIGIN:-}"
+    echo "    parent: :       ${CONTAINER_PARENT:-}"
 
     [ "${CONTAINER_FINGERPRINT:-}" ] || trap.die "No base image found for '$taggedImage'. Unable to calculate fingerprint."
 
@@ -487,6 +491,7 @@ function build.module()
         echo "    repo:           ${CONTAINER_GIT_URL:-}" >> "$depLog"
         echo "    fingerprint:    ${CONTAINER_FINGERPRINT:-}" >> "$depLog"
         echo "    revision:       ${CONTAINER_ORIGIN:-}" >> "$depLog"
+        echo "    parent:         ${CONTAINER_PARENT:-}" >> "$depLog"
         echo '  dependencies:' >> "$depLog"
         local -a deps=( $dependencies )
         printf '    %s\n' "${deps[@]}" >> "$depLog"
@@ -554,7 +559,6 @@ function build.module()
     [ $status -eq 9 ] && status=0
     return $status
 }
-export -f build.module
 
 #----------------------------------------------------------------------------------------------
 function build.parentChild()
@@ -575,20 +579,6 @@ function build.parentChild()
     done < <(find . -mindepth 2 -maxdepth 2 -name 'docker-compose.yml' | awk '{print substr($0,3)}')
     echo ']'
 }
-export -f build.parentChild
-
-#----------------------------------------------------------------------------------------------
-function build.pushImage()
-{
-    local -r tagged="${1:?}"
-    local -r actual="${2:-}"
-
-    local -r prefix='#\s+max\s+registry\s+entries:'
-    local max_images=$(grep -E "$prefix" "$compose_yaml" | sed -r "s|${prefix}\s+(\d+)|\1|")
-    : ${max_images:=$MAX_IMAGES_TO_KEEP}
-    registry.pushImage "$max_images" "$tagged" "$actual"
-}
-export -f build.pushImage
 
 #----------------------------------------------------------------------------------------------
 function build.updateContainer()
@@ -612,7 +602,7 @@ function build.updateContainer()
             elif [ "${BUILD_PUSH:-0}" != 0 ] || [ $(docker inspect "$taggedImage" | jq -r '.[].RepoDigests?|length') -eq 0 ]; then
                 doPush=1
             fi
-            [ $doPush -eq 0 ] || build.pushImage "$taggedImage"
+            [ $doPush -eq 0 ] || registry.push 0 "$taggedImage"
             return 9
         fi
 
@@ -625,12 +615,14 @@ function build.updateContainer()
             build.logImageInfo "$taggedImage" "$compose_yaml"
             if [ "${BUILD_PUSH:-0}" != 0 ]; then
                 build.logger "pushing ${taggedImage} to registry"
-                build.pushImage "$taggedImage" "$actualImage"
+                registry.push 0 "$taggedImage"
             fi
             docker rmi "$actualImage"
             return 9
         fi
     fi
+
+    build.loadCustomSettings
 
     # rebuild container because no container exists with the correct fingerprint
     build.logger "building $actualImage"
@@ -641,12 +633,11 @@ function build.updateContainer()
 
     if build.canPush "$revision"; then
         build.logger "pushing ${taggedImage} to registry"
-        build.pushImage "$taggedImage" "$actualImage"
+        registry.push 0 "$taggedImage"
     fi
     docker rmi "$actualImage"
     return 0
 }
-export -f build.updateContainer
 
 #----------------------------------------------------------------------------------------------
 function build.verifyModules()
@@ -680,13 +671,13 @@ function build.verifyModules()
     done
     return "$retval"
 }
-export -f build.verifyModules
 
 #----------------------------------------------------------------------------------------------
 function build.wrapper()
 {
     local -A opts
     eval opts=( $1 )
+    readonly opts
     shift
 
     [ "${opts['force']:-}" ] && export BUILD_ALWAYS="${opts['force']}"
@@ -701,7 +692,6 @@ function build.wrapper()
         build.all "${opts['base']}" "$@"
     fi
 }
-export -f build.wrapper
 
 #----------------------------------------------------------------------------------------------
 function build.yamlToJson()
@@ -719,6 +709,5 @@ function build.yamlToJson()
         "${YAML_TO_JSON[@]}" <<< "$yamlFile"
     fi
 }
-export -f build.yamlToJson
 
 #----------------------------------------------------------------------------------------------

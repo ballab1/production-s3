@@ -13,3 +13,10 @@ function custom.credentials()
     echo '--insecure'
 }
 export -f custom.credentials
+
+#----------------------------------------------------------------------------------------------
+function custom.storage()
+{
+    echo 'GitHub'
+}
+export -f custom.storage

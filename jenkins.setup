@@ -6,6 +6,7 @@
 #
 #############################################################################
 
+declare -r config_dir=${CONFIG_DIR:?}
 declare -r workspace_dir=${WORKSPACE_DIR:?} 
 
 declare -r jenkins_home="${workspace_dir}/jenkins/jenkins_home"
@@ -17,6 +18,9 @@ pushd "$jenkins_home" >/dev/null || exit 0
 declare -a nfiles
 mapfile -t nfiles < <(ls -1A)
 [ ${#nfiles[*]} -gt 0 ] || exit 0
+
+# copy jdbc driver
+cp "$config_dir"/* "$jenkins_home/war/WEB-INF/lib/"
 
 declare -r host_ip=$(environ.ipAddress)
 
