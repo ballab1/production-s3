@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#############################################################################
+#
+#   initialization for docker-registry-frontend
+#
+#############################################################################
+declare -r config_dir=${CONFIG_DIR:?}
+declare -r workspace_dir=${WORKSPACE_DIR:?}
+
+
+declare -r ini=${workspace_dir}/registryfe
+[ -f "$ini" ] && exit 0
+
+sudo cp -r "${config_dir}/registryfe"/* "${workspace_dir}/registryfe"/
