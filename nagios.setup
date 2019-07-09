@@ -32,7 +32,7 @@ declare expr="'s#${ip_match_rgx}#localhost:$(environ.ipAddress)#g'"
 eval sed -i -r -e "$expr" "$yaml" 
 
 declare -r dc_json="$(docker.yamlToJson "$yaml")"
-declare -r mysql_root_password="$(deploy.passwordSecret "${dc_json}" 'mysql' 'MYSQL_ROOT_PASSWORD' )"
+declare -r mysql_root_password="$(deploy.passwordSecret "$dc_json" 'mysql' 'MYSQL_ROOT_PASSWORD' )"
 declare -r nconf_dbpass="$(deploy.passwordSecret "${dc_json}" 'nagios' 'NCONF_DBPASS' )"
 declare nconf_dbuser=$(jq '.services.nagios.environment.NCONF_DBUSER' <<< "$dc_json" | tr -d '"' )
 nconf_dbuser="$(eval echo "$nconf_dbuser")"

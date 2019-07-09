@@ -1,30 +1,60 @@
 #!/bin/bash
 
-#############################################################################
-#
-#   build.bashlib; basic functions to build a submodules distribution repo
-#
-#############################################################################
+#----------------------------------------------------------------------------------------------
+function build.usage()
+{
+    local -i exit_status=${1:-1}
 
+    cat >&2 << EOF
+Usage:
+    $progname [ -h | --help ]
+              [ -f | --force ]
+              [ -c | --console ]
+              [ --logdir <logDir> ]
+              [ -l | --logfile <logName> ]
+              [ -o | --os <osName> ]
+              [ -p | --push ]
+              [ <repoName> <repoName> <repoName> ]
+
+    Common options:
+        -h --help                  Display a basic set of usage instructions
+        -c --console               log build info to conolse : default is to log to logdir and just display summary on cpnsole
+        -f --force                 force build : do not check if fingerprint exists locally or in registry
+           --logdir                log directory. If not specified, defalts to
+        -l --logfile <logName>     log build results to <logName>. Defaults to build.YYYYMMDDhhmmss.log
+        -o --os <osName>           specify OS <osName> that will be used. Default all OS types defined
+        -p --push                  always push image to regitry
+
+    build one or more component repos
+
+EOF
+    exit "$exit_status"
+}
 
 export PROGRESS_LOG
 
 #----------------------------------------------------------------------------------------------
 function build.all()
 {
-    local -r top=${1:?}
-    shift
+    local -r top="${1:?}"
+    local -r logDir="${2:?}"
+    shift 2
     local -ra userInput=( "$@" )
 
     local -r allStartTime=$(timer.getTimestamp)
     cd "$top"
-    local logDir="$(readlink -f "$top")/logs"
     [ -d "$logDir" ] || mkdir -p "$logDir"
+
+
+    VERSIONS_DIRECTORY="${top}/versions"
+    local -a files=()
+    mapfile -t files < <(ls -1 "$VERSIONS_DIRECTORY" | grep -vF '.' ||:)
+    [ "${#files[*]}" -eq 0 ] && trap.die "No version information available."
+
 
     local updateTo
     [[ "$(git.branch)" = *dev* ]] && updateTo=latest
     [ "${CONTAINER_TAG:-}" ] && updateTo=latest
-    versions.data "${top}/.versions" "${updateTo:-}"
 
     local -a OSes
     mapfile -t OSes < <(sed '/^[[:blank:]]*#/d;s/[[:blank:]]*#.*//' container.os)
@@ -44,13 +74,16 @@ function build.all()
     echo
     echo
 
+    local -i status=0
     local request_cbf="${CBF_VERSION:-}"
     for containerOS in "${OSes[@]}"; do
         [ ${containerOS:-} ] || continue
-        [ -e "$(versions.DIRECTORY)/$containerOS" ] || continue
+        [ -e "$VERSIONS_DIRECTORY/$containerOS" ] || continue
         [ "${request_cbf:-}" ] || CBF_VERSION="$cbf_version"
 
-        (build.containersForOS "$containerOS" "${userInput[@]:-}") || break    # run in separate shell to avoid "VERSIONS" conflicting
+        # run in separate shell to avoid "VERSIONS" conflicting
+        (build.containersForOS "$containerOS" "${userInput[@]:-}") && status=$? || status=$?
+        [ "$status" -ne 0 ] && break
     done
 
 
@@ -73,6 +106,7 @@ function build.all()
                      'overall build'
 
     [ -d "$logDir" ] && [ $(ls -1A "$logDir" | wc -l) -gt 0 ] || rmdir "$logDir"
+    return $status
 }
 
 #----------------------------------------------------------------------------------------------
@@ -100,7 +134,7 @@ function build.cbfVersion()
     local filename="$(git.origin 'container_build_framework')"
     [[ "$filename" == *-dirty* ]] && return 1
 
-    custom.cbfVersion
+    custom.cbfVersion "$filename"
     return 0
 }
 
@@ -116,6 +150,47 @@ function build.changeImage()
 
     [ -z "$(docker images --format '{{.Repository}}:{{.Tag}}' --filter "reference=$actualImage")" ] || \
         docker tag "$actualImage" "$taggedImage"
+}
+
+#---------------------------------------------------------------------------------------------- #----------------------------------------------------------------------------------------------
+function build.cmdLineArgs()
+{
+    local base="${1:?}"
+    shift
+    local usage='build.usage'
+
+    # Parse command-line options into above variable
+    local -r progname="$( basename "${BASH_SOURCE[0]}" )"
+    local -r options=$(getopt --longoptions "help,Help,HELP,console,force,logdir:,logfile:,push,os:" --options "Hhcfl:po:" --name "$progname" -- "$@") || "$usage" $?
+    eval set -- "$options"
+
+    local -A opts=()
+    opts['base']="$(readlink -f "$base")"
+    opts['logdir']="${opts['base']}/logs"
+    opts['logfile']="logs/build.$(date +"%Y%m%d%H%M%S").log"
+    opts['conlog']=0
+
+    while true; do
+        case "${1:-}" in
+            -h|--h|--help|-help)  "$usage" 1;;
+            -H|--H|--HELP|-HELP)  "$usage" 1;;
+            --Help|-Help)         "$usage" 1;;
+            -c|--c|--console)     opts['console']=1; shift 1;;
+               --logdir)          opts['logdir']="$2"; shift 2;;
+            -l|--l|--logfile)     opts['logfile']="$2"; shift 2;;
+            -o|--o|--os)          opts['os']="$2"; shift 2;;
+            -f|--f|--force)       opts['force']=1; shift 1;;
+            -p|--p|--push)        opts['push']=1; shift 1;;
+            --)                   shift; break;;
+        esac
+    done
+
+    if [ -z "$(git submodule)" ];then
+        term.log 'Invalid directory.' 'error'
+        exit 1
+    fi
+
+    appenv.results "$@"
 }
 
 #----------------------------------------------------------------------------------------------
@@ -134,7 +209,7 @@ function build.containersForOS()
     export DEV_TEAM="${DEV_TEAM:-devops/}"
     export DOCKER_REGISTRY=$(registry.SERVER)
 
-    if [ "${BUILD_URL:-}" ]; then
+    if [ "${CONSOLE_LOG:-0}" -eq 0 ]; then
         PROGRESS_LOG="$(readlink -f "$logDir")/progressInfo"
         touch "$PROGRESS_LOG"
     fi
@@ -157,12 +232,15 @@ function build.containersForOS()
     echo "    revision:       $origin"
 
     # get versions  (do not redefine any that are alresady in ENV)
-    versions.get "$containerOS" 'export'
+    local versions="${VERSIONS_DIRECTORY}/$containerOS"
+    [ -e "$versions" ] || trap.die "Unrecognized CONTAINER_OS: $containerOS"
+    lib.exportFileVars "$versions"
 
     exec 3>&1  # create special stdout
 
     local -i status=0
     while read -r dir; do
+        [ $status -eq 0 ] || continue
         if [ ! -d "$dir" ]; then
             echo "invalid project directory: $dir"
             continue
@@ -171,8 +249,8 @@ function build.containersForOS()
         pushd "$dir" >/dev/null
         build.module "$containerOS" && status=$? || status=$?
         popd >/dev/null
-        [ $status -eq 0 ] || break
-    done< <( build.verifyModules "$containerOS" $(printf '%s\n' "${requestModules[@]}") )
+        [ $status -ne 0 ] && break
+    done< <( build.verifyModules "$containerOS" $(printf '%s\n' "${requestModules[@]}") && status=$? || status=$?)
 
     exec 3>&-   # close special stdout
 
@@ -185,7 +263,7 @@ function build.containersForOS()
     local osDuration="$(timer.fmtElapsed $osElapsed)"
     printf '\n  Time building %s OS: %s\n' "$containerOS" "$osDuration"
 
-    [ -z "${BUILD_URL:-}" ] || :> "$PROGRESS_LOG"
+    [ "${CONSOLE_LOG:-0}" -eq 0 ] || :> "$PROGRESS_LOG"
     build.logToKafka "$build_time" \
                      "$fingerprint" \
                      "$git_commit" \
@@ -216,7 +294,9 @@ function build.dependencyInfo()
 
 
     # git tree hash
-    git.lsTree HEAD . | awk '{print $3}'
+    local dirty=' '
+    [ "$(git.status --porcelain)" ] && dirty='*'
+    echo "${dirty}$(sha256sum < <(git.lsTree HEAD .) | cut -d ' ' -f 1) $(basename $(pwd))"
 
     # resolve 'docker build.args' config (without reference to FROM_BASE) from docker-compose.yml
     set +u
@@ -316,36 +396,11 @@ function build.getImageParent()
 }
 
 #----------------------------------------------------------------------------------------------
-function build.jsonParentChild()
-{
-    local os=${1:-}
-
-    build.parentChild "$os" | jq '. as $data |
-        def dependentsOf($f): [ $data[]|select(.parent == $f)|.image ];
-        def parentsOf($f): [ $data[]|select(.image == $f)|.parent ];
-        def composeTree: [ $data[].parent ] | unique | map( {"image":.,"parent": parentsOf(.) } );
-        def dependentTree: [ $data[].image ] | unique | map( {"image":.,"dependents": dependentsOf(.) } );
-        def rootImages: composeTree[]|select(.parent|length == 0)|.image;
-        dependentTree'
-}
-
-#----------------------------------------------------------------------------------------------
-function build.loadCustomSettings()
-{
-    if [ -e custom.properties ]; then
-       # import our setup configuration
-        while read -r line; do
-            eval "export $line"
-        done < <(cat custom.properties)
-    fi
-}
-
-#----------------------------------------------------------------------------------------------
 function build.logger()
 {
     local msg=${1:?}
 
-    if [ "${BUILD_URL:-}" ]; then
+    if [ "${CONSOLE_LOG:-0}" -eq 0 ]; then
         if [[ $msg == checking* ]] || [[ $msg == *'has not changed.' ]]; then
             echo "    $msg" >&3
         else
@@ -354,6 +409,20 @@ function build.logger()
         echo "$msg" >> "$PROGRESS_LOG"
     fi
     echo "    $msg"
+}
+
+#----------------------------------------------------------------------------------------------
+function build.logInfo()
+{
+    local log_time=${1:-}
+
+    [ "$log_time" ] && echo "    build time:     ${CONTAINER_BUILD_TIME:-}"
+    echo "    refs:           ${CONTAINER_GIT_REFS:-}"
+    echo "    commitId:       ${CONTAINER_GIT_COMMIT:-}"
+    echo "    repo:           ${CONTAINER_GIT_URL:-}"
+    echo "    fingerprint:    ${CONTAINER_FINGERPRINT:-}"
+    echo "    revision:       ${CONTAINER_ORIGIN:-}"
+    echo "    parent:         ${CONTAINER_PARENT:-}"
 }
 
 #----------------------------------------------------------------------------------------------
@@ -453,30 +522,39 @@ function build.module()
     export CONTAINER_GIT_REFS="($(git.refs))"
     export CONTAINER_GIT_URL="$(git.remoteUrl)"
     export CONTAINER_ORIGIN="$(git.origin)"
-    export CONTAINER_PARENT="$(build.getImageParent "$config" 'unique')"
 
 
     # generate fingerprint from all our dependencies
     local branch=$(git.branch)
+    if [ "$branch" = 'HEAD' ]; then
+        local -a branches
+        mapfile -t branches < <(git log -n1 --oneline --decorate | \
+                                sed -e 's/[^\(]*(\([^\)]*\)).*/\1/' -e 's:origin/::g' -e 's:,::g' -e 's|tag:||g' -e 's|HEAD||g' | \
+                                awk '{if(length($0)>0) {print $0}}' RS=' '| \
+                                sort -u | \
+                                awk '{if(length($0)>0) {print $0}}')
+        if [ "${#branches[0]}" -eq 0 ]; then
+            term.elog "***ERROR: failure to determine current branch for $(git.repoName). Most likely on a detached HEAD"'\n' 'warn'
+            git log -8 --graph --abbrev-commit --decorate --all >&2
+            return 1
+        fi
+        branch="${branches[0]}"
+    fi
     export BASE_TAG="${BASE_TAG:-${branch//\//-}}"
-    local -r dependencies="$(build.dependencyInfo "$config")"
-    export CONTAINER_FINGERPRINT="$( sha256sum <<< "$dependencies" | cut -d' ' -f1 )"
+    export CONTAINER_PARENT="$(build.getImageParent "$config" 'unique')"
 
     local taggedImage="$(eval echo $(jq '.image?' <<< $config))"
-    [ "$branch" = 'HEAD' ] && term.log 'git.tag returned HEAD for '$image  'warn'
     taggedImage="${taggedImage%:*}:${BASE_TAG}"
+
+    local -r dependencies="$(build.dependencyInfo "$config")"
+    export CONTAINER_FINGERPRINT="$( sha256sum <<< "$dependencies" | cut -d' ' -f1 )"
 
     echo
     echo -n 'building '
     echo -en '\e[94m'
     echo -n "$taggedImage"
     echo -e '\e[0m'
-    echo "    refs:           ${CONTAINER_GIT_REFS:-}"
-    echo "    commitId:       ${CONTAINER_GIT_COMMIT:-}"
-    echo "    repo:           ${CONTAINER_GIT_URL:-}"
-    echo "    fingerprint:    ${CONTAINER_FINGERPRINT:-}"
-    echo "    revision:       ${CONTAINER_ORIGIN:-}"
-    echo "    parent: :       ${CONTAINER_PARENT:-}"
+    build.logInfo
 
     [ "${CONTAINER_FINGERPRINT:-}" ] || trap.die "No base image found for '$taggedImage'. Unable to calculate fingerprint."
 
@@ -486,12 +564,7 @@ function build.module()
         local offs=$(grep -n ' :: building ' "$depLog" | tail -2 | awk -F':' '{if(NR==1){print ($1-1)}}')
         [ -z "$offs" ] || [ $offs -le 0 ] || sed -i -e "1,$offs d" "$depLog"
         printf '%s :: building %s\n' "$(TZ='America/New_York' date)" "$taggedImage" >> "$depLog"
-        echo "    refs:           ${CONTAINER_GIT_REFS:-}" >> "$depLog"
-        echo "    commitId:       ${CONTAINER_GIT_COMMIT:-}" >> "$depLog"
-        echo "    repo:           ${CONTAINER_GIT_URL:-}" >> "$depLog"
-        echo "    fingerprint:    ${CONTAINER_FINGERPRINT:-}" >> "$depLog"
-        echo "    revision:       ${CONTAINER_ORIGIN:-}" >> "$depLog"
-        echo "    parent:         ${CONTAINER_PARENT:-}" >> "$depLog"
+        build.logInfo >> "$depLog"
         echo '  dependencies:' >> "$depLog"
         local -a deps=( $dependencies )
         printf '    %s\n' "${deps[@]}" >> "$depLog"
@@ -505,18 +578,27 @@ function build.module()
     local -i status=0
 
     # rebuild container because no container exists with the correct fingerprint
-    if [ "${BUILD_URL:-}" ]; then
+    if [ "${CONSOLE_LOG:-0}" -eq 0 ]; then
         # this on Jenkins
         :> "$PROGRESS_LOG"
-        local logBase="${logDir}/$dir"
-        (build.updateContainer "$compose_yaml" "$taggedImage" "$actualImage" "$CONTAINER_ORIGIN" >"${logBase}.out" 2>"${logBase}.err") \
+        local logBase="${logDir}/${dir}.${CONTAINER_OS}"
+        [ -f "${logBase}.out.log" ] && sudo rm "${logBase}.out.log"
+        [ -f "${logBase}.err.log" ] && sudo rm "${logBase}.err.log"
+        build.logInfo 'include_time' > "${logBase}.out.log"
+        # - use 'sed' to strip color codes from "${logBase}.out.log"
+        (build.updateContainer "$compose_yaml" "$taggedImage" "$actualImage" "$CONTAINER_ORIGIN" 2>"${logBase}.err.log" \
+          | sed -E 's|\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]||g' >>"${logBase}.out.log") \
           && status=$? || status=$?
-        [ $status -eq 9 ] && rm "${logBase}.out"
+        [[ $status -eq 9 || ! -s "${logBase}.out.log" ]] && rm "${logBase}.out.log"
+        [ -s "${logBase}.err" ] || rm "${logBase}.err.log"
 
-        # show location of log files if they have any content
-        local log_display_base="${BUILD_URL}artifact/$logBase"
-        [ -s "${logBase}.out" ] && echo "    STDOUT log:  ${log_display_base}.out/*view*/"
-        [ -s "${logBase}.err" ] && echo "    STDERR log:  ${log_display_base}.err/*view*/"
+
+        if [ "${BUILD_URL:-}" ]; then
+            # for Jenkins: show location of log files if they have any content
+            local log_display_base="${BUILD_URL}artifact/$(basename "$logDir")/${dir}.${CONTAINER_OS}"
+            [ -s "${logBase}.out.log" ] && echo "    STDOUT log:     ${log_display_base}.out.log/*view*/"
+            [ -s "${logBase}.err.log" ] && echo "    STDERR log:     ${log_display_base}.err.log/*view*/"
+        fi
 
         if [ $status -ne 0 ] && [ $status -ne 9 ]; then
           term.log "\n"
@@ -526,13 +608,13 @@ function build.module()
           echo
           echo  'STDOUT:'
           echo
-          tail -30 ${logBase}.out
+          [ -e "${logBase}.out.log" ] && tail -30 "${logBase}.out.log"
           echo
           echo '----------------------------------------------------------------------------------------------'
           echo
           echo  'STDERR:'
           echo
-          tail -30 ${logBase}.err
+          [ -e "${logBase}.err.log" ] && tail -30 "${logBase}.err.log"
           echo
           echo '----------------------------------------------------------------------------------------------'
         fi
@@ -561,26 +643,6 @@ function build.module()
 }
 
 #----------------------------------------------------------------------------------------------
-function build.parentChild()
-{
-    local os=${1:-}
-
-    local -i index=0
-    local -r skip_builds_file='skip.build'
-    echo '['
-    while read -r dc_yaml; do
-        [ -e "$skip_builds_file" ] && [ $(grep -cH "$(dirname "$dc_yaml")" "$skip_builds_file" 2>/dev/null | cut -d':' -f2) -eq 0 ] || continue
-        local definedOS=$(grep -E '^#\s+containerOS:\s+' "$dc_yaml")
-        [ "${definedOS:-}" ] && [ $(grep -cH "$os" <<< "$definedOS" | awk -F ':' '{print $2}') -eq 0 ] && continue
-
-        (( index++ )) && echo -n ','
-        eval echo $(build.yamlToJson "$dc_yaml" | jq '.services[]|{parent: .build.args.FROM_BASE, image: .image}?|tojson')
-
-    done < <(find . -mindepth 2 -maxdepth 2 -name 'docker-compose.yml' | awk '{print substr($0,3)}')
-    echo ']'
-}
-
-#----------------------------------------------------------------------------------------------
 function build.updateContainer()
 {
     local -r compose_yaml=${1:?}
@@ -595,14 +657,14 @@ function build.updateContainer()
         if [ ${#images[*]} -gt 0 ]; then
             build.logger "${taggedImage} has not changed."
             local -i doPush=0
-            if [ $(printf '%s\n' "${images[@]}" | grep "$taggedImage" | wc -l) -eq 0 ]; then
+            if [ $(printf '%s\n' "${images[@]}" | grep -cs "$taggedImage") -eq 0 ]; then
                 # found image by a different 'name:tag'
                 docker tag "${images[0]}" "$taggedImage"
                 doPush=1
             elif [ "${BUILD_PUSH:-0}" != 0 ] || [ $(docker inspect "$taggedImage" | jq -r '.[].RepoDigests?|length') -eq 0 ]; then
                 doPush=1
             fi
-            [ $doPush -eq 0 ] || registry.push 0 "$taggedImage"
+            [ $doPush -eq 0 ] || docker.pushRetained 0 "$taggedImage"
             return 9
         fi
 
@@ -615,14 +677,16 @@ function build.updateContainer()
             build.logImageInfo "$taggedImage" "$compose_yaml"
             if [ "${BUILD_PUSH:-0}" != 0 ]; then
                 build.logger "pushing ${taggedImage} to registry"
-                registry.push 0 "$taggedImage"
+                docker.pushRetained 0 "$taggedImage"
             fi
             docker rmi "$actualImage"
             return 9
         fi
     fi
 
-    build.loadCustomSettings
+    # export any custom variables needed
+    lib.exportFileVars custom.properties
+
 
     # rebuild container because no container exists with the correct fingerprint
     build.logger "building $actualImage"
@@ -633,7 +697,7 @@ function build.updateContainer()
 
     if build.canPush "$revision"; then
         build.logger "pushing ${taggedImage} to registry"
-        registry.push 0 "$taggedImage"
+        docker.pushRetained 0 "$taggedImage"
     fi
     docker rmi "$actualImage"
     return 0
@@ -648,7 +712,7 @@ function build.verifyModules()
     [ "${#requestedModules[*]}" -gt 0 ] || requestedModules=()
     local -r skip_builds_file='skip.build'
 
-    local -a modules=( $(grep -Ev '^\s*#' "$(versions.DIRECTORY)/${containerOS}.modules") )
+    local -a modules=( $(grep -Ev '^\s*#' "$VERSIONS_DIRECTORY/${containerOS}.modules") )
     local retval=1
     for defMod in "${modules[@]}"; do
         [ -d "$defMod" ] && [ -e "${defMod}/docker-compose.yml" ] || continue
@@ -680,17 +744,23 @@ function build.wrapper()
     readonly opts
     shift
 
-    [ "${opts['force']:-}" ] && export BUILD_ALWAYS="${opts['force']}"
-    [ "${opts['push']:-}" ]  && export BUILD_PUSH="${opts['push']}"
-    [ "${opts['os']:-}" ]    && export CONTAINER_OS="${opts['os']}"
 
+    export CONSOLE_LOG="${opts['conlog']:-0}"
+    [ "${opts['force']:-}" ]  && export BUILD_ALWAYS="${opts['force']}"
+    [ "${opts['push']:-}" ]   && export BUILD_PUSH="${opts['push']}"
+    [ "${opts['os']:-}" ]     && export CONTAINER_OS="${opts['os']}"
+
+
+    local -i status=0
     if [ "${opts['logfile']:-}" ]; then
-        eval echo 'build.all "${opts['base']}" "$@" 2>&1 | tee '"${opts['logfile']}"
-        build.all "${opts['base']}" "$@" 2>&1 | tee "$logFile" ||:
+        mkdir -p "$(dirname "${opts['logfile']}")"
+        eval echo 'build.all "${opts['base']}" "${opts['logdir']}" "$@" 2>&1 | tee '"${opts['logfile']}"
+        (build.all "${opts['base']}" "${opts['logdir']}" "$@" 2>&1 | tee "${opts['logfile']}") && status=$? || status=$?
     else
-        eval echo 'build.all "${opts['base']}" "$@"'
-        build.all "${opts['base']}" "$@"
+        eval echo 'build.all "${opts['base']}" "${opts['logdir']}" "$@"'
+        (build.all "${opts['base']}" "${opts['logdir']}" "$@") && status=$? || status=$?
     fi
+    return $status
 }
 
 #----------------------------------------------------------------------------------------------
@@ -711,3 +781,23 @@ function build.yamlToJson()
 }
 
 #----------------------------------------------------------------------------------------------
+#
+#      MAIN
+#
+#----------------------------------------------------------------------------------------------
+
+declare -i status
+declare -a args
+declare fn=build.wrapper
+
+declare loader="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/appenv.bashlib"
+if [ ! -e "$loader" ]; then
+    echo 'Unable to load libraries'
+    exit 1
+fi
+source "$loader"
+appenv.loader "$fn"
+
+args=$( build.cmdLineArgs "$TOP" "$@" ) && status=$? || status=$?
+[ $status -eq 0 ] || exit $status
+"$fn" ${args[@]}

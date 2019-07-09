@@ -17,9 +17,9 @@ declare -r ini=${workspace_dir}/grafana/etc/grafana.ini
 
 declare -r yaml="${workspace_dir}/docker-compose.yml"
 declare -r dc_json="$(docker.yamlToJson "$yaml")"
-declare -r grafana_root_password="$(deploy.passwordSecret "${dc_json}" 'grafana' 'GF_SECURITY_ADMIN_PASSWORD' )"
-declare -r host_ip=$(environ.ipAddress) 
-declare -r host_name=$(environ.hostName) 
+declare -r grafana_root_password="$(deploy.passwordSecret "$dc_json" 'grafana' 'GF_SECURITY_ADMIN_PASSWORD' )"
+declare -r host_ip=$${HOST_IP:?} 
+declare -r host_name=$${HOST_NAME:?} 
 
 sudo mkdir -p "${workspace_dir}/grafana"
 sudo cp -r "${config_dir}/grafana"/* "${workspace_dir}/grafana"/
