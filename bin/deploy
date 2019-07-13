@@ -728,11 +728,11 @@ function deploy.updateDockerCompose()
             fi
 
             # look for 'service' definition
-            key="$(sed -E -e 's|^\s+(\w+):\s*$|\1|' <<< "$line")"
+            key="$(sed -E -e 's|^(.+?[:#])\s.*$|\1|' <<< "$line" | sed -E -e 's|^\s+(\w+):\s*$|\1|')"
             if [ "${key:-}" ] && [ "${json:-}" ]; then
 
                 # find service that defines image
-                grep -qE '^\s+'${key}':\s*$' <<< "$line" && \
+                grep -qE '^\s+'"${key}"':\s*$' <<< "$line" && \
                     grep -q "$key" <<< "$services" && \
                     service=$(jq ".services.$key" <<< "$json")
             fi
@@ -744,6 +744,7 @@ function deploy.updateDockerCompose()
             fi
         done < <(cat "$src_yaml")
     ) > "$tmp_file"
+
 
     # if there are no changes, delete tmp file
     if [ "$(lib.fileSha256 "$dst_yaml")" = "$(lib.fileSha256 "$tmp_file")" ]; then
