@@ -4,7 +4,7 @@ services:
     grafana:
         container_name: grafana
         environment:
-            GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.7,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.5,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.8,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0
+            GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.7,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.5,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.8,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0,grafana-simple-json-datasource 1.4.0
 #            GF_SECURITY_ADMIN_PASSWORD: ${CFG_PASS:?}
             GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
             GF_SERVER_ROOT_URL: http://255.255.255.255:3000/grafana
@@ -191,7 +191,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.3}:${CONTAINER_TAG:-1622e96c77f4a7909e28990ec17757ea4ef6fd301c21dfe94dc199996b86e694}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.3}:${CONTAINER_TAG:-97a5b73e01d9d48797a2a55d471afc90755aa2172b6eded1c43488393f0841df}
         links:
             - mysql:mysql
         logging:
@@ -232,7 +232,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.0}:${CONTAINER_TAG:-5a892608e6fd157d97287db11e0c7b0041bd8d5c3effefabebbb94daf2ee0926}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-2908c075c67fa88bf0677e701b4800f5232669dd1f3c2a678a644f386d6f4845}
         links:
             - jenkins:jenkins
             - kafkamgr:kafkamgr
@@ -280,7 +280,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.0.1}:${CONTAINER_TAG:-9f42d5ee86142ca829a5c4a9b2d1f89d287844db606a80d6407cd5c37489d8b0}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.0.1}:${CONTAINER_TAG:-8ba4b8bb6dc61096b69016124fa0907b0dcef7ed93d79eb494934e02ef1bc7d8}
         links:
             - mysql:mysql
         logging:
@@ -355,7 +355,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-0e5ceabfb0e5eda0823d596604957c162bf8e725cdbf8ebe29d46f35716fa292}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-f411d6192e4176b167b0a7bc7fde3cc9b932ca805c4557bbcc273324e353738a}
         logging:
             driver: json-file
             options:
@@ -405,7 +405,7 @@ services:
             ZEN_USER: ${CFG_USER:?}
 #            WWW_UID: '1000'
         hostname: zen
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.4}:${CONTAINER_TAG:-4460307a195736fdc7b90d448fe678ad08bdd11af245d616afd93a0cca106831}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.4}:${CONTAINER_TAG:-741aacc3b0a929a5632bd07578717cf2175d67d1ffd1920077f28825bbf36fc5}
         links:
             - mysql
         logging:
