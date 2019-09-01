@@ -8,8 +8,14 @@
 declare -r config_dir=${CONFIG_DIR:?}
 declare -r workspace_dir=${WORKSPACE_DIR:?}
 
+declare setup="$(basename "${BASH_SOURCE[0]}")"
+setup=".${setup%.*}.init"
+if [ ! -f "${workspace_dir}/$setup" ]; then
+    # perform initialization 
+    touch "${workspace_dir}/$setup"
 
-declare -r ini=${workspace_dir}/registryfe
-[ -f "$ini" ] && exit 0
+    declare -r ini=${workspace_dir}/registryfe
+    sudo cp -r "${config_dir}/registryfe"/* "${workspace_dir}/registryfe"/
+fi
 
-sudo cp -r "${config_dir}/registryfe"/* "${workspace_dir}/registryfe"/
+# perform common

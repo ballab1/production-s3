@@ -9,19 +9,28 @@
 declare -r config_dir=${CONFIG_DIR:?}
 declare -r workspace_dir=${WORKSPACE_DIR:?} 
 
-declare initdb="${workspace_dir}/postgresql/postgres-initdb"
-if [ ! -e "${initdb}/.setup-CTD_data.sql" ]; then
+declare setup="$(basename "${BASH_SOURCE[0]}")"
+setup=".${setup%.*}.init"
+if [ ! -f "${workspace_dir}/$setup" ]; then
+    # perform initialization 
+    touch "${workspace_dir}/$setup"
 
-    mkdir -p "${workspace_dir}/bin" ||:
-    while read -r f; do
-        cp "$f" "${workspace_dir}/bin"/
-        chmod 755 "${workspace_dir}/bin/$(basename "$f")"
-    done < <(find "${config_dir}/postgresql/bin" -type f ! -name '.*')
+    declare initdb="${workspace_dir}/postgresql/postgres-initdb"
+    if [ ! -e "${initdb}/.setup-CTD_data.sql" ]; then
 
-    mkdir -p "$initdb" ||:
-    while read -r f; do
-        cp "$f" "$initdb"/
-    done < <(find "${config_dir}/postgresql" -maxdepth 1 -type f)
+        mkdir -p "${workspace_dir}/bin" ||:
+        while read -r f; do
+            cp "$f" "${workspace_dir}/bin"/
+            chmod 755 "${workspace_dir}/bin/$(basename "$f")"
+        done < <(find "${config_dir}/postgresql/bin" -type f ! -name '.*')
 
-    chmod 755 "${initdb}"/*.sh
+        mkdir -p "$initdb" ||:
+        while read -r f; do
+            cp "$f" "$initdb"/
+        done < <(find "${config_dir}/postgresql" -maxdepth 1 -type f)
+
+        chmod 755 "${initdb}"/*.sh
+    fi
 fi
+
+# perform common

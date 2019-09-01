@@ -10,32 +10,41 @@ declare -r config_dir=${CONFIG_DIR:?}
 declare -r workspace_dir=${WORKSPACE_DIR:?} 
 declare -r secretDir=${SECRETS_DIR:?}
 
-declare -r index="${workspace_dir}/www/index.html"
-if [ ! -e "$index" ]; then
-    mkdir -p "${workspace_dir}/www" ||:
-    cp -r "${config_dir}/nginx"/* "${workspace_dir}/www"/
+declare setup="$(basename "${BASH_SOURCE[0]}")"
+setup=".${setup%.*}.init"
+if [ ! -f "${workspace_dir}/$setup" ]; then
+    # perform initialization 
+    touch "${workspace_dir}/$setup"
 
-    echo 'unpacking recipes'
-    tar -xzf ~/xsrc/recipes.tgz -C "${workspace_dir}/www"
+    declare -r index="${workspace_dir}/www/index.html"
+    if [ ! -e "$index" ]; then
+        mkdir -p "${workspace_dir}/www" ||:
+        cp -r "${config_dir}/nginx"/* "${workspace_dir}/www"/
 
-    declare -a whilelist=( '10.1.3.1' '10.1.3.2' '10.1.3.5' '192.168.100.1' )
+        echo 'unpacking recipes'
+        tar -xzf ~/xsrc/recipes.tgz -C "${workspace_dir}/www"
 
-    deploy.replaceIpAddresses "$index" "$(environ.ipAddress)" "${whitelist[@]}"
+        declare -a whilelist=( '10.1.3.1' '10.1.3.2' '10.1.3.5' '192.168.100.1' )
+
+        deploy.replaceIpAddresses "$index" "$(environ.ipAddress)" "${whitelist[@]}"
+    fi
+
+    # ensure we have self signed certs (incase they are not include in secrets dir
+    mkdir -p "$secretDir" ||:
+    pushd "$secretDir" >/dev/null
+    if [ ! -e dhparam.pem ] || [ ! -e server.key ] || [ ! -e server.crt ] || [ ! -e server.csr ]; then
+
+        term.log '>> GENERATING SSL CERT\n' 'lt_magenta'
+        openssl genrsa -des3 -passout pass:x -out server.pass.key 2048
+        openssl rsa -passin pass:x -in server.pass.key -out server.key
+        rm server.pass.key
+
+        openssl dhparam -out dhparam.pem 2048
+        openssl req -new -key server.key -out server.csr -subj "/C=US/ST=Massachusetts/L=Hopkinton/O=DELL_EMC/OU=com/OU=docker.nginx.io/CN=$(hostname -s)"
+        openssl x509 -req -sha256 -days 300065 -in server.csr -signkey server.key -out server.crt
+        term.log '>> GENERATING SSL CERT ... DONE\n' 'lt_magenta'
+    fi
+    popd >/dev/null
 fi
 
-# ensure we have self signed certs (incase they are not include in secrets dir
-mkdir -p "$secretDir" ||:
-pushd "$secretDir" >/dev/null
-if [ ! -e dhparam.pem ] || [ ! -e server.key ] || [ ! -e server.crt ] || [ ! -e server.csr ]; then
-
-    term.log '>> GENERATING SSL CERT\n' 'lt_magenta'
-    openssl genrsa -des3 -passout pass:x -out server.pass.key 2048
-    openssl rsa -passin pass:x -in server.pass.key -out server.key
-    rm server.pass.key
-
-    openssl dhparam -out dhparam.pem 2048
-    openssl req -new -key server.key -out server.csr -subj "/C=US/ST=Massachusetts/L=Hopkinton/O=DELL_EMC/OU=com/OU=docker.nginx.io/CN=$(hostname -s)"
-    openssl x509 -req -sha256 -days 300065 -in server.csr -signkey server.key -out server.crt
-    term.log '>> GENERATING SSL CERT ... DONE\n' 'lt_magenta'
-fi
-popd >/dev/null
+# perform common

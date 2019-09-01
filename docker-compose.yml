@@ -10,7 +10,7 @@ services:
             GF_SERVER_ROOT_URL: http://255.255.255.255:3000/grafana
             TZ: "America/New_York"
         hostname: grafana
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}grafana:${GRAFANA_VERSION:-6.3.3}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}grafana:${GRAFANA_VERSION:-6.3.4}
         links:
             - mysql
         logging:
@@ -80,7 +80,7 @@ services:
             - "ubuntu-s5:10.1.3.14"
             - "ubuntu-s6:10.1.3.15"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.176.2}:${CONTAINER_TAG:-38d6e3812eebf55340871dc2e0e4cf10baff7b76ec0bfacd6b98877e6b40567d}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.176.3}:${CONTAINER_TAG:-de01298f29c9f0eb057e46325b8b0ac24feb596bd2d646b6f6fc3f166d182512}
         logging:
             driver: json-file
             options:
@@ -115,7 +115,7 @@ services:
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.11:2181,10.1.3.10:2181,255.255.255.255:2181
         hostname: kafkamgr
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-bfae897cdb88ac2f05bb6661d630c04700f331a36532ac4829886e11e5aa3c67}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-3ed25709e5eeb6cbf5fbc430a220677fff2643a04123d95e104e68cac59dced4}
         logging:
             driver: json-file
             options:
@@ -191,7 +191,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.3}:${CONTAINER_TAG:-97a5b73e01d9d48797a2a55d471afc90755aa2172b6eded1c43488393f0841df}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-562a1078948eb1c8acbb44031e05a12fa28b7ee835cb14d26473b3602fca9912}
         links:
             - mysql:mysql
         logging:
@@ -219,6 +219,7 @@ services:
     nginx:
         container_name: nginx
         environment:
+            NGINX_DEBUG: 1
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
 #            PWD_PROTECTED: 'true'
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
@@ -397,6 +398,7 @@ services:
     zen:
         container_name: zen
         environment:
+            NGINX_DEBUG: 1
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
@@ -405,7 +407,7 @@ services:
             ZEN_USER: ${CFG_USER:?}
 #            WWW_UID: '1000'
         hostname: zen
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.4}:${CONTAINER_TAG:-741aacc3b0a929a5632bd07578717cf2175d67d1ffd1920077f28825bbf36fc5}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.4}:${CONTAINER_TAG:-67ffd393bbe26ccf3c48ea14742b663c82e1ce8ef14436ff55b1146d54a6f954}
         links:
             - mysql
         logging:

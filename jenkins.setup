@@ -9,34 +9,42 @@
 declare -r config_dir=${CONFIG_DIR:?}
 declare -r workspace_dir=${WORKSPACE_DIR:?} 
 
-declare -r jenkins_home="${workspace_dir}/jenkins/jenkins_home"
-[ -d "$jenkins_home" ] || exit 0
+declare setup="$(basename "${BASH_SOURCE[0]}")"
+setup=".${setup%.*}.init"
+if [ ! -f "${workspace_dir}/$setup" ]; then
+    # perform initialization 
+    touch "${workspace_dir}/$setup"
 
-git clone https://github.com/ballab1/jenkins-files.git "$jenkins_home"
-pushd "$jenkins_home" >/dev/null || exit 0
+    declare -r jenkins_home="${workspace_dir}/jenkins/jenkins_home"
 
-declare -a nfiles
-mapfile -t nfiles < <(ls -1A)
-[ ${#nfiles[*]} -gt 0 ] || exit 0
+    git clone https://github.com/ballab1/jenkins-files.git "$jenkins_home"
+    pushd "$jenkins_home" >/dev/null || exit 0
 
-# copy jdbc driver
-cp "$config_dir"/* "$jenkins_home/war/WEB-INF/lib/"
+    declare -a nfiles
+    mapfile -t nfiles < <(ls -1A)
+    [ ${#nfiles[*]} -gt 0 ] || exit 0
 
-declare -r host_ip=$(environ.ipAddress)
+    # copy jdbc driver
+    cp "$config_dir"/* "$jenkins_home/war/WEB-INF/lib/"
 
-while read -r xml; do
+    declare -r host_ip=$(environ.ipAddress)
 
-    sudo sed -i -e "s|10\\.1\\.3\\.\\d{1:3}|${host_ip}|g" "$xml"
+    while read -r xml; do
 
-done < <(sudo grep -crH '10\.1\.3\.' ./* | \
-         grep -v ':0' | \
-         grep '.xml:' | \
-         grep -v '/builds/' | \
-         grep -v 'config-history/' | \
-         grep -v 'scm-sync-configuration/' | \
-         awk -F ':' '{print $1}' ||:
-        )
+        sudo sed -i -e "s|10\\.1\\.3\\.\\d{1:3}|${host_ip}|g" "$xml"
 
-[ ! -f .git ] || rm .git
+    done < <(sudo grep -crH '10\.1\.3\.' ./* | \
+             grep -v ':0' | \
+             grep '.xml:' | \
+             grep -v '/builds/' | \
+             grep -v 'config-history/' | \
+             grep -v 'scm-sync-configuration/' | \
+             awk -F ':' '{print $1}' ||:
+            )
 
-popd >/dev/null
+    [ ! -f .git ] || rm .git
+
+    popd >/dev/null
+fi
+
+# perform common
