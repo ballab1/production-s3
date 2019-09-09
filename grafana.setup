@@ -5,31 +5,30 @@
 #   initialization for grafana
 #
 #############################################################################
-declare -r config_dir=${CONFIG_DIR:?}
-declare -r workspace_dir=${WORKSPACE_DIR:?}
+
+declare -r config_dir="${CONFIG_DIR:?}"
+declare -r workspace_dir="${WORKSPACE_DIR:?}/grafana"
 declare -r grafana_uid=${GRAFANA_UID:?}
 
-declare setup="$(basename "${BASH_SOURCE[0]}")"
-setup=".${setup%.*}.init"
-if [ ! -f "${workspace_dir}/$setup" ]; then
+
+declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
+isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
+if [ ! -f "$isIinitialized" ]; then
+
     # perform initialization 
-    touch "${workspace_dir}/$setup"
+    mkdir -p "$workspace_dir" ||:
+    touch "$isIinitialized"
 
-    declare -r libs="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../libs" 
-    declare -r ini=${workspace_dir}/grafana/etc/grafana.ini
-
-    declare -r yaml="${workspace_dir}/docker-compose.yml"
-    declare -r dc_json="$(docker.yamlToJson "$yaml")"
-    declare -r grafana_root_password="$(deploy.passwordSecret "$dc_json" 'grafana' 'GF_SECURITY_ADMIN_PASSWORD' )"
     declare -r host_ip="${HOST_IP:?}"
     declare -r host_name="${HOST_NAME:?}"
+    declare -r grafana_root_password="$(deploy.passwordSecret 'grafana' 'GF_SECURITY_ADMIN_PASSWORD' )"
 
-    sudo mkdir -p "${workspace_dir}/grafana"
-    sudo cp -r "${config_dir}/grafana"/* "${workspace_dir}/grafana"/
-    sudo mkdir -p "${workspace_dir}/grafana/etc/provisioning/datasources"
-    sudo mkdir -p "${workspace_dir}/grafana/etc/provisioning/notifiers"
-    sudo mkdir -p "${workspace_dir}/grafana/etc/provisioning/dashboards"
+    sudo cp -r "${config_dir}/grafana"/* "$workspace_dir"
+    sudo mkdir -p "${workspace_dir}/etc/provisioning/datasources"
+    sudo mkdir -p "${workspace_dir}/etc/provisioning/notifiers"
+    sudo mkdir -p "${workspace_dir}/etc/provisioning/dashboards"
 
+    declare -r ini=${workspace_dir}/etc/grafana.ini
     sudo sed -i -r -e "s|^instance_name\\s*=.*$|instance_name = ${host_name}|" \
                    -e "s|^domain\\s*=.*$|domain = ${host_ip}|" \
                    -e "s|^root_url\\s*=.*$|root_url = http://${host_ip}:3000/grafana|" \
@@ -37,7 +36,7 @@ if [ ! -f "${workspace_dir}/$setup" ]; then
                    -e "s|<HOST_IP>|${host_ip}|g" \
                    -e "s|^admin_password\\s*=.*$|admin_password = ${grafana_root_password}|" \
                 "$ini"
-    sudo chown -R "$grafana_uid" "${workspace_dir}/grafana"
+    sudo chown -R "$grafana_uid" "$workspace_dir"
 fi
 
 # perform common

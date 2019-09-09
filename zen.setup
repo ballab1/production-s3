@@ -5,35 +5,37 @@
 #   initialization for zenphoto
 #
 #############################################################################
-declare -r config_dir=${CONFIG_DIR:?}
-declare -r workspace_dir=${WORKSPACE_DIR:?}
 
-declare setup="$(basename "${BASH_SOURCE[0]}")"
-setup=".${setup%.*}.init"
-if [ ! -f "${workspace_dir}/$setup" ]; then
+declare -r config_dir="${CONFIG_DIR:?}"
+declare -r workspace_dir="${WORKSPACE_DIR:?}/zen"
+
+
+declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
+isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
+if [ ! -f "$isIinitialized" ]; then
+
     # perform initialization 
-    touch "${workspace_dir}/$setup"
+    mkdir -p "$workspace_dir" ||: 
+    touch "$isIinitialized"
 
     echo 'Unpacking photos'
-    tar -xzf ~/xsrc/photos.tgz -C "${workspace_dir}/zen"
+    tar -xzf ~/xsrc/photos.tgz -C "$workspace_dir"
 
-    declare dumps_dir="${workspace_dir}/mysql/loader/dumps"
+    declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
     if [ ! -e "${dumps_dir}/nconf.sql" ]; then
         mkdir -p "$dumps_dir" ||:
         cp "${config_dir}/nagios/nconf.sql" "${dumps_dir}/nconf.sql"
     fi
 
     # update dbms access for zen
-    declare yaml="${workspace_dir}/docker-compose.yml"
-    declare dc_json="$(docker.yamlToJson "$yaml")"
+    declare -r mysql_root_password="$(deploy.passwordSecret 'mysql' 'MYSQL_ROOT_PASSWORD' )"
+    declare -r zen_pass="$(deploy.passwordSecret 'zen' 'ZEN_PASS' )"
 
-    declare -r mysql_root_password="$(deploy.passwordSecret "$dc_json" 'mysql' 'MYSQL_ROOT_PASSWORD' )"
-    declare -r zen_pass="$(deploy.passwordSecret "${dc_json}" 'zen' 'ZEN_PASS' )"
-
+    declare dc_json="$(docker.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
     declare zen_user=$(jq '.services.zen.environment.ZEN_USER' <<< "$dc_json" | tr -d '"' )
     zen_user="$(eval echo "$zen_user")"
 
-    cat <<-ZEN_USER > "${workspace_dir}/mysql/loader/zen_user.sh"
+    cat <<-ZEN_USER > "${WORKSPACE_DIR}/mysql/loader/zen_user.sh"
 #!/bin/bash
 
 cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost

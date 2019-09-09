@@ -5,17 +5,20 @@
 #   initialization for docker-registry-frontend
 #
 #############################################################################
-declare -r config_dir=${CONFIG_DIR:?}
-declare -r workspace_dir=${WORKSPACE_DIR:?}
 
-declare setup="$(basename "${BASH_SOURCE[0]}")"
-setup=".${setup%.*}.init"
-if [ ! -f "${workspace_dir}/$setup" ]; then
+declare -r config_dir="${CONFIG_DIR:?}"
+declare -r workspace_dir="${WORKSPACE_DIR:?}/registryfe"
+
+
+declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
+isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
+if [ ! -f "$isIinitialized" ]; then
+
     # perform initialization 
-    touch "${workspace_dir}/$setup"
+    mkdir -p "$workspace_dir" ||: 
+    touch "$isIinitialized"
 
-    declare -r ini=${workspace_dir}/registryfe
-    sudo cp -r "${config_dir}/registryfe"/* "${workspace_dir}/registryfe"/
+    sudo cp -r "${config_dir}/registryfe/"* "$workspace_dir"
 fi
 
 # perform common

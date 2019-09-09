@@ -3,16 +3,16 @@ version: '3.3'
 services:
     grafana:
         container_name: grafana
+        depends_on:
+            - mysql
         environment:
-            GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.7,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.5,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.8,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0,grafana-simple-json-datasource 1.4.0
+            GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.9,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.5,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.9,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0,grafana-simple-json-datasource 1.4.0
 #            GF_SECURITY_ADMIN_PASSWORD: ${CFG_PASS:?}
             GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
             GF_SERVER_ROOT_URL: http://255.255.255.255:3000/grafana
             TZ: "America/New_York"
         hostname: grafana
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}grafana:${GRAFANA_VERSION:-6.3.4}
-        links:
-            - mysql
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}thirdparty/grafana:${GRAFANA_VERSION:-6.3.4}
         logging:
             driver: json-file
             options:
@@ -42,7 +42,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: hubot
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-bc8bf366738c61268d9345751e37e35321be2e7a3d5ba3f3905758f210b4c338}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-d639e0eae9ebc5fa4128969f3b2840b8a8f39e843467a0157a3a3ec3ca2fb686}
         logging:
             driver: json-file
             options:
@@ -80,7 +80,7 @@ services:
             - "ubuntu-s5:10.1.3.14"
             - "ubuntu-s6:10.1.3.15"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.176.3}:${CONTAINER_TAG:-de01298f29c9f0eb057e46325b8b0ac24feb596bd2d646b6f6fc3f166d182512}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.176.3}:${CONTAINER_TAG:-5102489ec4737aac0c1e776ed9b94026ecb810d05138a1ef75c8ed7afa7baa45}
         logging:
             driver: json-file
             options:
@@ -115,7 +115,7 @@ services:
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.11:2181,10.1.3.10:2181,255.255.255.255:2181
         hostname: kafkamgr
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-3ed25709e5eeb6cbf5fbc430a220677fff2643a04123d95e104e68cac59dced4}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-e799fa8c363f2b4ccef7451956b5f0e3a50d788098d5b47c83516fc1989dda25}
         logging:
             driver: json-file
             options:
@@ -142,7 +142,7 @@ services:
             MYSQL_USER: ${CFG_USER:?}
             TZ: America/New_York
         hostname: mysql
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}mysql:${MYSQL_VERSION:-5.7.23}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}thirdparty/mysql:${MYSQL_VERSION:-5.7.23}
         logging:
             driver: json-file
             options:
@@ -163,6 +163,8 @@ services:
 
     nagios:
         container_name: nagios
+        depends_on:
+            - mysql
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             NAGIOS_GITHUB_CREDENTIALS_FILE: /run/secrets/github.credentials
@@ -191,9 +193,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-562a1078948eb1c8acbb44031e05a12fa28b7ee835cb14d26473b3602fca9912}
-        links:
-            - mysql:mysql
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-5c5567fc13c84733a7d9890cf3858fc5231a259ae0c35f1874a3cac89d625fae}
         logging:
             driver: json-file
             options:
@@ -218,8 +218,15 @@ services:
 
     nginx:
         container_name: nginx
+        depends_on:
+            - jenkins
+            - kafkamgr
+            - nagios
+            - phpmyadmin
+            - webdav
+            - zen
         environment:
-            NGINX_DEBUG: 1
+#            NGINX_DEBUG: 1
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
 #            PWD_PROTECTED: 'true'
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
@@ -233,14 +240,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-2908c075c67fa88bf0677e701b4800f5232669dd1f3c2a678a644f386d6f4845}
-        links:
-            - jenkins:jenkins
-            - kafkamgr:kafkamgr
-            - nagios:nagios
-            - phpmyadmin:phpmyadmin
-            - webdav:webdav
-            - zen:zen
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-2a40af20f0ecc67e0b520f7b9f6beaad5201dfb5ae7698d54bebcd4357b8cbb4}
         logging:
             driver: json-file
             options:
@@ -265,6 +265,8 @@ services:
 
     phpmyadmin:
         container_name: phpmyadmin
+        depends_on:
+            - mysql
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
 #            MYSQL_PASSWORD_FILE: /run/secrets/mysql.pwd
@@ -281,9 +283,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.0.1}:${CONTAINER_TAG:-8ba4b8bb6dc61096b69016124fa0907b0dcef7ed93d79eb494934e02ef1bc7d8}
-        links:
-            - mysql:mysql
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.0.1}:${CONTAINER_TAG:-45a6dcefe0efbe92c3f20eed4fba10cae8f9e099c405334e34f83b01f592d7ea}
         logging:
             driver: json-file
             options:
@@ -314,7 +314,7 @@ services:
         extra_hosts:
             - "ubuntu-s2:10.1.3.12"
         hostname: registry
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}docker-registry-frontend:${DREGISTRY_FE_VERSION:-v2}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}thirdparty/docker-registry-frontend:${DREGISTRY_FE_VERSION:-v2}
         labels:
             com.github.url: "https://github.com/kwk/docker-registry-frontend"
         logging:
@@ -332,15 +332,15 @@ services:
 
     smee:
         container_name: smee
+        depends_on:
+            - jenkins
         environment:
 #            SMEE_PORT: 8080
 #            SMEE_PATH: /jenkins/github-webhook/
             SMEE_TARGET: http://jenkins:8080/jenkins/generic-webhook-trigger/invoke
             SMEE_URL: https://smee.io/F9gFiEeTza0Po4Rd
         hostname: smee
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-6cf9fcba66bf9b60c9e3e26283a428ab2b47cc05b7c09417d80692894016e70b}
-        links:
-            - jenkins:jenkins
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-3e43efe7f2ded40a94c0848aeabd36076bd820adc41ed68d5aa991ed79259f49}
         logging:
             driver: json-file
             options:
@@ -356,7 +356,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-f411d6192e4176b167b0a7bc7fde3cc9b932ca805c4557bbcc273324e353738a}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-9ee641cbfaf6c8fe208a0e4393f46db5dc1ac0dad7e59e33a93eaddcc3dafc72}
         logging:
             driver: json-file
             options:
@@ -379,7 +379,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-4611c6bd1a26a6279eef69704f76521bf2b82dba60a0fd6d8028196af4286689}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-7977b4afbe1fcf5acb7c137c007a3b499028d7b964c20b1862a2af7e9ad0a715}
         logging:
             driver: json-file
             options:
@@ -397,8 +397,10 @@ services:
 
     zen:
         container_name: zen
+        depends_on:
+            - mysql
         environment:
-            NGINX_DEBUG: 1
+#            NGINX_DEBUG: 1
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
@@ -407,9 +409,7 @@ services:
             ZEN_USER: ${CFG_USER:?}
 #            WWW_UID: '1000'
         hostname: zen
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.4}:${CONTAINER_TAG:-67ffd393bbe26ccf3c48ea14742b663c82e1ce8ef14436ff55b1146d54a6f954}
-        links:
-            - mysql
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.4}:${CONTAINER_TAG:-5e714fad66a4db7fda6c09814546d842af84fa895ea6cbf5881820ae53957042}
         logging:
             driver: json-file
             options:
@@ -425,6 +425,8 @@ services:
         volumes:
             - ./zen/log:/var/log 
             - ./zen/photos:/var/www/albums
+            - ./zen/cache:/var/www/cache
+            - ./zen/uploaded:/var/www/uploaded
 
 
 networks:

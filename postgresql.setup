@@ -6,28 +6,31 @@
 #
 #############################################################################
 
-declare -r config_dir=${CONFIG_DIR:?}
-declare -r workspace_dir=${WORKSPACE_DIR:?} 
+declare -r config_dir="${CONFIG_DIR:?}"
+declare -r workspace_dir="${WORKSPACE_DIR:?}/postgresql"
 
-declare setup="$(basename "${BASH_SOURCE[0]}")"
-setup=".${setup%.*}.init"
-if [ ! -f "${workspace_dir}/$setup" ]; then
+
+declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
+isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
+if [ ! -f "$isIinitialized" ]; then
+
     # perform initialization 
-    touch "${workspace_dir}/$setup"
+    mkdir -p "$workspace_dir" ||: 
+    touch "$isIinitialized"
 
-    declare initdb="${workspace_dir}/postgresql/postgres-initdb"
+    declare initdb="${workspace_dir}/postgres-initdb"
     if [ ! -e "${initdb}/.setup-CTD_data.sql" ]; then
 
-        mkdir -p "${workspace_dir}/bin" ||:
+        mkdir -p "${WORKSPACE_DIR}/bin" ||:
         while read -r f; do
-            cp "$f" "${workspace_dir}/bin"/
-            chmod 755 "${workspace_dir}/bin/$(basename "$f")"
+            cp "$f" "${WORKSPACE_DIR}/bin"/
+            chmod 755 "${WORKSPACE_DIR}/bin/$(basename "$f")"
         done < <(find "${config_dir}/postgresql/bin" -type f ! -name '.*')
 
         mkdir -p "$initdb" ||:
         while read -r f; do
             cp "$f" "$initdb"/
-        done < <(find "${config_dir}/postgresql" -maxdepth 1 -type f)
+        done < <(find "${CONFIG_DIR}/postgresql" -maxdepth 1 -type f)
 
         chmod 755 "${initdb}"/*.sh
     fi
