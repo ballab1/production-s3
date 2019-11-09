@@ -6,7 +6,7 @@
 #
 #############################################################################
 
-declare -r config_dir="${CONFIG_DIR:?}"
+declare -r config_dir="${CONFIG_DIR:?}/grafana"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/grafana"
 declare -r grafana_uid=${GRAFANA_UID:?}
 
@@ -19,14 +19,16 @@ if [ ! -f "$isIinitialized" ]; then
     mkdir -p "$workspace_dir" ||:
     touch "$isIinitialized"
 
-    declare -r host_ip="${HOST_IP:?}"
-    declare -r host_name="${HOST_NAME:?}"
+
+
+    declare -r host_ip=$(environ.ipAddress)
+    declare -r host_name=$(environ.hostName)
     declare -r grafana_root_password="$(deploy.passwordSecret 'grafana' 'GF_SECURITY_ADMIN_PASSWORD' )"
 
-    sudo cp -r "${config_dir}/grafana"/* "$workspace_dir"
+    sudo cp -r "${config_dir}" "${WORKSPACE_DIR}/"
+    sudo mkdir -p "${workspace_dir}/etc/provisioning/dashboards"
     sudo mkdir -p "${workspace_dir}/etc/provisioning/datasources"
     sudo mkdir -p "${workspace_dir}/etc/provisioning/notifiers"
-    sudo mkdir -p "${workspace_dir}/etc/provisioning/dashboards"
 
     declare -r ini=${workspace_dir}/etc/grafana.ini
     sudo sed -i -r -e "s|^instance_name\\s*=.*$|instance_name = ${host_name}|" \
