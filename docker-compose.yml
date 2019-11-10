@@ -44,7 +44,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: hubot
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-b5dabb741c911b39bf0e3d63bfcb9c5fe9ec330aac6267a061febc72e141981e}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -84,7 +84,7 @@ services:
             - "ubuntu-s5:10.1.3.14"
             - "ubuntu-s6:10.1.3.15"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.190.2}:${CONTAINER_TAG:-65f305810aec485d40faefecf62b2c6ceefe60e1a47985114a5bc4708218e21f}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.190.2}:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -121,7 +121,7 @@ services:
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.11:2181,10.1.3.10:2181,255.255.255.255:2181
         hostname: kafkamgr
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-5f54420f5ec3c75bb1a1112fa9fdda3b89c7b68e935b9d534c6f33ac894185f4}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -203,7 +203,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-3723b25258e307e78a59e39fca930652f6da2efbd59db88f12a0be2b57bc6326}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -252,7 +252,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-ec7fe724fd31f8430d728d38d48a74bcabff12894392532edc818b10db190dca}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -297,7 +297,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.1}:${CONTAINER_TAG:-2fd45b177049c7bc597a5dc48a43bd3147f17fb238c708beb8931d90a4c1da58}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.1}:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -358,7 +358,7 @@ services:
             SMEE_TARGET: http://jenkins:8080/jenkins/generic-webhook-trigger/invoke
             SMEE_URL: https://smee.io/F9gFiEeTza0Po4Rd
         hostname: smee
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-6cc0935f712f919a089e7b77d11f9e0f4d8f35b53c2ec57f9f54bd5c477b519f}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -376,7 +376,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-15fb41e498cd1f50b8bb8c06bf27e7b34f3878c8a69b2d1dfe3ebf66a6b6e3dc}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.7}:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -401,7 +401,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-4a3f7bc6812702d4264e95ac10d6738a6788f353dc803a7f5bab5846372e76a8}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
@@ -433,7 +433,7 @@ services:
             ZEN_USER: ${CFG_USER:?}
 #            WWW_UID: '1000'
         hostname: zen
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.5}:${CONTAINER_TAG:-0b6581afe1653eb0c30714e80875f6c5be0d35d435739ffed4b168ad3d6999ed}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.6}:${CONTAINER_TAG:-v3.9.1}
         logging:
             driver: json-file
             options:
