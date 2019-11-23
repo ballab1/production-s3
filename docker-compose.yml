@@ -84,7 +84,7 @@ services:
             - "ubuntu-s5:10.1.3.14"
             - "ubuntu-s6:10.1.3.15"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.190.2}:${CONTAINER_TAG:-d418bfb650750ce5ea8d4a19c7ead5825204cfa135f4e0a6986ac027db702c06}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.190.3}:${CONTAINER_TAG:-2d796a603f9f41386e38bfe5c0664016f0ee0469ac28f7fdd998aac55015784a}
         logging:
             driver: json-file
             options:
@@ -203,7 +203,7 @@ services:
             - "ubuntu-s4:10.1.3.10"
             - "ubuntu-s5:10.1.3.14"
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-39db823e15f7045591d6875d7c86e85a901876356b448a224d5b8970c0bc7b62}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-23dad79c3518c70aabbdfce4fe8eb121be0e6ff28cf3661ec66776b291c914d0}
         logging:
             driver: json-file
             options:
