@@ -305,7 +305,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.1}:${CONTAINER_TAG:-e32d7907d68bea5a641ca58d45acc269a2c5a03c4563f45036c04208d1279d0f}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.2}:${CONTAINER_TAG:-2c06e4dff7833eb284c382453a4d281ab115a6211b95f94c310f66b831c6788c}
         logging:
             driver: json-file
             options:
@@ -409,7 +409,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-f1120d00491f512daa5543b6cab17f58ff659f59c262af92616b3050010ddccc}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-d7b4d9e41806d9bac3e9950f8f56c768e829861eb87e9bf254cd033c6bda3d1f}
         logging:
             driver: json-file
             options:
@@ -423,7 +423,9 @@ services:
         secrets:
             - webdav.pwd
         volumes:
-            - ./webdav/storage:/webdav
+            - /mnt/Guest:/webdav/Guest
+            - /mnt/Seagate:/webdav/Seagate
+            - /mnt/WDMyCloud:/webdav/WDMyCloud
             - ./webdav/log:/var/log 
 
 
