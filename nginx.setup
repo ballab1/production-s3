@@ -6,7 +6,7 @@
 #
 #############################################################################
 
-declare -r config_dir="${CONFIG_DIR:?}"
+declare -r config_dir="${CONFIG_DIR:?}/nginx"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/nginx"
 declare -r www_dir="${WORKSPACE_DIR:?}/www"
 declare -r secrets_dir="${SECRETS_DIR:?}"
@@ -20,17 +20,11 @@ if [ ! -f "$isIinitialized" ]; then
     mkdir -p "$workspace_dir" ||: 
     touch "$isIinitialized"
 
-    declare -r index="${www_dir}/index.html"
-    if [ ! -e "$index" ]; then
+    if [ ! -e "${www_dir}/index.html" ]; then
         mkdir -p "$www_dir" ||:
-        cp -r "${config_dir}/nginx/"* "${www_dir}/"
 
         echo 'unpacking recipes'
         tar -xzf ~/xsrc/recipes.tgz -C "$www_dir"
-
-        declare -a whilelist=( '10.1.3.1' '10.1.3.2' '10.1.3.5' '192.168.100.1' )
-
-        deploy.replaceIpAddresses "$index" "$(environ.ipAddress)" "${whitelist[@]}"
     fi
 
     # ensure we have self signed certs (incase they are not include in secrets dir
@@ -49,6 +43,23 @@ if [ ! -f "$isIinitialized" ]; then
         term.log '>> GENERATING SSL CERT ... DONE\n' 'lt_magenta'
     fi
     popd >/dev/null
+    
+    
+    # 
 fi
 
+
 # perform common
+if [ -d "${config_dir}/nginx.conf" ]; then
+    sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
+    sudo cp -r "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
+fi
+
+
+if [ -d "$www_dir" ]; then
+    cp -r "${config_dir}/"* "${www_dir}/"
+    [ -d "${www_dir}/nginx.conf" ] && sudo rm -rf "${www_dir}/nginx.conf"
+
+    declare -a whilelist=( '10.1.3.1' '10.1.3.2' '10.1.3.5' '192.168.100.1' )
+    deploy.replaceIpAddresses "${www_dir}/index.html" "$(environ.ipAddress)" "${whitelist[@]}"
+fi

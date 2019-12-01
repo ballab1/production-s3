@@ -6,7 +6,7 @@
 #
 #############################################################################
 
-declare -r config_dir="${CONFIG_DIR:?}"
+declare -r config_dir="${CONFIG_DIR:?}/zen"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/zen"
 
 
@@ -24,14 +24,14 @@ if [ ! -f "$isIinitialized" ]; then
     declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
     if [ ! -e "${dumps_dir}/nconf.sql" ]; then
         mkdir -p "$dumps_dir" ||:
-        cp "${config_dir}/nagios/nconf.sql" "${dumps_dir}/nconf.sql"
+        cp "${CONFIG_DIR}/nagios/nconf.sql" "${dumps_dir}/nconf.sql"
     fi
 
     # update dbms access for zen
     declare -r mysql_root_password="$(deploy.passwordSecret 'mysql' 'MYSQL_ROOT_PASSWORD' )"
     declare -r zen_pass="$(deploy.passwordSecret 'zen' 'ZEN_PASS' )"
 
-    declare dc_json="$(docker.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
+    declare dc_json="$(lib.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
     declare zen_user=$(jq '.services.zen.environment.ZEN_USER' <<< "$dc_json" | tr -d '"' )
     zen_user="$(eval echo "$zen_user")"
 
@@ -50,3 +50,7 @@ ZEN_USER
 fi
 
 # perform common
+if [ -d "${config_dir}/nginx.conf" ]; then
+    sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
+    sudo cp -r "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
+fi

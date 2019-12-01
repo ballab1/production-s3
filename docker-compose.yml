@@ -260,7 +260,7 @@ services:
             - "ubuntu-s7:10.1.3.16"
             - "ubuntu-s8:10.1.3.17"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-94433c53abe82cda14aff01b63c91c211a4b4b4b2deb1a2bdb5339e2644e26d6}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-9a4a50669116fa251c8068ef728095d696349170b2ccee516a3009720cf18e4e}
         logging:
             driver: json-file
             options:
@@ -282,7 +282,7 @@ services:
         volumes:
             - ./nginx/log:/var/log
             - ./www:/var/www
-#            - ./nginx/etc:/etc/nginx
+            - ./nginx/conf.d:/etc/nginx/proxy.conf
 
 
     phpmyadmin:
@@ -399,7 +399,7 @@ services:
         secrets:
             - supervisord.pwd
         volumes:
-            - ./cesi/log:/var/log
+            - ./supervisorm/log:/var/log
 
 
     webdav:

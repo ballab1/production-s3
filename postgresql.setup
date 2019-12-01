@@ -6,7 +6,7 @@
 #
 #############################################################################
 
-declare -r config_dir="${CONFIG_DIR:?}"
+declare -r config_dir="${CONFIG_DIR:?}/postgresql"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/postgresql"
 
 
@@ -25,15 +25,22 @@ if [ ! -f "$isIinitialized" ]; then
         while read -r f; do
             cp "$f" "${WORKSPACE_DIR}/bin"/
             chmod 755 "${WORKSPACE_DIR}/bin/$(basename "$f")"
-        done < <(find "${config_dir}/postgresql/bin" -type f ! -name '.*')
+        done < <(find "${config_dir}/bin" -type f ! -name '.*')
 
         mkdir -p "$initdb" ||:
         while read -r f; do
+            [ "$f" = 'nginx.conf' ] && continue
             cp "$f" "$initdb"/
-        done < <(find "${CONFIG_DIR}/postgresql" -maxdepth 1 -type f)
+        done < <(find "${config_dir}" -maxdepth 1 -type f)
 
         chmod 755 "${initdb}"/*.sh
     fi
+
+    if [ -d "${config_dir}/nginx.conf" ]; then
+        sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
+        sudo cp -r "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
+    fi
+
 fi
 
 # perform common

@@ -2,12 +2,12 @@
 
 #############################################################################
 #
-#   initialization for docker-registry-frontend
+#   initialization for supervisorm
 #
 #############################################################################
 
-declare -r config_dir="${CONFIG_DIR:?}/registryfe"
-declare -r workspace_dir="${WORKSPACE_DIR:?}/registryfe"
+declare -r config_dir="${CONFIG_DIR:?}/supervisorm"
+declare -r workspace_dir="${WORKSPACE_DIR:?}/supervisorm"
 
 
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
@@ -15,12 +15,10 @@ isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
 if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
-    mkdir -p "$workspace_dir" ||: 
+    mkdir -p "$workspace_dir" ||:
     touch "$isIinitialized"
 
-    sudo cp -r "${config_dir}/"* "$workspace_dir"
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
-
 fi
 
 # perform common
