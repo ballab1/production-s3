@@ -1,3 +1,6 @@
+completion_msg:
+    - "If this setup includes a web server, please open the following URL in your browser: http://$HOST_IP"
+ 
 container_os: alpine
 
 environment:
@@ -19,5 +22,5 @@ skip_wait:
 
 versions:
     repo: https://github.com/ballab1/versions
-    dir: ${WORKSPACE_DIR}/versions
+    dir: ${WORKSPACE_DIR}/.versions
     commit: e757c7961356cdb05f7965523f361a406a55b277

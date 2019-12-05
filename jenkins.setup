@@ -26,7 +26,7 @@ if [ ! -f "$isIinitialized" ]; then
     [ ${#nfiles[*]} -gt 0 ] || exit 0
 
     # copy jdbc driver
-    cp "${config_dir}/"*.jar "${jenkins_home}/war/WEB-INF/lib/"
+    [  "$(ls "${config_dir}/"*.jar 2>/dev/null ||:)" ] && cp "${config_dir}/"*.jar "${jenkins_home}/war/WEB-INF/lib/"
 
     declare -r host_ip=$(environ.ipAddress)
 
@@ -49,7 +49,7 @@ if [ ! -f "$isIinitialized" ]; then
 fi
 
 # perform common
-if [ -d "${config_dir}/nginx.conf" ]; then
+if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
     sudo cp -r "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
 fi

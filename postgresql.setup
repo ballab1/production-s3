@@ -35,12 +35,10 @@ if [ ! -f "$isIinitialized" ]; then
 
         chmod 755 "${initdb}"/*.sh
     fi
-
-    if [ -d "${config_dir}/nginx.conf" ]; then
-        sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
-        sudo cp -r "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
-    fi
-
 fi
 
 # perform common
+if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
+    sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
+    sudo cp -r "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
+fi
