@@ -16,9 +16,11 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||:
-    touch "$isIinitialized"
 
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
+
+
+    touch "$isIinitialized"
 fi
 
 # perform common

@@ -18,7 +18,6 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||: 
-    touch "$isIinitialized"
 
     if [ ! -e "${www_dir}/index.html" ]; then
         mkdir -p "$www_dir" ||:
@@ -69,6 +68,8 @@ if [ ! -f "$isIinitialized" ]; then
 
         term.log '>> GENERATING SSL CERT ... DONE\n' 'lt_magenta'
     fi
+
+    touch "$isIinitialized"
 fi
 
 

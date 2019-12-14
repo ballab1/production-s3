@@ -8,7 +8,6 @@
 
 declare -r config_dir="${CONFIG_DIR:?}/pgadmin4"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/pgadmin4"
-declare -r pgadmin4_uid=${GRAFANA_UID:?}
 
 
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
@@ -17,9 +16,9 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||:
-    touch "$isIinitialized"
-
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
+
+    touch "$isIinitialized"
 fi
 
 # perform common

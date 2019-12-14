@@ -16,7 +16,6 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||: 
-    touch "$isIinitialized"
 
     declare loader_dir="${workspace_dir}/loader"
     [ -d "${loader_dir}/dumps" ] && exit 0
@@ -25,4 +24,5 @@ if [ ! -f "$isIinitialized" ]; then
     cp -r "${config_dir}/"* "${loader_dir}/"
 
     git clone https://github.com/ballab1/DBMS-backup "${loader_dir}/dumps"
+    touch "$isIinitialized"
 fi

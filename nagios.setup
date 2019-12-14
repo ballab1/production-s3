@@ -8,7 +8,7 @@
 
 declare -r config_dir="${CONFIG_DIR:?}/nagios"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/nagios"
-declare -r NagiosConfig="${workspace_dir}/config/NagiosConfig.tgz"
+declare NagiosConfig="${workspace_dir}/config/NagiosConfig.tgz"
 
 
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
@@ -17,12 +17,10 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||: 
-    touch "$isIinitialized"
 
     if [ ! -f "$NagiosConfig" ]; then
         mkdir -p "${workspace_dir}/archives" ||:
         [ -e "${config_dir}/NagiosConfig.tgz" ] && cp "${config_dir}/NagiosConfig.tgz" "$NagiosConfig" 
-        [ -e ~/xsrc/NagiosConfig.tgz ] && cp ~/xsrc/NagiosConfig.tgz "$NagiosConfig" 
     fi
 
     declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
@@ -36,7 +34,8 @@ if [ ! -f "$isIinitialized" ]; then
 
     # determine nconf dbuser
     declare -r dc_json="$(lib.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
-    declare nconf_dbuser="$(eval echo $(jq --compact-output --monochrome-output --raw-output '.services.nagios.environment.NCONF_DBUSER' <<< "$dc_json"))"
+    declare nconf_dbuser=$(jq --compact-output --monochrome-output --raw-output '.services.nagios.environment.NCONF_DBUSER' <<< "$dc_json")
+    nconf_dbuser="$(eval echo "$nconf_dbuser")"
 
     cat <<-NCONF_DBUSER > "${WORKSPACE_DIR}/mysql/loader/nconf_user.sh"
 #!/bin/bash
@@ -50,6 +49,7 @@ EOSQL
 
 NCONF_DBUSER
 
+    touch "$isIinitialized"
 fi
 
 # perform common

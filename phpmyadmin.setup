@@ -16,7 +16,6 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||: 
-    touch "$isIinitialized"
 
     declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
     if [ ! -e "${dumps_dir}/phpmyadmin.sql" ]; then
@@ -31,7 +30,7 @@ if [ ! -f "$isIinitialized" ]; then
 
     # update dbms access for phpmyadmin
     declare dc_json="$(lib.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
-    declare pma_user=$(jq '.services.phpmyadmin.environment.PMA_USER' <<< "$dc_json" | tr -d '"' )
+    declare pma_user=$(jq --compact-output --monochrome-output --raw-output '.services.phpmyadmin.environment.PMA_USER' <<< "$dc_json")
     pma_user="$(eval echo "$pma_user")"
 
     cat <<-PMA_USER > "${WORKSPACE_DIR}/mysql/loader/phpmyadmin_user.sh"
@@ -46,6 +45,7 @@ EOSQL
 
 PMA_USER
 
+    touch "$isIinitialized"
 fi
 
 # perform common

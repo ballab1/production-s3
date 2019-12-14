@@ -16,7 +16,6 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||: 
-    touch "$isIinitialized"
 
     declare initdb="${workspace_dir}/postgres-initdb"
     if [ ! -e "${initdb}/.setup-CTD_data.sql" ]; then
@@ -35,6 +34,8 @@ if [ ! -f "$isIinitialized" ]; then
 
         chmod 755 "${initdb}"/*.sh
     fi
+
+    touch "$isIinitialized"
 fi
 
 # perform common
