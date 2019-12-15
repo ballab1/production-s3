@@ -1,0 +1,5 @@
+server {
+    server_name pgadmin4;
+    underscores_in_headers on;
+    include conf.d/pgadmin4.redirect; 
+} 
