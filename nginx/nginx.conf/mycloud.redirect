@@ -1,9 +1,19 @@
 location /mycloud {
-    rewrite /mycloud/(.*)$ /UI/$1; 
-    try_files 301 $uri $uri/ $uri;
+    proxy_pass http://mycloud/;
+    proxy_set_header X-Script-Name /mycloud;
+    proxy_set_header Host $host;
+    proxy_redirect off;
+
+#    rewrite /mycloud/(.*)$ /UI/$1; 
+#    try_files 301 $uri $uri/ $uri;
 }
 
 location /mycloud/ {
-    rewrite /mycloud/(.*)$ /UI/$1;
-    try_files 301 $uri $uri/ $uri;
+    proxy_pass http://mycloud/;
+    proxy_set_header X-Script-Name /mycloud;
+    proxy_set_header Host $host;
+    proxy_redirect off;
+
+#    rewrite /mycloud/(.*)$ /UI/$1;
+#    try_files 301 $uri $uri/ $uri;
 }

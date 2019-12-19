@@ -16,15 +16,46 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||: 
-    touch "$isIinitialized"
-
     sudo cp -r "${config_dir}/"* "$workspace_dir"
-    [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 
+    echo 'Unpacking photos'
+    tar -xzf ~/xsrc/photos.tgz -C "$workspace_dir"
+#    sudo rm -rf "$workspace_dir/Uncatagorized"
+    tar -xzf ~/xsrc/photoprism_cache.tgz -C "$workspace_dir"
+    
+    declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
+    if [ ! -e "${dumps_dir}/photoprism.sql" ]; then
+        mkdir -p "$dumps_dir" ||:
+        cp "${config_dir}/photoprism.sql" "${dumps_dir}/photoprism.sql"
+    fi
+
+    declare -r mysql_root_password="$(deploy.passwordSecret 'mysql' 'MYSQL_ROOT_PASSWORD' )"
+    declare -r photoprism_dbpass="$(deploy.passwordSecret 'photoprism' 'PHOTOPRISM_DBPASS' )"
+
+    # determine photoprism dbuser
+    declare -r dc_json="$(lib.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
+    declare photoprism_dbuser=$(jq --compact-output --monochrome-output --raw-output '.services.photoprism.environment.PHOTOPRISM_DBUSER' <<< "$dc_json")
+    photoprism_dbuser="$(eval echo "$photoprism_dbuser")"
+
+    cat <<-PHOTOPRISM_DBUSER > "${WORKSPACE_DIR}/mysql/loader/photoprism_user.sh"
+#!/bin/bash
+
+cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
+    CREATE DATABASE IF NOT EXISTS photoprism;
+    CREATE USER IF NOT EXISTS '${photoprism_dbuser}'@'%';
+    SET PASSWORD FOR '${photoprism_dbuser}'@'%' = PASSWORD('${photoprism_dbpass}');
+    GRANT ALL ON photoprism.* TO '${photoprism_dbuser}'@'%';
+EOSQL
+
+PHOTOPRISM_DBUSER
+
+    touch "$isIinitialized"
 fi
 
 # perform common
 if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
+    [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 fi
+cp -ru "${config_dir}/photoprism.yml" "${workspace_dir}/photoprism.yml"

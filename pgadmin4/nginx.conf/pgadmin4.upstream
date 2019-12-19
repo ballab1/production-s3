@@ -1,3 +1,0 @@
-upstream pgadmin4 {
-    server pgadmin4:80;
-} 

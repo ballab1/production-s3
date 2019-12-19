@@ -10,7 +10,7 @@ function initialize_jenkins_home()
 {
     local -r jenkins_home="${workspace_dir}/jenkins_home"
 
-    [ -d "$jenkins_home" ] || exit 0
+    [ -d "$jenkins_home" ] || return 0
     git clone https://github.com/ballab1/jenkins-files.git "$jenkins_home"
     pushd "$jenkins_home" >/dev/null || return 0
 
@@ -65,4 +65,5 @@ fi
 if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
+    [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 fi

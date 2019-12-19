@@ -26,7 +26,6 @@ if [ ! -f "$isIinitialized" ]; then
     sudo mkdir -p "${workspace_dir}/etc/provisioning/dashboards"
     sudo mkdir -p "${workspace_dir}/etc/provisioning/datasources"
     sudo mkdir -p "${workspace_dir}/etc/provisioning/notifiers"
-    [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 
     declare -r ini=${workspace_dir}/etc/grafana.ini
     sudo sed -i -r -e "s|^instance_name\\s*=.*$|instance_name = ${host_name}|" \
@@ -38,6 +37,33 @@ if [ ! -f "$isIinitialized" ]; then
                 "$ini"
     sudo chown -R "$grafana_uid" "$workspace_dir"
 
+
+    declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
+    if [ ! -e "${dumps_dir}/grafana.sql" ]; then
+        mkdir -p "$dumps_dir" ||:
+        cp "${config_dir}/grafana.sql" "${dumps_dir}/grafana.sql"
+    fi
+
+    declare -r mysql_root_password="$(deploy.passwordSecret 'mysql' 'MYSQL_ROOT_PASSWORD' )"
+    declare -r grafana_dbpass="$(deploy.passwordSecret 'grafana' 'GRAFANA_DBPASS' )"
+
+    # determine grafana dbuser
+    declare -r dc_json="$(lib.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
+    declare grafana_dbuser=$(jq --compact-output --monochrome-output --raw-output '.services.grafana.environment.GRAFANA_DBUSER' <<< "$dc_json")
+    grafana_dbuser="$(eval echo "$grafana_dbuser")"
+
+    cat <<-NCONF_DBUSER > "${WORKSPACE_DIR}/mysql/loader/grafana_user.sh"
+#!/bin/bash
+
+cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
+    CREATE DATABASE IF NOT EXISTS grafana;
+    CREATE USER IF NOT EXISTS '${grafana_dbuser}'@'%';
+    SET PASSWORD FOR '${grafana_dbuser}'@'%' = PASSWORD('${grafana_dbpass}');
+    GRANT ALL ON grafana.* TO '${grafana_dbuser}'@'%';
+EOSQL
+
+NCONF_DBUSER
+
     touch "$isIinitialized"
 fi
 
@@ -45,4 +71,5 @@ fi
 if [ -d "${config_dir}/nginx.conf" ]; then
     sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
+    [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 fi

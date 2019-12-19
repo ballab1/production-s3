@@ -16,15 +16,15 @@ if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
     mkdir -p "$workspace_dir" ||: 
-    touch "$isIinitialized"
 
     echo 'Unpacking photos'
     tar -xzf ~/xsrc/photos.tgz -C "$workspace_dir"
+    tar -xzf ~/xsrc/zen_cache.tgz -C "$workspace_dir"
 
     declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
-    if [ ! -e "${dumps_dir}/nconf.sql" ]; then
+    if [ ! -e "${dumps_dir}/zen.sql" ]; then
         mkdir -p "$dumps_dir" ||:
-        cp "${CONFIG_DIR}/nagios/nconf.sql" "${dumps_dir}/nconf.sql"
+        cp "${config_dir}/zen.sql" "${dumps_dir}/zen.sql"
     fi
 
     # update dbms access for zen
@@ -47,10 +47,12 @@ EOSQL
 
 ZEN_USER
 
+    touch "$isIinitialized"
 fi
 
 # perform common
 if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
+    [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 fi

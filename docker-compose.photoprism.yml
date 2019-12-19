@@ -285,11 +285,10 @@ services:
             - ./nginx/conf.d:/etc/nginx/proxy.conf
 
 
-# Run "photoprism help" and "photoprism config" too see all config options and current values
     photoprism:
         container_name: photoprism
-        environment:
-            PHOTOPRISM_URL: "https://10.1.3.6/photoprism"
+        environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
+#            PHOTOPRISM_URL: "https://demo.photoprism.org/"
             PHOTOPRISM_TITLE: "Ballantyne Photo Album"
             PHOTOPRISM_SUBTITLE: "Browse your life"
             PHOTOPRISM_DESCRIPTION: "Personal Photo Management."
@@ -385,7 +384,7 @@ services:
         restart: unless-stopped
         volumes:
             - ./registryfe/apache2.conf:/etc/apache/apache2.conf
-            - ./registryfe/log:/var/log/apache
+            - ./registryfe/log:/var/log
 
 
     smee:

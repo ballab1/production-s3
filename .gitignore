@@ -30,3 +30,6 @@ scanned.paths
 **/versions
 config/versions
 workspace*
+photoprism.index
+tcpdump*
+
