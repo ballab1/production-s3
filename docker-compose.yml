@@ -86,7 +86,7 @@ services:
             - "ubuntu-s7:10.1.3.16"
             - "ubuntu-s8:10.1.3.17"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.190.3}:${CONTAINER_TAG:-4639549e6ba25756beb50bd6632b78cdf58ec0d8e1d4b292b0cf2051a8b7b8b5}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.204.1}:${CONTAINER_TAG:-bccf81477f2089f0f048f9d6ef8dea6342ba828023b98f0f34416f242c014ca0}
         logging:
             driver: json-file
             options:
@@ -416,7 +416,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-4080805ee8b5ae66b03a46313e6c6ae9d9586c8028759db46cfbab1b99de9422}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-7ca68454be618a654129873a49d31c9b32e48905f359aff493d54b2f306534c0}
         logging:
             driver: json-file
             options:
