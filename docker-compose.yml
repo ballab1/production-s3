@@ -44,7 +44,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: hubot
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-96e3fec71b2e2a390e7a8bfe9d87c82001fb9ccf7172a008c9bd2461f478ed0e}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-c3514581a5b35109b0da2fbc07e17059cd6eb5e41cff38b14882dc25f15a7300}
         logging:
             driver: json-file
             options:
@@ -86,7 +86,7 @@ services:
             - "ubuntu-s7:10.1.3.16"
             - "ubuntu-s8:10.1.3.17"
         hostname: jenkins
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.204.1}:${CONTAINER_TAG:-bccf81477f2089f0f048f9d6ef8dea6342ba828023b98f0f34416f242c014ca0}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.204.1}:${CONTAINER_TAG:-9e5fdccae9b6c0bbfe8715488afb83fda255b79172d88deebe0f74256b530376}
         logging:
             driver: json-file
             options:
@@ -123,7 +123,7 @@ services:
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.10:2181,10.1.3.6:2181
         hostname: kafkamgr
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-23c4a410ccec42aa7a344879ce91f84e71dff3838e3476b5c79418e327f4a763}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-33648b9b0d271f6e7def358248f19d1c33193987d20618a6594a280655c03970}
         logging:
             driver: json-file
             options:
@@ -208,7 +208,7 @@ services:
             - "ubuntu-s7:10.1.3.16"
             - "ubuntu-s8:10.1.3.17"
         hostname: nagios
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-b0ac8613d9cbe611ddf9a9c3eb43a72884d0c95baea7666f34f3ecb77bafc11d}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-2b38e7f4f95de8a4abfb4244b7cbcd99b4951ba47a2389175e7e3e0f2d36f074}
         logging:
             driver: json-file
             options:
@@ -260,7 +260,7 @@ services:
             - "ubuntu-s7:10.1.3.16"
             - "ubuntu-s8:10.1.3.17"
         hostname: nginx
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-cfe0f5ab1bfa6266bc87d8ff68b37f0e87abf4f5ccd16dce2543b33730293185}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-f4c5e717543e7d169d3f6d9607c87d472c87aed711054625a189a5492f66aa58}
         logging:
             driver: json-file
             options:
@@ -285,7 +285,6 @@ services:
             - ./nginx/conf.d:/etc/nginx/proxy.conf
 
 
-# Run "photoprism help" and "photoprism config" too see all config options and current values
     photoprism:
         container_name: photoprism
         environment:
@@ -337,7 +336,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.2}:${CONTAINER_TAG:-2c06e4dff7833eb284c382453a4d281ab115a6211b95f94c310f66b831c6788c}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.2}:${CONTAINER_TAG:-90a18ad6599e8b973dcf7baa77d8c5f94e7d9b7db4695766d7f500eeb238c643}
         logging:
             driver: json-file
             options:
@@ -365,6 +364,8 @@ services:
         environment:
             ENV_DOCKER_REGISTRY_HOST: ubuntu-s2
             ENV_DOCKER_REGISTRY_PORT: 5000
+            ENV_DEFAULT_REPOSITORIES_PER_PAGE: 50
+            ENV_DEFAULT_TAGS_PER_PAGE: 20
             ENV_MODE_BROWSE_ONLY: 'false'
             TZ: "America/New_York"
         extra_hosts:
@@ -398,7 +399,7 @@ services:
             SMEE_TARGET: http://jenkins:8080/jenkins/generic-webhook-trigger/invoke
             SMEE_URL: https://smee.io/F9gFiEeTza0Po4Rd
         hostname: smee
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-590c9dd40abedaf5467547da1596cbc45f902f1f1baaa643396dc00f29588f0b}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-7c85770b1c16e1d81f2dc2d9d9b52821d084a9889aaa6a365c151ef1b4f00a98}
         logging:
             driver: json-file
             options:
@@ -416,7 +417,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-7ca68454be618a654129873a49d31c9b32e48905f359aff493d54b2f306534c0}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-268fc7d723da3deb48d5fcf39e4899f97b3782bfd47e4b6e86f812fd6da0c08a}
         logging:
             driver: json-file
             options:
@@ -425,7 +426,7 @@ services:
         networks:
             - support-net
         ports:
-            - "8008:5000"
+            - "8008:80"
             - "9008:9001"
         restart: unless-stopped
         secrets:
@@ -441,7 +442,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-70d964c1cf2efb434078e9f0e93245bfafbac4f9ffe1ec859c6e664ae2722fbf}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-bfa8f951e53c3898de8e14a71f98335a2fa5ab6f807f37aea8558a5f1b1a002c}
         logging:
             driver: json-file
             options:
@@ -475,7 +476,7 @@ services:
             ZEN_USER: ${CFG_USER:?}
 #            WWW_UID: '1000'
         hostname: zen
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.6}:${CONTAINER_TAG:-0be72133ef9de5b095e782b9a760a8cb201d865cedcc1aa17935e8bd149e5030}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.6}:${CONTAINER_TAG:-d955ae5f173424a9aa464243f5f9b019ff15c6665e2410f5741aa228b35cd7c4}
         logging:
             driver: json-file
             options:
