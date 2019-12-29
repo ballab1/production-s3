@@ -336,7 +336,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-4.9.2}:${CONTAINER_TAG:-90a18ad6599e8b973dcf7baa77d8c5f94e7d9b7db4695766d7f500eeb238c643}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.0}:${CONTAINER_TAG:-ca5e82912e629b0cdcd8ce1c1a3006680f717527c60aca8cffc7381c4075f25e}
         logging:
             driver: json-file
             options:
@@ -417,7 +417,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-268fc7d723da3deb48d5fcf39e4899f97b3782bfd47e4b6e86f812fd6da0c08a}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-8511526e31a53af6acf5bb82e67011a76b10d41d730dfe80bd47e711a8f532b8}
         logging:
             driver: json-file
             options:
@@ -456,9 +456,12 @@ services:
         secrets:
             - webdav.pwd
         volumes:
-            - /mnt/Guest:/webdav/Guest
-            - /mnt/Seagate:/webdav/Seagate
-            - /mnt/WDMyCloud:/webdav/WDMyCloud
+            - /mnt/Guest:/webdav/Guest:ro
+            - /mnt/Seagate:/webdav/Seagate:ro
+            - /mnt/WDMyCloud:/webdav/WDMyCloud:ro
+            - ~:/webdav/home:ro
+            - /:/webdav/root:ro
+            - ../logs:/webdav/logs:ro
             - ./webdav/log:/var/log 
 
 
