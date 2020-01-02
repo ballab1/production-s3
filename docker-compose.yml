@@ -417,7 +417,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-8511526e31a53af6acf5bb82e67011a76b10d41d730dfe80bd47e711a8f532b8}
+        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-71b9a0b1fbc9b24e60289f440cc8876a9137a3587ed0e826f6c4ee810c426b9d}
         logging:
             driver: json-file
             options:

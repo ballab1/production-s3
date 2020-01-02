@@ -1,4 +1,4 @@
-# Convert inbound WAN requests for https://domain.tld/jenkins/ to 
+# Convert inbound WAN requests for https://domain.tld/jenkins/ to
 # local network requests for http://jenkins/jenkins/
 proxy_pass http://jenkins/jenkins;
 
@@ -8,6 +8,7 @@ proxy_redirect http:// https://;
 proxy_set_header   Host               $host:$server_port;
 proxy_set_header   X-Real-IP          $remote_addr;
 proxy_set_header   X-Forwarded-For    $proxy_add_x_forwarded_for;
+proxy_set_header   X-Forwarded-Proto  $scheme;
 #proxy_set_header   X-Forwarded-Port   $proxy_protocol_port;
 #proxy_set_header   X-Forwarded-Proto  $proxy_add_x_forwarded_for;
 proxy_max_temp_file_size 0;
