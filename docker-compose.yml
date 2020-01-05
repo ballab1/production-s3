@@ -6,16 +6,17 @@ services:
         depends_on:
             - mysql
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             GF_INSTALL_PLUGINS: briangann-datatable-panel 0.0.9,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.6,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.3.9,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0
 #            GF_SECURITY_ADMIN_PASSWORD: ${CFG_PASS:?}
             GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
             GF_SERVER_ROOT_URL: http://${HOST_IP:?}:3000/grafana
             TZ: "America/New_York"
-        hostname: grafana.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}thirdparty/grafana:${GRAFANA_VERSION:-6.5.2}
+        hostname: grafana.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-6.5.2}
         logging:
             driver: json-file
             options:
@@ -38,8 +39,9 @@ services:
     hubot:
         container_name: hubot
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             HUBOT_BOT_NAME: hubot
@@ -49,8 +51,8 @@ services:
             HUBOT_SLACK_TOKEN_FILE: /run/secrets/slack.token
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
-        hostname: hubot.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-c3514581a5b35109b0da2fbc07e17059cd6eb5e41cff38b14882dc25f15a7300}
+        hostname: hubot.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-de2e8079adc2bba6fed5b6d6e20991e6b5e30e63f60010934accadf37215aa37}
         logging:
             driver: json-file
             options:
@@ -76,8 +78,9 @@ services:
     jenkins:
         container_name: jenkins
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             JAVA_OPTS: "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
@@ -85,8 +88,8 @@ services:
             JENKINS_GITHUB_EMAIL: ${CFG_EMAIL:?}
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
-        hostname: jenkins.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.204.1}:${CONTAINER_TAG:-9e5fdccae9b6c0bbfe8715488afb83fda255b79172d88deebe0f74256b530376}
+        hostname: jenkins.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.204.1}:${CONTAINER_TAG:-749ce3f15ddac90c96284a1b4d6424d281b06c8bbf66e9606ad9abf0f1169283}
         logging:
             driver: json-file
             options:
@@ -111,8 +114,9 @@ services:
     kafkamgr:
         container_name: kafkamgr
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             APPLICATION_SECRET_FILE: /run/secrets/kafka.secret
             BASE_ZK_PATH: /
@@ -125,8 +129,8 @@ services:
             KAFKA_MANAGER_USERNAME: admin
             KM_HTTP_CONTEXT: /kafkamgr
             ZK_HOSTS: 10.1.3.10:2181,10.1.3.6:2181
-        hostname: kafkamgr.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-33648b9b0d271f6e7def358248f19d1c33193987d20618a6594a280655c03970}
+        hostname: kafkamgr.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/kafka-manager/${KM_VERSION:-2.0.0.2}:${CONTAINER_TAG:-8e3deec4d35f2795a96fb031285785185f62e2adcf024215c1405a66274b25ac}
         logging:
             driver: json-file
             options:
@@ -149,16 +153,17 @@ services:
 #        command: --default-authentication-plugin=mysql_native_password
         container_name: mysql
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
             MYSQL_PASSWORD_FILE: /run/secrets/mysql.pwd
             MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root.pwd
             MYSQL_USER: ${CFG_USER:?}
             TZ: America/New_York
-        hostname: mysql.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}thirdparty/mysql:${MYSQL_VERSION:-5.7.23}
+        hostname: mysql.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}thirdparty/mysql:${MYSQL_VERSION:-5.7.23}
         logging:
             driver: json-file
             options:
@@ -184,8 +189,9 @@ services:
         depends_on:
             - mysql
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             NAGIOS_GITHUB_CREDENTIALS_FILE: /run/secrets/github.credentials
@@ -204,8 +210,8 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
         extra_hosts:
             - \"docker-host:${HOST_IP:?}\"
-        hostname: nagios.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-2b38e7f4f95de8a4abfb4244b7cbcd99b4951ba47a2389175e7e3e0f2d36f074}
+        hostname: nagios.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NCORE_VERSION:-4.4.5}:${CONTAINER_TAG:-b75bd522ea501408e6d8622c10941039ee27ad830abe7132fa41a6a9ababaf96}
         logging:
             driver: json-file
             options:
@@ -233,8 +239,9 @@ services:
     nginx:
         container_name: nginx
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         depends_on:
             - jenkins
             - kafkamgr
@@ -250,8 +257,8 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             WEB_USER_ID: ${CFG_USER:?}
             WEB_USER_PASS_FILE: /run/secrets/web_user.pwd
-        hostname: nginx.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-f4c5e717543e7d169d3f6d9607c87d472c87aed711054625a189a5492f66aa58}
+        hostname: nginx.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.16.1}:${CONTAINER_TAG:-877392ae30a0674f147806d0996c6d6d6651210c77ceb829c405bb3f3e4f9b4d}
         logging:
             driver: json-file
             options:
@@ -279,8 +286,9 @@ services:
     photoprism:
         container_name: photoprism
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             PHOTOPRISM_URL: "https://10.1.3.6/photoprism"
             PHOTOPRISM_TITLE: "Ballantyne Photo Album"
@@ -292,8 +300,8 @@ services:
             PHOTOPRISM_IMPORT_PATH: "/home/photoprism/Pictures/Import"
             PHOTOPRISM_EXPORT_PATH: "/home/photoprism/Pictures/Export"
             PHOTOPRISM_ORIGINALS_PATH: "/home/photoprism/Pictures/Originals"
-        hostname: photoprism.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}thirdparty/photoprism:latest
+        hostname: photoprism.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}thirdparty/photoprism:latest
         networks:
             - support-net
         ports:
@@ -313,8 +321,9 @@ services:
     phpmyadmin:
         container_name: phpmyadmin
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         depends_on:
             - mysql
         environment:
@@ -332,8 +341,8 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
-        hostname: phpmyadmin.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.0}:${CONTAINER_TAG:-ca5e82912e629b0cdcd8ce1c1a3006680f717527c60aca8cffc7381c4075f25e}
+        hostname: phpmyadmin.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.0}:${CONTAINER_TAG:-e1b26644e9790b4d316387e47ad6143b286b4a8cd752e11941c667bb74b549d9}
         logging:
             driver: json-file
             options:
@@ -359,8 +368,9 @@ services:
     registry:
         container_name: registry
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             ENV_DOCKER_REGISTRY_HOST: ubuntu-s2
             ENV_DOCKER_REGISTRY_PORT: 5000
@@ -368,8 +378,8 @@ services:
             ENV_DEFAULT_TAGS_PER_PAGE: 20
             ENV_MODE_BROWSE_ONLY: 'false'
             TZ: "America/New_York"
-        hostname: registry.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}thirdparty/docker-registry-frontend:${DREGISTRY_FE_VERSION:-v2}
+        hostname: registry.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}thirdparty/docker-registry-frontend:${DREGISTRY_FE_VERSION:-v2}
         labels:
             com.github.url: "https://github.com/kwk/docker-registry-frontend"
         logging:
@@ -392,15 +402,16 @@ services:
         depends_on:
             - jenkins
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
 #            SMEE_PORT: 8080
 #            SMEE_PATH: /jenkins/github-webhook/
             SMEE_TARGET: http://jenkins:8080/jenkins/generic-webhook-trigger/invoke
             SMEE_URL: https://smee.io/F9gFiEeTza0Po4Rd
-        hostname: smee.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-7c85770b1c16e1d81f2dc2d9d9b52821d084a9889aaa6a365c151ef1b4f00a98}
+        hostname: smee.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-3e6f33f58ae266f97c983e83e985bc2e5847c229651a284f50d6c1f26dd794e6}
         logging:
             driver: json-file
             options:
@@ -414,14 +425,15 @@ services:
     supervisorm:
         container_name: supervisorm
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
-        hostname: supervisorm.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-71b9a0b1fbc9b24e60289f440cc8876a9137a3587ed0e826f6c4ee810c426b9d}
+        hostname: supervisorm.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.6.8}:${CONTAINER_TAG:-4fd4250c96875acb8d2df694aab83bea977d37d5fd0699b7cf58a0c529604845}
         logging:
             driver: json-file
             options:
@@ -442,14 +454,15 @@ services:
     webdav:
         container_name: webdav
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
-        hostname: webdav.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-bfa8f951e53c3898de8e14a71f98335a2fa5ab6f807f37aea8558a5f1b1a002c}
+        hostname: webdav.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-2a45afd2e6b77726b54a841475c0d129ca863908b584b2f15b6268d4d556b97e}
         logging:
             driver: json-file
             options:
@@ -475,8 +488,9 @@ services:
     zen:
         container_name: zen
         dns: 10.1.3.1
-        dns_search: home
-        domainname: home
+        dns_search:
+            - ubuntu.home
+            - home
         depends_on:
             - mysql
         environment:
@@ -488,8 +502,8 @@ services:
             ZEN_PASS_FILE: /run/secrets/zenphoto.pwd
             ZEN_USER: ${CFG_USER:?}
 #            WWW_UID: '1000'
-        hostname: zen.s3
-        image: ${DOCKER_REGISTRY:-ubuntu-s2:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.6}:${CONTAINER_TAG:-d955ae5f173424a9aa464243f5f9b019ff15c6665e2410f5741aa228b35cd7c4}
+        hostname: zen.s3.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.6}:${CONTAINER_TAG:-e9f441a2be45d7db43785f2abf3e84ef1db0b3808e02127a1bd51140a5e987cc}
         logging:
             driver: json-file
             options:
