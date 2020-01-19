@@ -1,0 +1,6 @@
+kafkahq:
+  connections:
+    docker-kafka-server:
+      properties:
+        bootstrap.servers: "10.1.3.6:9092,10.1.3.10:9092"
+

@@ -2,13 +2,12 @@
 
 #############################################################################
 #
-#   initialization for kafkamgr
+#   initialization for kafkahq
 #
 #############################################################################
 
-declare -r config_dir="${CONFIG_DIR:?}/kafkamgr"
-declare -r workspace_dir="${WORKSPACE_DIR:?}/kafkamgr"
-declare -r kafkamgr_uid=${GRAFANA_UID:?}
+declare -r config_dir="${CONFIG_DIR:?}/kafkahq"
+declare -r workspace_dir="${WORKSPACE_DIR:?}/kafkahq"
 
 
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
@@ -27,3 +26,7 @@ if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 fi
+
+sudo rm -rf "${workspace_dir}/app"
+cp -r "${config_dir}/app" "${workspace_dir}"
+sudo chown -R 1000:1004 "${workspace_dir}/app"

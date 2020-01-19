@@ -1,0 +1,3 @@
+upstream kafkahq {
+    server kafkahq:8080;
+}  

@@ -4,23 +4,26 @@ completion_msg:
 container_os: alpine
 
 environment:
-#    KAFKA_BOOTSTRAP_SERVERS: '10.1.3.6:9092,10.1.3.10:9092'
+    __SECRETS_FILE: /home/bobb/.inf/secret.properties
+    LOCATION: home
+    KAFKA_BOOTSTRAP_SERVERS: "${KAFKA_BOOTSTRAP_SERVERS:-?}"
     KAFKA_ID: 3
     GRAFANA_UID: 1000
-    LOCATION: home 
 
-skip_wait:
-    - blue
-    - grafana
-    - jbe
-    - jfk
-    - jira
-    - mysql
-    - pgadmin4
-    - photoprism
-    - registry
+#skip_wait:
+#    - grafana
+
+thirdparty_versions:
+    CADVISOR_VERSION: latest
+    DREGISTRY_FE_VERSION: v2
+    GRAFANA_VERSION: 6.5.3
+#    KAFKAHQ_VERSION: latest
+    KAFKAHQ_VERSION: 0.11.0
+    MYSQL_VERSION: 5.7.23
+    PGADMIN4_VERSION: "4.16"
+    PHOTOPRISM_VERSION: latest
 
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: 589bd45dce67db2e0d62cca31e9ec12acb4093bf
+    commit: 5e66285b9b0938a0a1e2b9899970e5d5b28b4f55
