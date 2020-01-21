@@ -71,7 +71,7 @@ services:
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
             HUBOT_BOT_NAME: hubot
-#            HUBOT_GITHUB_REPOS_MAP: '{"git":["ballab1/alpinefull","ballab1/bin","ballab1/DBMS-backup","ballab1/hubot","ballab1/jenkins","ballab1/jenkins-files","ballab1/kafka-i386","ballab1/mysql","ballab1/nagios","ballab1/nginx","ballab1/phpmyadmin","ballab1/prod","ballab1/update-check","ballab1/UptimePipeline","ballab1/webhooks","ballab1/zenphoto"]}'
+#            HUBOT_GITHUB_REPOS_MAP: '{"git":["ballab1/alpinefull","ballab1/bin","ballab1/DBMS-backup","ballab1/hubot","ballab1/jenkins","ballab1/jenkins-files","ballab1/kafka-i386","ballab1/mysql","ballab1/nagios","ballab1/nginx","ballab1/phpmyadmin","ballab1/prod","ballab1/update-check","ballab1/UptimePipeline","ballab1/webhooks""]}'
 #            HUBOT_GITHUB_TOKEN_FILE: /run/secrets/github.token
 #            HUBOT_GITHUB_WEBHOOK_SECRET_FILE: /run/secrets/github_webhook_secret
             HUBOT_SLACK_TOKEN_FILE: /run/secrets/slack.token
@@ -135,37 +135,6 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
 #            - /usr/bin/docker:/usr/bin/docker
             - /var/lib/docker:/var/lib/docker
-
-
-    kafkahq:
-        # https://hub.docker.com/r/tchiotludo/kafkahq
-        # https://github.com/tchiotludo/kafkahq
-        container_name: kafkahq
-        dns: 10.1.3.1
-        dns_search:
-            - ubuntu.home
-            - home
-        environment:
-            KAFKAHQ_CONFIGURATION: |
-                kafkahq:
-                    connections:
-                        docker-kafka-server:
-                            properties:
-                                bootstrap.servers: "${KAFKA_BOOTSTRAP_SERVERS:-?}"
-        hostname: kafkahq
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/kafkahq:${KAFKAHQ_VERSION:-0.11.0}
-        logging:
-            driver: json-file
-            options:
-                max-file: "3"
-                max-size: "10m" 
-        networks:
-            - support-net
-        ports:
-            - 8080:8080
-        restart: unless-stopped
-        volumes:
-            - ./kafkahq/app/application.yml:/app/application.yml
 
 
     mysql:
@@ -263,11 +232,9 @@ services:
             - home
         depends_on:
             - jenkins
-#            - kafkamgr
             - nagios
             - phpmyadmin
             - webdav
-            - zen
         environment:
             NGINX_DEBUG: 1
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
@@ -361,7 +328,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.0}:${CONTAINER_TAG:-da1da83b54c6da4f6c0ae6d77ee3c41399d870538c8a2ba0ea31aed917d92e6d}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.1}:${CONTAINER_TAG:-da1da83b54c6da4f6c0ae6d77ee3c41399d870538c8a2ba0ea31aed917d92e6d}
         logging:
             driver: json-file
             options:
@@ -502,46 +469,6 @@ services:
             - ./webdav/log:/var/log 
 
 
-    zen:
-        container_name: zen
-        dns: 10.1.3.1
-        dns_search:
-            - ubuntu.home
-            - home
-        depends_on:
-            - mysql
-        environment:
-#            NGINX_DEBUG: 1
-            DEBUG_TRACE: ${DEBUG_TRACE:-0}
-            SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
-            SUPERVISORD_USER: ${CFG_USER:?}
-            ZEN_HOST: mysql
-            ZEN_PASS_FILE: /run/secrets/zenphoto.pwd
-            ZEN_USER: ${CFG_USER:?}
-#            WWW_UID: '1000'
-        hostname: zen.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/zenphoto/${ZEN_VERSION:-1.5.6}:${CONTAINER_TAG:-5dde3589b4113634fcebdda7ed5fe6b8205d2c8c0277bccb93d66e950047a359}
-        logging:
-            driver: json-file
-            options:
-                max-file: "3"
-                max-size: "10m"
-        networks:
-            - support-net
-        ports:
-            - "8003:80"
-            - "9003:9001"
-        restart: unless-stopped
-        secrets:
-            - supervisord.pwd
-            - zenphoto.pwd
-        volumes:
-            - ./zen/log:/var/log 
-            - ./zen/photos:/var/www/photos/albums
-            - ./zen/cache:/var/www/photos/cache
-            - ./zen/uploaded:/var/www/photos/uploaded
-
-
 networks:
    support-net:
        ipam:
@@ -554,10 +481,6 @@ secrets:
      file: .secrets/secrets/credentials.github
    grafana_admin.pwd:
      file: .secrets/secrets/grafana_admin.pwd
-   kafka.secret:
-     file: .secrets/secrets/kafkamgr.secret
-   kafka_manager.pwd:
-     file: .secrets/secrets/bobb.pwd
    mysql.pwd:
      file: .secrets/secrets/bobb.pwd
    mysql_root.pwd:
@@ -568,8 +491,6 @@ secrets:
      file: .secrets/secrets/bobb.pwd
    photoprism.pwd:
      file: .secrets/secrets/bobb.pwd
-#   github.token:
-#     file: .secrets/secrets/hubot_token.github
    slack.token:
      file: .secrets/secrets/hubot_token.slack
    supervisord.pwd:      
@@ -577,8 +498,6 @@ secrets:
    web_user.pwd:
      file: .secrets/secrets/bobb.pwd
    webdav.pwd:
-     file: .secrets/secrets/bobb.pwd
-   zenphoto.pwd:
      file: .secrets/secrets/bobb.pwd
    server.crt:
      file: .secrets/ssl/server.crt

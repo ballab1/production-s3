@@ -17,8 +17,9 @@ thirdparty_versions:
     CADVISOR_VERSION: latest
     DREGISTRY_FE_VERSION: v2
     GRAFANA_VERSION: 6.5.3
+    KAFDROP_VERSION: latest
 #    KAFKAHQ_VERSION: latest
-    KAFKAHQ_VERSION: 0.11.0
+#    KAFKAHQ_VERSION: 0.11.0
     MYSQL_VERSION: 5.7.23
     PGADMIN4_VERSION: "4.16"
     PHOTOPRISM_VERSION: latest
@@ -26,4 +27,4 @@ thirdparty_versions:
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: 5e66285b9b0938a0a1e2b9899970e5d5b28b4f55
+    commit: c6150b0a434430a3fdec3e26ec9a270c4aff3d01
