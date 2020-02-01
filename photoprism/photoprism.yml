@@ -1,4 +1,4 @@
-url: "https://10.1.3.6/photoprism"
+url: "https://s3.ubuntu.home/photoprism"
 title: "Ballantyne Photo Gallery"
 subtitle: "Browse your life"
 description: "Personal Photo Management powered by Go and Google TensorFlow."
