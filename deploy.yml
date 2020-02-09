@@ -16,13 +16,13 @@ environment:
 thirdparty_versions:
     CADVISOR_VERSION: v0.35.0           # https://console.cloud.google.com/gcr/images/google-containers/GLOBAL/cadvisor?gcrImageListsize=30
     DREGISTRY_FE_VERSION: v2            # https://hub.docker.com/r/konradkleine/docker-registry-frontend
-    GRAFANA_VERSION: 6.6.0              # https://hub.docker.com/r/grafana/grafana:
+    GRAFANA_VERSION: 6.6.1              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
     MYSQL_VERSION: 5.7.23               # https://hub.docker.com/_/mysql
-    PGADMIN4_VERSION: 4.17              # https://hub.docker.com/r/dpage/pgadmin4
-    PHOTOPRISM_VERSION: 20200131        # https://hub.docker.com/r/photoprism/photoprism
+    PGADMIN4_VERSION: 4.18              # https://hub.docker.com/r/dpage/pgadmin4
+    PHOTOPRISM_VERSION: 20200204        # https://hub.docker.com/r/photoprism/photoprism
 
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: 121035089ca1740bb5ee170fd88d56cabe48e28a
+    commit: 2c3dd4d9684c54a27608e35f27723efbdc7b45b3
     branch: master
