@@ -23,7 +23,7 @@ if [ ! -f "$isIinitialized" ]; then
         mkdir -p "$www_dir" ||:
 
         echo 'unpacking recipes'
-        tar -xzf ~/xsrc/recipes.tgz -C "$www_dir"
+        tar -xzf ~/src/recipes.tgz -C "$www_dir"
     fi
 
     mkdir -p "$secrets_dir" ||:

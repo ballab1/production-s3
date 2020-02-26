@@ -16,7 +16,7 @@ environment:
 thirdparty_versions:
     CADVISOR_VERSION: v0.35.0           # https://console.cloud.google.com/gcr/images/google-containers/GLOBAL/cadvisor?gcrImageListsize=30
     DREGISTRY_FE_VERSION: v2            # https://hub.docker.com/r/konradkleine/docker-registry-frontend
-    GRAFANA_VERSION: 6.6.1              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
+    GRAFANA_VERSION: 6.6.2              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
     MYSQL_VERSION: 5.7.23               # https://hub.docker.com/_/mysql
     PGADMIN4_VERSION: 4.18              # https://hub.docker.com/r/dpage/pgadmin4
     PHOTOPRISM_VERSION: 20200204        # https://hub.docker.com/r/photoprism/photoprism
@@ -24,5 +24,5 @@ thirdparty_versions:
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: afa03bdc456b474a33801f0ba81cdc3ee4a40419
+    commit: 1f9e164a03bc18295d588b2166828b74f9b220e6
     branch: master

@@ -18,8 +18,8 @@ if [ ! -f "$isIinitialized" ]; then
     mkdir -p "$workspace_dir" ||: 
 
     echo 'Unpacking photos'
-    tar -xzf ~/xsrc/photos.tgz -C "$workspace_dir"
-    tar -xzf ~/xsrc/zen_cache.tgz -C "$workspace_dir"
+    tar -xzf ~/src/photos.tgz -C "$workspace_dir"
+    tar -xzf ~/src/zen_cache.tgz -C "$workspace_dir"
 
     declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
     if [ ! -e "${dumps_dir}/zen.sql" ]; then

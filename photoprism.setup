@@ -21,7 +21,7 @@ if [ ! -f "$isIinitialized" ]; then
     echo 'Unpacking photos'
     tar -xzf ~/xsrc/photos.tgz -C "$workspace_dir"
 #    sudo rm -rf "$workspace_dir/Uncatagorized"
-    tar -xzf ~/xsrc/photoprism_cache.tgz -C "$workspace_dir"
+    tar -xzf ~/src/photoprism_cache.tgz -C "$workspace_dir"
     
     declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
     if [ ! -e "${dumps_dir}/photoprism.sql" ]; then
