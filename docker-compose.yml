@@ -269,41 +269,6 @@ services:
             - ./nginx/conf.d:/etc/nginx/proxy.conf
 
 
-    photoprism:
-        container_name: photoprism
-        dns: 10.1.3.1
-        dns_search:
-            - ubuntu.home
-            - home
-        environment:
-            PHOTOPRISM_URL: "https://s3.ubuntu.home/photoprism"
-            PHOTOPRISM_TITLE: "Ballantyne Photo Album"
-            PHOTOPRISM_SUBTITLE: "Browse your life"
-            PHOTOPRISM_DESCRIPTION: "Personal Photo Management."
-#            PHOTOPRISM_AUTHOR: "Anonymous"
-#            PHOTOPRISM_TWITTER: "@browseyourlife"
-            PHOTOPRISM_ADMIN_PASSWORD: photoprism
-            PHOTOPRISM_IMPORT_PATH: "/home/photoprism/Pictures/Import"
-            PHOTOPRISM_EXPORT_PATH: "/home/photoprism/Pictures/Export"
-            PHOTOPRISM_ORIGINALS_PATH: "/home/photoprism/Pictures/Originals"
-        hostname: photoprism.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/photoprism:${PHOTOPRISM_VERSION:-20200204}
-        networks:
-            - support-net
-        ports:
-          - 2342:2342 # [local port]:[container port]
-        restart: unless-stopped
-        secrets:
-            - photoprism.pwd
-        volumes:
-            - ./photoprism/log:/var/log
-            - ./photoprism/photoprism.yml:/home/photoprism/.config/photoprism/photoprism.yml
-            - ./photoprism/photos:/home/photoprism/Pictures/Originals
-            - ./photoprism/Import:/home/photoprism/Pictures/Import
-            - ./photoprism/Export:/home/photoprism/Pictures/Export
-            - ./photoprism/cache:/home/photoprism/.cache/photoprism
-
-    
     phpmyadmin:
         container_name: phpmyadmin
         dns: 10.1.3.1
