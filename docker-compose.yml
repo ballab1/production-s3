@@ -42,7 +42,7 @@ services:
             GF_SERVER_ROOT_URL: http://${HOST_IP:?}:3000/grafana
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-6.6.2}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-6.7.1}
         logging:
             driver: json-file
             options:
@@ -115,7 +115,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.204.5}:${CONTAINER_TAG:-4571c9357f0cb3a77b9bd977db34eafdd8c7fb8ec4df60e00cecf4494b5c1122}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.222.1}:${CONTAINER_TAG:-4571c9357f0cb3a77b9bd977db34eafdd8c7fb8ec4df60e00cecf4494b5c1122}
         logging:
             driver: json-file
             options:
@@ -200,7 +200,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd         
             SUPERVISORD_USER: ${CFG_USER:?}
         extra_hosts:
-            - \"docker-host:${HOST_IP:?}\"
+            - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
         image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.5}:${CONTAINER_TAG:-7d58f8066145626047a2daa23bdee2276479fb4e2ce826146c7e3925dd618816}
         logging:
@@ -239,7 +239,7 @@ services:
             - webdav
         environment:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
-#            NGINX_DEBUG: 0
+            NGINX_DEBUG: 1
 #            PWD_PROTECTED: 'false'
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
@@ -295,7 +295,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.1}:${CONTAINER_TAG:-da1da83b54c6da4f6c0ae6d77ee3c41399d870538c8a2ba0ea31aed917d92e6d}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.2}:${CONTAINER_TAG:-da1da83b54c6da4f6c0ae6d77ee3c41399d870538c8a2ba0ea31aed917d92e6d}
         logging:
             driver: json-file
             options:
