@@ -55,7 +55,7 @@ services:
         restart: unless-stopped
         secrets:
             - grafana_admin.pwd    
-        user: \"${GRAFANA_UID:?}\"
+        user: "${GRAFANA_UID:?}"
         volumes:
             - ./grafana/etc:/etc/grafana
             - ./grafana/log:/var/log/grafana
