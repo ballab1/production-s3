@@ -42,7 +42,7 @@ services:
             GF_SERVER_ROOT_URL: http://${HOST_IP:?}:3000/grafana
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-6.7.1}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-6.7.2}
         logging:
             driver: json-file
             options:
