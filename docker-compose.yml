@@ -42,7 +42,7 @@ services:
             GF_SERVER_ROOT_URL: http://${HOST_IP:?}:3000/grafana
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-6.7.3}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.0.0}
         logging:
             driver: json-file
             options:
@@ -202,7 +202,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.5}:${CONTAINER_TAG:-7d58f8066145626047a2daa23bdee2276479fb4e2ce826146c7e3925dd618816}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-7d58f8066145626047a2daa23bdee2276479fb4e2ce826146c7e3925dd618816}
         logging:
             driver: json-file
             options:
