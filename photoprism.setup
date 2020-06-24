@@ -2,13 +2,12 @@
 
 #############################################################################
 #
-#   initialization for kafkamgr
+#   initialization for photoprism
 #
 #############################################################################
 
-declare -r config_dir="${CONFIG_DIR:?}/kafkamgr"
-declare -r workspace_dir="${WORKSPACE_DIR:?}/kafkamgr"
-declare -r kafkamgr_uid=${GRAFANA_UID:?}
+declare -r config_dir="${CONFIG_DIR:?}/photoprism"
+declare -r workspace_dir="${WORKSPACE_DIR:?}/photoprism"
 
 
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
@@ -16,10 +15,12 @@ isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
 if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
-    mkdir -p "$workspace_dir" ||:
+    mkdir -p "$workspace_dir" ||: 
+    touch "$isIinitialized"
+
+    sudo cp -r "${config_dir}/"* "$workspace_dir"
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 
-    touch "$isIinitialized"
 fi
 
 # perform common

@@ -17,10 +17,11 @@ skip_wait:
     - jira
     - mysql
     - pgadmin4
+    - photoprism
     - supervisorm
     - registry
 
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: e757c7961356cdb05f7965523f361a406a55b277
+    commit: e90ef571ae9d28462bcad7476bd20109d3c6ffdf
