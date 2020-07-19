@@ -56,7 +56,7 @@ if [ ! -f "$isIinitialized" ]; then
         openssl req \
                 -new \
                 -key "${CERTS['server.key']}" \
-                -subj "/C=US/ST=Massachusetts/L=Mansfield/O=SOHO_BALL/OU=home/OU=docker.nginx.io/CN=$(hostname -s)" \
+                -subj "/C=US/ST=Massachusetts/L=Mansfield/O=soho_ball/OU=home/OU=docker.nginx.io/CN=$(hostname -s)" \
                 -out "${CERTS['server.csr']}"
         openssl x509
                 -req \
