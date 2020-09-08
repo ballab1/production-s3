@@ -36,13 +36,13 @@ services:
             - ubuntu.home
             - home
         environment:
-            GF_INSTALL_PLUGINS: briangann-datatable-panel 1.0.2,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.6,digrich-bubblechart-panel 1.1.0,grafana-piechart-panel 1.5.0,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.6,savantly-heatmap-panel 0.2.0
+            GF_INSTALL_PLUGINS: briangann-datatable-panel 1.0.2,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.6,digrich-bubblechart-panel 1.2.0,grafana-piechart-panel 1.6.0,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.7-dev,savantly-heatmap-panel 0.2.0
 #            GF_SECURITY_ADMIN_PASSWORD: ${CFG_PASS:?}
             GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
             GF_SERVER_ROOT_URL: http://${HOST_IP:?}:3000/grafana
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.1.0}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.1.5}
         logging:
             driver: json-file
             options:
@@ -115,7 +115,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.235.2}:${CONTAINER_TAG:-4571c9357f0cb3a77b9bd977db34eafdd8c7fb8ec4df60e00cecf4494b5c1122}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.235.5}:${CONTAINER_TAG:-4571c9357f0cb3a77b9bd977db34eafdd8c7fb8ec4df60e00cecf4494b5c1122}
         logging:
             driver: json-file
             options:
