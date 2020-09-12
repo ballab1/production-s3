@@ -20,6 +20,8 @@ thirdparty_versions:
     MYSQL_VERSION: 5.7.23               # https://hub.docker.com/_/mysql
     PGADMIN4_VERSION: '4.25'            # https://hub.docker.com/r/dpage/pgadmin4
     PHOTOPRISM_VERSION: '20200204'      # https://hub.docker.com/r/photoprism/photoprism
+#    JENKINS_VERSION: 2.235.5
+
 
 versions:
     repo: https://github.com/ballab1/versions
