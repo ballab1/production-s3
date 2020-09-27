@@ -26,6 +26,7 @@ if [ ! -f "$isIinitialized" ]; then
     sudo mkdir -p "${workspace_dir}/etc/provisioning/dashboards"
     sudo mkdir -p "${workspace_dir}/etc/provisioning/datasources"
     sudo mkdir -p "${workspace_dir}/etc/provisioning/notifiers"
+    sudo mkdir -p "${workspace_dir}/etc/provisioning/plugins"
 
     declare -r ini=${workspace_dir}/etc/grafana.ini
     sudo sed -i -r -e "s|^instance_name\\s*=.*$|instance_name = ${host_name}|" \
