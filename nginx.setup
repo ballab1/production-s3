@@ -56,9 +56,9 @@ if [ ! -f "$isIinitialized" ]; then
         openssl req \
                 -new \
                 -key "${CERTS['server.key']}" \
-                -subj "/C=US/ST=Massachusetts/L=Mansfield/O=soho_ball/OU=home/OU=docker.nginx.io/CN=$(hostname -s)" \
+                -subj "/C=US/ST=Massachusetts/L=Mansfield/O=soho_ball/OU=home/OU=docker.nginx.io/CN=$(hostname)" \
                 -out "${CERTS['server.csr']}"
-        openssl x509
+        openssl x509 \
                 -req \
                 -sha256 \
                 -days 300065 \
