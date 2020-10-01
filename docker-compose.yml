@@ -50,7 +50,7 @@ services:
             GF_PATHS_PROVISIONING: /etc/provisioning
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.1.5}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.2.0}
         logging:
             driver: json-file
             options:
