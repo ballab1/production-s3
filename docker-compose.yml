@@ -36,7 +36,7 @@ services:
             - ubuntu.home
             - home
         environment:
-            GF_INSTALL_PLUGINS: briangann-datatable-panel 1.0.2,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.6,digrich-bubblechart-panel 1.2.0,grafana-piechart-panel 1.6.1,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.7-dev,savantly-heatmap-panel 0.2.0
+            GF_INSTALL_PLUGINS: briangann-datatable-panel 1.0.2,briangann-gauge-panel 0.0.6,digiapulssi-breadcrumb-panel 1.1.6,digrich-bubblechart-panel 1.2.0,grafana-piechart-panel 1.6.1,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.7-dev,savantly-heatmap-panel 0.2.0,grafana-github-datasource 1.0.6,sni-pnp-datasource 1.0.7
 #            GF_SECURITY_ADMIN_PASSWORD: ${CFG_PASS:?}
             GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
             GF_SERVER_ROOT_URL: http://${HOST_IP:?}:3000/grafana
@@ -123,7 +123,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.249.1}:${CONTAINER_TAG:-87541a70b02579e0ce195dea29ca4ae04fe146f3aff85811ee70d0fd369e4b5a}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.249.2}:${CONTAINER_TAG:-8020f525dee476cf203b13991af42ec02adb1af7ac6d955455a4940436e22e8b}
         logging:
             driver: json-file
             options:
@@ -204,14 +204,14 @@ services:
 #            NCONF_DEBUG_MODE: 1              # [0|1] 
 #            NCONF_DEBUG_GENERATE: 5          # [1=ERROR|2=WARN|3=INFO|4=DEBUG|5=TRACE] 
 #            NGINX_DEBUG: 1
-#            PNP4NAGIOS_LOGLEVEL: 4
+            PNP4NAGIOS_LOGLEVEL: 4
             PWD_PROTECTED: 'true'
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd         
             SUPERVISORD_USER: ${CFG_USER:?}
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-9213e8544ae97601df11c0ba2c2c13458a010b4fb487e0b8a0e7cded5ce74368}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-f9f3ff89208f53143ede6b96da671edf64e55fb54a9d9ba1f961fe1f0070b6a5}
         logging:
             driver: json-file
             options:
@@ -230,9 +230,11 @@ services:
             - nagios.pwd
             - supervisord.pwd
         volumes:
+            - ~/.inf:/usr/local/nagios/inf
             - ./nagios/archives:/var/nagios/archives
             - ./nagios/config:/var/www/nconf/output
             - ./nagios/log:/var/log
+            - ./nagios/rrd:/var/nagios/perfdata
 
 
     nginx:
@@ -304,7 +306,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.2}:${CONTAINER_TAG:-6b637c407c2c13675458d8706e5c36300c9435e1e89124ed1ff906ae77334456}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.2}:${CONTAINER_TAG:-62a93d58de2b8bf2180edb0ae3e893ec1b86ec7decfb4a3b0dbdc1cbba5f1b01}
         logging:
             driver: json-file
             options:
