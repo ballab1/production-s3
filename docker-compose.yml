@@ -123,7 +123,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.249.2}:${CONTAINER_TAG:-8020f525dee476cf203b13991af42ec02adb1af7ac6d955455a4940436e22e8b}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.249.2}:${CONTAINER_TAG:-1d163134b22d2f56f32f6edee0a4d180a0e44c50644f2a02595c9ca9ae087801}
         logging:
             driver: json-file
             options:
@@ -211,7 +211,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-f9f3ff89208f53143ede6b96da671edf64e55fb54a9d9ba1f961fe1f0070b6a5}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-1cba8f8353bf994e50bf0fccc0d7391cafb2c0acd39e2d816b486ca19736726b}
         logging:
             driver: json-file
             options:
@@ -231,10 +231,14 @@ services:
             - supervisord.pwd
         volumes:
             - ~/.inf:/usr/local/nagios/inf
+            - ~/.ssh:/var/ssh
             - ./nagios/archives:/var/nagios/archives
             - ./nagios/config:/var/www/nconf/output
             - ./nagios/log:/var/log
             - ./nagios/rrd:/var/nagios/perfdata
+            - /var/run/docker.sock:/var/run/docker.sock
+#            - /usr/bin/docker:/usr/bin/docker
+            - /var/lib/docker:/var/lib/docker
 
 
     nginx:
