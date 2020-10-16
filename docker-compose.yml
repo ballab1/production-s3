@@ -50,7 +50,7 @@ services:
             GF_PATHS_PROVISIONING: /etc/provisioning
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.2.0}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.2.1}
         logging:
             driver: json-file
             options:
@@ -310,7 +310,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.2}:${CONTAINER_TAG:-62a93d58de2b8bf2180edb0ae3e893ec1b86ec7decfb4a3b0dbdc1cbba5f1b01}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.4}:${CONTAINER_TAG:-350a000a72e0107dbe324448b44a735970dd87020330a06300b626d822879e44}
         logging:
             driver: json-file
             options:
