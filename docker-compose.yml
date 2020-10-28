@@ -50,7 +50,7 @@ services:
             GF_PATHS_PROVISIONING: /etc/provisioning
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.2.1}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.2.2}
         logging:
             driver: json-file
             options:
@@ -146,6 +146,39 @@ services:
             - /var/lib/docker:/var/lib/docker
 
 
+    metricbeat:
+        container_name: metricbeat
+        dns: 10.3.1.1
+        dns_search:
+            - ubuntu.home
+            - home
+        hostname: metricbeat
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}thirdparty/metricbeat:${METRICBEAT_VERSION:-7.9.3}
+        labels:
+            co.elastic.metrics/hosts: '$${data.host}:$${data.port}'
+            co.elastic.metrics/metricsets: status
+            co.elastic.metrics/module: metricbeat
+            co.elastic.metrics/period: 10s
+        logging:
+            driver: json-file
+            options:
+                max-file: "3"
+                max-size: "10m"
+        networks:
+            - support-net
+        restart: unless-stopped
+        user: root
+        volumes:
+            - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+#            - ./metricbeat/metricbeat.yml:/etc/metricbeat/metricbeat.yml:ro
+            - ./metricbeat/modules.d:/usr/share/metricbeat/modules.d:ro
+            - ./metricbeat/log:/var/log
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+            - /proc:/hostfs/proc:ro
+            - /:/hostfs:ro
+
+
     mysql:
 #        command: --default-authentication-plugin=mysql_native_password
         container_name: mysql
@@ -211,7 +244,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-1cba8f8353bf994e50bf0fccc0d7391cafb2c0acd39e2d816b486ca19736726b}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-1e4814ed6b007f31cd7727853a827143efdf14a2b8dcc55b60517abfde063330}
         logging:
             driver: json-file
             options:

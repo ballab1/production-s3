@@ -1,0 +1,18 @@
+#logging.level: debug
+
+output.elasticsearch: 
+  hosts: ["s6.ubuntu.home:9200"] 
+
+setup.kibana:
+  host: "s6.ubuntu.home:5601"
+
+metricbeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+metricbeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+ 
