@@ -123,7 +123,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.249.2}:${CONTAINER_TAG:-1d163134b22d2f56f32f6edee0a4d180a0e44c50644f2a02595c9ca9ae087801}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.249.3}:${CONTAINER_TAG:-bd5e8a1e0468c7dfcbafa37120430721a7828fc087b57cb609a73d71129f0ca1}
         logging:
             driver: json-file
             options:
@@ -247,7 +247,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-fdf5082cdf58b603f118d7dbe11772bd63e4aa9b01b5af344510645a8852707b}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-ee84428e9ce142ba4cb696e2b06ba0cea89f720f371bf21093fc4ac000cc7852}
         logging:
             driver: json-file
             options:
@@ -344,13 +344,13 @@ services:
             PMA_PORT: 3306
             PMA_USER: ${CFG_USER:?}
             PMA_VERBOSE: 1
-            NGINX_LOG_ACCESS: 'syslog:server=10.3.1.15:514,tag=nginx_access json'
-            NGINX_LOG_ERRORS: 'syslog:server=10.3.1.15:514,tag=nginx_error notice'
+#            NGINX_LOG_ACCESS: 'syslog:server=10.3.1.15:514,tag=nginx_access json'
+#            NGINX_LOG_ERRORS: 'syslog:server=10.3.1.15:514,tag=nginx_error notice'
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.4}:${CONTAINER_TAG:-ab5ed6fa488b4809d9664e1fc0daad15a9f260b03dc869988cf37f6644ff84bd}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.4}:${CONTAINER_TAG:-46ef61b070c49e495c3bc2eb7eca481ba40706ced1a097129b1601430148cd8a}
         logging:
             driver: json-file
             options:
