@@ -50,7 +50,7 @@ services:
             GF_PATHS_PROVISIONING: /etc/provisioning
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.3.6}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.3.7}
         logging:
             driver: json-file
             options:
@@ -123,7 +123,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.263.1}:${CONTAINER_TAG:-787d5309992795a0943632cd0e9613af54c9c651398a40b820e768f507edd485}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.263.3}:${CONTAINER_TAG:-2d1a7451d5ee82c6ca424ede5822e75478195d7ca4eda775a57369b0eae6e233}
         logging:
             driver: json-file
             options:
