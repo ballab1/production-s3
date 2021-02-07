@@ -50,7 +50,7 @@ services:
             GF_PATHS_PROVISIONING: /etc/provisioning
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.3.7}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.4.0}
         logging:
             driver: json-file
             options:
@@ -123,7 +123,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.263.3}:${CONTAINER_TAG:-2d1a7451d5ee82c6ca424ede5822e75478195d7ca4eda775a57369b0eae6e233}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.263.3}:${CONTAINER_TAG:-0cd0419c37b62d3dd0cb9035bfa6144f1c16d640355aed337546f6a2959bd818}
         logging:
             driver: json-file
             options:
@@ -485,7 +485,7 @@ services:
         secrets:
             - webdav.pwd
         volumes:
-            - /mnt/nas:/webdav/nas:ro
+            - /mnt/Synology:/webdav/nas:ro
             - ~:/webdav/home:ro
             - /:/webdav/root:ro
             - ../logs:/webdav/logs:ro
