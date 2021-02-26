@@ -50,7 +50,7 @@ services:
             GF_PATHS_PROVISIONING: /etc/provisioning
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.4.0}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.4.3}
         logging:
             driver: json-file
             options:
@@ -123,7 +123,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.263.3}:${CONTAINER_TAG:-0cd0419c37b62d3dd0cb9035bfa6144f1c16d640355aed337546f6a2959bd818}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.263.4}:${CONTAINER_TAG:-1cccd04747086997abc401820215a6f7eef5e296ba40ee4a5c962c6b30cd92be}
         logging:
             driver: json-file
             options:
@@ -351,7 +351,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.0.4}:${CONTAINER_TAG:-46ef61b070c49e495c3bc2eb7eca481ba40706ced1a097129b1601430148cd8a}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.0}:${CONTAINER_TAG:-283ba4b78fbf3bc27bcbba187a003828dc97f1339328c4d588b11932571c3188}
         logging:
             driver: json-file
             options:
