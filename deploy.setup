@@ -2,24 +2,21 @@
 
 #############################################################################
 #
-#   initialization for secrets
+#   initialization for deploy
 #
 #############################################################################
 
 declare -r config_dir="${CONFIG_DIR:?}"
-declare -r workspace_dir="${WORKSPACE_DIR:?}/.secrets"
+declare -r workspace_dir="${WORKSPACE_DIR:?}"
 
 
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
 isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
 if [ ! -f "$isIinitialized" ]; then
 
-    # perform initialization
+    # perform initialization 
     mkdir -p "$workspace_dir" ||:
-    cp "${config_dir}/secrets"/* "${workspace_dir}/"
 
     touch "$isIinitialized"
 fi
-
-# perform common
 exit 0

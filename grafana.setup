@@ -74,3 +74,4 @@ if [ -d "${config_dir}/nginx.conf" ]; then
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 fi
+exit 0

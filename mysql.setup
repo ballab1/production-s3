@@ -27,3 +27,4 @@ if [ ! -f "$isIinitialized" ]; then
 
     touch "$isIinitialized"
 fi
+exit 0

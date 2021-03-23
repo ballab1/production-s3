@@ -59,3 +59,4 @@ if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 fi
 cp -ru "${config_dir}/photoprism.yml" "${workspace_dir}/photoprism.yml"
+exit 0

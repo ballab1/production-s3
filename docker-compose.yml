@@ -45,9 +45,6 @@ services:
 #            GF_PATHS_LOGS: /var/log/grafana
 #            GF_PATHS_PLUGINS: /var/lib/grafana/plugins
 #            GF_SECURITY_ADMIN_PASSWORD: ${CFG_PASS:?}
-            GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
-            GF_SERVER_ROOT_URL: http://${HOST_IP:?}:3000/grafana
-            GF_PATHS_PROVISIONING: /etc/provisioning
             TZ: "America/New_York"
         hostname: grafana.s3.home
         image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.4.3}
@@ -86,7 +83,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: hubot.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-e0a1ba29aa5a1f7fe5c915cf1c77e527718fabcd24a36e98d936bb2c2e169462}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-f257d4684df9295cffd837a04c942add5cd0f424e4e89d5d610c205cce59e093}
         logging:
             driver: json-file
             options:
@@ -123,7 +120,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.263.4}:${CONTAINER_TAG:-1cccd04747086997abc401820215a6f7eef5e296ba40ee4a5c962c6b30cd92be}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.277.1}:${CONTAINER_TAG:-9e2b08afc1ea7ae0f243aef0ea76ff241f87830078871a116b680f428d2a1555}
         logging:
             driver: json-file
             options:
@@ -248,7 +245,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-ee84428e9ce142ba4cb696e2b06ba0cea89f720f371bf21093fc4ac000cc7852}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-e194503a8539697b3e09999eefbe56c9c3f37ba01193039b2ffa527da3504be6}
         logging:
             driver: json-file
             options:
@@ -300,7 +297,7 @@ services:
             WEB_USER_ID: ${CFG_USER:?}
             WEB_USER_PASS_FILE: /run/secrets/web_user.pwd
         hostname: nginx.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.18.0}:${CONTAINER_TAG:-0e253356c6c2c02385dce70bc9bc05627b110ea15bab073082c272a9196719e0}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.18.0}:${CONTAINER_TAG:-ead22999d0e73f30a19fe48ee5d230cc858ed65c05c1c73101a376449373852b}
         logging:
             driver: json-file
             options:
@@ -351,7 +348,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.0}:${CONTAINER_TAG:-283ba4b78fbf3bc27bcbba187a003828dc97f1339328c4d588b11932571c3188}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.0}:${CONTAINER_TAG:-cc7a36dc7c71742cbd4df5d45dd438465aea08026f56a7b1a75b64eda144ada0}
         logging:
             driver: json-file
             options:
@@ -420,7 +417,7 @@ services:
             SMEE_TARGET: http://jenkins:8080/jenkins/generic-webhook-trigger/invoke
             SMEE_URL: https://smee.io/F9gFiEeTza0Po4Rd
         hostname: smee.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-9c157a4a975826907dcc772530f2ad74bbd12a6f4b0bba7e212a1f52abb07c1e}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-f80cea07918d3253e866b8e593156dc89b922938b0f0427b3377f29b50e31a8a}
         logging:
             driver: json-file
             options:
@@ -442,7 +439,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-ffd106247f1186482806a46f5fafc59e22f83972a75a296e1bc972b0e0402144}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-9c28ad848ea89cb0a6df181aab5f9cf36ffb774e6a8eb901b3673ad4adbcc35d}
         logging:
             driver: json-file
             options:
@@ -471,7 +468,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-eb68b8bffb57045edee03916d2d519e19965e689837db63e0e2e0eef3bdd97d3}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-aefbe8f3c7be69080f940fa5f93cab5ea7b26d3eb50b1749c96a772eae852def}
         logging:
             driver: json-file
             options:

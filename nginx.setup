@@ -86,3 +86,4 @@ if [ -d "$www_dir" ]; then
 
     deploy.replaceIpAddresses "${www_dir}/index.html" "$(environ.ipAddress)"
 fi
+exit 0
