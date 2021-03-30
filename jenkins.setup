@@ -47,6 +47,9 @@ function initialize_jenkins_home()
 
 #----------------------------------------------------------------------------
 
+[ "${CONFIG_DIR:-}" ] || CONFIG_DIR="$(pwd)"
+[ "${WORKSPACE_DIR:-}" ] || WORKSPACE_DIR="$(pwd)/workspace.$(basename "$CONFIG_DIR")"
+
 declare -r config_dir="${CONFIG_DIR:?}/jenkins"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/jenkins"
 

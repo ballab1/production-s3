@@ -6,6 +6,9 @@
 #
 #############################################################################
 
+[ "${CONFIG_DIR:-}" ] || CONFIG_DIR="$(pwd)"
+[ "${WORKSPACE_DIR:-}" ] || WORKSPACE_DIR="$(pwd)/workspace.$(basename "$CONFIG_DIR")"
+
 declare -r config_dir="${CONFIG_DIR:?}/webdav"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/webdav"
 
