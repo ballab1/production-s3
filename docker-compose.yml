@@ -45,9 +45,10 @@ services:
 #            GF_PATHS_LOGS: /var/log/grafana
 #            GF_PATHS_PLUGINS: /var/lib/grafana/plugins
 #            GF_SECURITY_ADMIN_PASSWORD: ${CFG_PASS:?}
+            GRAFANA_DBUSER: 'grafana'
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.4.5}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.5.1}
         logging:
             driver: json-file
             options:
@@ -232,7 +233,7 @@ services:
             NCONF_DBHOST: mysql
             NCONF_DBNAME: nconf
             NCONF_DBPASS_FILE: /run/secrets/mysql.pwd
-            NCONF_DBUSER: ${CFG_USER:?}
+            NCONF_DBUSER: nconf
 #            NCONF_DEBUG_GENERATE: 5          # [1=ERROR|2=WARN|3=INFO|4=DEBUG|5=TRACE] 
 #            NCONF_DEBUG_MODE: 1              # [0|1] 
 #            NGINX_DEBUG: 1
@@ -246,7 +247,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-8294ab3cd7df8fc0b5323e6ac2f05bad37721c90e0311ac2d41b23df65c2d1bb}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-6295fafcc9e280eb6f7f97a5449b47ebebc27eaa2a23040db064a3a8dcdec776}
         logging:
             driver: json-file
             options:
@@ -349,7 +350,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.0}:${CONTAINER_TAG:-8ac1f29fc35a0a7fe3bed95c0fb04a109123604b121f8b5c0e3aede5f71aedf5}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.0}:${CONTAINER_TAG:-4b006323b1ebf3299793716c755d1ddf4302dabd09a4fcb2309cb019597a6c2c}
         logging:
             driver: json-file
             options:

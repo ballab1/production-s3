@@ -21,7 +21,7 @@ if [ ! -f "$isIinitialized" ]; then
     mkdir -p "$workspace_dir" ||: 
 
     declare loader_dir="${workspace_dir}/loader"
-    [ -d "${loader_dir}/dumps" ] && exit 0
+    [ -d "${loader_dir}/dumps" ] ||  mkdir -p "${loader_dir}/dumps" ||:
 
     mkdir -p "${loader_dir}/dumps" ||:
     cp -r "${config_dir}/"* "${loader_dir}/"
