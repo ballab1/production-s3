@@ -38,7 +38,8 @@ if [ ! -f "$isIinitialized" ]; then
     declare zen_user=$(jq '.services.zen.environment.ZEN_USER' <<< "$dc_json" | tr -d '"' )
     zen_user="$(eval echo "$zen_user")"
 
-    cat <<-ZEN_USER > "${WORKSPACE_DIR}/mysql/loader/zen_user.sh"
+    if [ "${zen_dbuser:-}" ] && [ "${zen_dbpass:-}" ]; then
+        cat <<-ZEN_USER > "${WORKSPACE_DIR}/mysql/loader/zen_user.sh"
 #!/bin/bash
 
 cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
@@ -49,7 +50,10 @@ cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
 EOSQL
 
 ZEN_USER
-
+    else
+        [ "${zen_dbuser:-}" ] || echo 'zen_dbuser not defined: connection to MYSQL not created'
+        [ "${zen_dbpass:-}" ] || echo 'zen_dbpass not defined: connection to MYSQL not created'
+    fi
     touch "$isIinitialized"
 fi
 

@@ -56,7 +56,8 @@ if [ ! -f "$isIinitialized" ]; then
     declare grafana_dbuser=$(jq --compact-output --monochrome-output --raw-output '.services.grafana.environment.GRAFANA_DBUSER' <<< "$dc_json")
     grafana_dbuser="$(eval echo "$grafana_dbuser")"
 
-    cat <<-NCONF_DBUSER > "${WORKSPACE_DIR}/mysql/loader/grafana_user.sh"
+    if [ "${grafana_dbuser:-}" ] && [ "${grafana_dbpass:-}" ]; then
+        cat <<-NCONF_DBUSER > "${WORKSPACE_DIR}/mysql/loader/grafana_user.sh"
 #!/bin/bash
 
 cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
@@ -67,9 +68,11 @@ cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
 EOSQL
 
 NCONF_DBUSER
-
+    else
+        [ "${grafana_dbuser:-}" ] || echo 'grafana_dbuser not defined: connection to MYSQL not created'
+        [ "${grafana_dbpass:-}" ] || echo 'grafana_dbpass not defined: connection to MYSQL not created'
+    fi
     touch "$isIinitialized"
-fi
 
 # perform common
 if [ -d "${config_dir}/nginx.conf" ]; then
