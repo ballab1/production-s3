@@ -121,7 +121,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.277.2}:${CONTAINER_TAG:-ee3b1903f32d6bf315b936e08b136feb15bd5ab7918d7141ca9c5a04efd9abce}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.277.3}:${CONTAINER_TAG:-340131f2af4d716935a0e939cd5eb1aa8c53c29b60e8998092ce8f6656fd6f4a}
         logging:
             driver: json-file
             options:
@@ -247,7 +247,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-ae13bd1455e1261e7c0fcfe9c8f14a0b20e24fcef5cd59bfcbe23a5ef6420d1b}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-79e9fa46ccc2978a4342b79befc53f071c234bff6fa25c4c582dff79f4881d40}
         logging:
             driver: json-file
             options:
@@ -299,7 +299,7 @@ services:
             WEB_USER_ID: ${CFG_USER:?}
             WEB_USER_PASS_FILE: /run/secrets/web_user.pwd
         hostname: nginx.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.18.0}:${CONTAINER_TAG:-ed299fbb4dea22943954556c3bf51bce460e9ba0e0861b620d2e5f53ff952552}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.20.0}:${CONTAINER_TAG:-e1c889f3860520e98a14332d5584ecc4efb1b470782e7f7232004edef9690e44}
         logging:
             driver: json-file
             options:
@@ -350,7 +350,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.0}:${CONTAINER_TAG:-14502293c7a1eb1b261d30bc6018124130c6151e8b229dce479bbc800fb7c2b0}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.0}:${CONTAINER_TAG:-75a0af9eea0a39fc4fbec9a695caccf94796e702238deb11dab4cab74c53445f}
         logging:
             driver: json-file
             options:
@@ -441,7 +441,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-c4dabbadba0d5b2f0ef1fe27ce60a88868f7ddbaf482f00e86946d8385127020}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-2f0337d8eca144079aba0d0232ea27b2801ba0220b1afd1d200868ab17f2955d}
         logging:
             driver: json-file
             options:

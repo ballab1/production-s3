@@ -19,7 +19,7 @@ thirdparty_versions:
     GRAFANA_VERSION: '7.5.4'              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
     METRICBEAT_VERSION: '7.11.1'
     MYSQL_VERSION: '5.7.23'               # https://hub.docker.com/_/mysql
-#    PGADMIN4_VERSION: '4.27'            # https://hub.docker.com/r/dpage/pgadmin4
+#    PGADMIN4_VERSION: '5.2'            # https://hub.docker.com/r/dpage/pgadmin4
 #    PHOTOPRISM_VERSION: '20200204'      # https://hub.docker.com/r/photoprism/photoprism
 #    JENKINS_VERSION: '2.249.3'
 

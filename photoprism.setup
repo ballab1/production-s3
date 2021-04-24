@@ -40,7 +40,7 @@ if [ ! -f "$isIinitialized" ]; then
     declare photoprism_dbuser=$(jq --compact-output --monochrome-output --raw-output '.services.photoprism.environment.PHOTOPRISM_DBUSER' <<< "$dc_json")
     photoprism_dbuser="$(eval echo "$photoprism_dbuser")"
 
-    if [ "${photoprism_dbuser:-}" ] && [ "${photoprism_dbpass:-}" ]; then
+    if [ "${photoprism_dbuser:-null}" != 'null' ] && [ "${photoprism_dbpass:-}" ]; then
         cat <<-PHOTOPRISM_DBUSER > "${WORKSPACE_DIR}/mysql/loader/photoprism_user.sh"
 #!/bin/bash
 
