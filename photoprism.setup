@@ -21,7 +21,7 @@ if [ ! -f "$isIinitialized" ]; then
     mkdir -p "$workspace_dir" ||: 
     sudo cp -r "${config_dir}/"* "$workspace_dir"
 
-    echo 'Unpacking photos'
+    echo 'Unpacking photos' >&2
     tar -xzf ~/xsrc/photos.tgz -C "$workspace_dir"
 #    sudo rm -rf "$workspace_dir/Uncatagorized"
     tar -xzf ~/src/photoprism_cache.tgz -C "$workspace_dir"
@@ -53,8 +53,8 @@ EOSQL
 
 PHOTOPRISM_DBUSER
     else
-        [ "${photoprism_dbuser:-}" ] || echo 'photoprism_dbuser not defined: connection to MYSQL not created'
-        [ "${photoprism_dbpass:-}" ] || echo 'photoprism_dbpass not defined: connection to MYSQL not created'
+        [ "${photoprism_dbuser:-null}" = 'null' ] && echo 'photoprism_dbuser not defined: connection to MYSQL not created' >&2
+        [ -z "${photoprism_dbpass:-}" ] && echo 'photoprism_dbpass not defined: connection to MYSQL not created' >&2
     fi
     touch "$isIinitialized"
 fi

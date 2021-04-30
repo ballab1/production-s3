@@ -6,11 +6,41 @@
 #
 #############################################################################
 
-[ "${CONFIG_DIR:-}" ] || CONFIG_DIR="$(pwd)"
-[ "${WORKSPACE_DIR:-}" ] || WORKSPACE_DIR="$(pwd)/workspace.$(basename "$CONFIG_DIR")"
+[ "${CONFIG_DIR:-}" ] || CONFIG_DIR="$(pwd)" 
+[ "${WORKSPACE_DIR:-}" ] || WORKSPACE_DIR="$(pwd)/workspace.$(basename "$CONFIG_DIR")" 
+
+#----------------------------------------------------------------------------
+function exposeDockerRestAPI() {
+    local target=/lib/systemd/system/docker.service
+    [ "$(grep -sc 'tcp://0.0.0.0:4243' "$target")" -gt 0 ] && return 0 
+
+    echo -e '\e[91mExposing docker REST API\e[0m' >&2
+    echo -e '\e[33msed -iE '"'"'s|^(ExecStart=/usr/bin/dockerd -H fd://)(.*)$|\1 -H tcp://0.0.0.0:4243\2|'"' $target"'\e[0m' >&2
+    sudo sed -i -E 's|^(ExecStart=/usr/bin/dockerd -H fd://)(.*)$|\1 -H tcp://0.0.0.0:4243\2|' "$target"
+    sudo -s systemctl daemon-reload
+    sudo -s systemctl restart docker
+    return 0
+}
+
+#---------------------------------------------------------------------------- 
 
 declare -r config_dir="${CONFIG_DIR:?}"
 declare -r workspace_dir="${WORKSPACE_DIR:?}"
+declare -r MOUNTPOINT=/opt
+
+if [ "${1:-}" ]; then
+
+    # copy certs to ${MOUNTPOINT} which is the custom volume
+    echo "copying certs to docker volume : $1" >&2
+    rm -rf "$MOUNTPOINT"/*
+    cd /etc/ssl ||:
+    while read -r file; do
+        [ -d "$(dirname "${MOUNTPOINT}/$file")" ] || mkdir -p "$(dirname "${MOUNTPOINT}/$file")"
+        cp "$(readlink -f "$file")" "${MOUNTPOINT}/$file"
+    done < <(find . ! -type d | awk '{print substr($1,3)}')
+
+    exit 0
+fi
 
 
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
@@ -20,6 +50,8 @@ if [ ! -f "$isIinitialized" ]; then
     # perform initialization 
     mkdir -p "$workspace_dir" ||:
 
+    exposeDockerRestAPI
+    
     touch "$isIinitialized"
 fi
 exit 0

@@ -12,7 +12,6 @@
 declare -r config_dir="${CONFIG_DIR:?}/phpmyadmin"
 declare -r workspace_dir="${WORKSPACE_DIR:?}/phpmyadmin"
 
-
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
 isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
 if [ ! -f "$isIinitialized" ]; then
@@ -29,12 +28,12 @@ if [ ! -f "$isIinitialized" ]; then
 
     # update dbms access for phpmyadmin
     declare -r mysql_root_password="$(deploy.passwordSecret 'mysql' 'MYSQL_ROOT_PASSWORD' )"
-    declare -r pma_pass="$(deploy.passwordSecret 'phpmyadmin' 'PMA_PASSWORD' )"
+    declare -r pma_dbpass="$(deploy.passwordSecret 'phpmyadmin' 'PMA_PASSWORD' )"
 
     # update dbms access for phpmyadmin
     declare dc_json="$(lib.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
-    declare pma_user=$(jq --compact-output --monochrome-output --raw-output '.services.phpmyadmin.environment.PMA_USER' <<< "$dc_json")
-    pma_user="$(eval echo "$pma_user")"
+    declare pma_dbuser=$(jq --compact-output --monochrome-output --raw-output '.services.phpmyadmin.environment.PMA_USER' <<< "$dc_json")
+    pma_dbuser="$(eval echo "$pma_dbuser")"
 
     if [ "${pma_dbuser:-null}" != 'null' ] && [ "${pma_dbpass:-}" ]; then
         cat <<-PMA_USER > "${WORKSPACE_DIR}/mysql/loader/phpmyadmin_user.sh"
@@ -42,15 +41,15 @@ if [ ! -f "$isIinitialized" ]; then
 
 cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
     CREATE DATABASE IF NOT EXISTS phpmyadmin;
-    CREATE USER IF NOT EXISTS '${pma_user}'@'%';
-    SET PASSWORD FOR '${pma_user}'@'%' = PASSWORD('${pma_pass}');
-    GRANT ALL PRIVILEGES ON *.* TO '${pma_user}'@'%' WITH GRANT OPTION;
+    CREATE USER IF NOT EXISTS '${pma_dbuser}'@'%';
+    SET PASSWORD FOR '${pma_dbuser}'@'%' = PASSWORD('${pma_dbpass}');
+    GRANT ALL PRIVILEGES ON *.* TO '${pma_dbuser}'@'%' WITH GRANT OPTION;
 EOSQL
 
 PMA_USER
     else
-        [ "${pma_dbuser:-}" ] || echo 'pma_dbuser not defined: connection to MYSQL not created'
-        [ "${pma_dbpass:-}" ] || echo 'pma_dbpass not defined: connection to MYSQL not created'
+        [ "${pma_dbuser:-null}" = 'null' ] && echo 'pma_dbuser not defined: connection to MYSQL not created' >&2
+        [ -z "${pma_dbpass:-}" ] && echo 'pma_dbpass not defined: connection to MYSQL not created' >&2
     fi
     touch "$isIinitialized"
 fi

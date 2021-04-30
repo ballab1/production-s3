@@ -57,7 +57,7 @@ if [ ! -f "$isIinitialized" ]; then
     grafana_dbuser="$(eval echo "$grafana_dbuser")"
 
     if [ "${grafana_dbuser:-null}" != 'null' ] && [ "${grafana_dbpass:-}" ]; then
-        cat <<-NCONF_DBUSER > "${WORKSPACE_DIR}/mysql/loader/grafana_user.sh"
+        cat <<-GRAFANA_DBUSER > "${WORKSPACE_DIR}/mysql/loader/grafana_user.sh"
 #!/bin/bash
 
 cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
@@ -67,12 +67,13 @@ cat <<-EOSQL | mysql -uroot -p${mysql_root_password} -hlocalhost
     GRANT ALL ON grafana.* TO '${grafana_dbuser}'@'%';
 EOSQL
 
-NCONF_DBUSER
+GRAFANA_DBUSER
     else
-        [ "${grafana_dbuser:-}" ] || echo 'grafana_dbuser not defined: connection to MYSQL not created'
-        [ "${grafana_dbpass:-}" ] || echo 'grafana_dbpass not defined: connection to MYSQL not created'
+        [ "${grafana_dbuser:-null}" = 'null' ] && echo 'grafana_dbuser not defined: connection to MYSQL not created' >&2
+        [ -z "${grafana_dbpass:-}" ] && echo 'grafana_dbpass not defined: connection to MYSQL not created' >&2
     fi
     touch "$isIinitialized"
+fi
 
 # perform common
 if [ -d "${config_dir}/nginx.conf" ]; then

@@ -25,7 +25,7 @@ if [ ! -f "$isIinitialized" ]; then
     if [ ! -e "${www_dir}/index.html" ]; then
         mkdir -p "$www_dir" ||:
 
-        echo 'unpacking recipes'
+        echo 'unpacking recipes' >&2
         tar -xzf ~/src/recipes.tgz -C "$www_dir"
     fi
 

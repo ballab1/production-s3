@@ -20,7 +20,7 @@ if [ ! -f "$isIinitialized" ]; then
     # perform initialization 
     mkdir -p "$workspace_dir" ||: 
 
-    echo 'Unpacking photos'
+    echo 'Unpacking photos' >&2
     tar -xzf ~/src/photos.tgz -C "$workspace_dir"
     tar -xzf ~/src/zen_cache.tgz -C "$workspace_dir"
 
@@ -51,8 +51,8 @@ EOSQL
 
 ZEN_USER
     else
-        [ "${zen_dbuser:-}" ] || echo 'zen_dbuser not defined: connection to MYSQL not created'
-        [ "${zen_dbpass:-}" ] || echo 'zen_dbpass not defined: connection to MYSQL not created'
+        [ "${zen_dbuser:-null}" = 'null' ] && echo 'zen_dbuser not defined: connection to MYSQL not created' >&2
+        [ -z "${zen_dbpass:-}" ] && echo 'zen_dbpass not defined: connection to MYSQL not created' >&2
     fi
     touch "$isIinitialized"
 fi
