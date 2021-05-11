@@ -1,5 +1,0 @@
-server {
-    server_name     kafkaeagle;
-    include conf.d/kafkaeagle.redirect;  
-}
-
