@@ -36,7 +36,7 @@ services:
             - ubuntu.home
             - home
         environment:
-            GF_INSTALL_PLUGINS: agenty-flowcharting-panel 0.9.0,briangann-datatable-panel 1.0.3,briangann-gauge-panel 0.0.9,digiapulssi-breadcrumb-panel 1.1.6,digrich-bubblechart-panel 1.2.0,grafana-github-datasource 1.0.10,grafana-piechart-panel 1.6.1,grafana-simple-json-datasource 1.4.1,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.7-dev,savantly-heatmap-panel 0.2.0,sni-pnp-datasource 1.0.7
+            GF_INSTALL_PLUGINS: agenty-flowcharting-panel 0.9.0,briangann-datatable-panel 1.0.3,briangann-gauge-panel 0.0.9,digiapulssi-breadcrumb-panel 1.1.6,digrich-bubblechart-panel 1.2.0,grafana-github-datasource 1.0.11,grafana-piechart-panel 1.6.1,grafana-simple-json-datasource 1.4.1,mtanda-heatmap-epoch-panel 0.1.7,natel-plotly-panel 0.0.6,neocat-cal-heatmap-panel 0.0.3,novalabs-annotations-panel 0.0.1,petrslavotinek-carpetplot-panel 0.1.1,ryantxu-ajax-panel 0.0.7-dev,savantly-heatmap-panel 0.2.0,sni-pnp-datasource 1.0.7
 #            GF_SECURITY_ADMIN_PASSWORD: ${CFG_PASS:?}
             GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin.pwd
             GF_SERVER_ROOT_URL: http://${HOST_IP:?}:3000/grafana
@@ -49,7 +49,7 @@ services:
             GRAFANA_DBPASS_FILE: /run/secrets/grafana_admin.pwd
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.5.6}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-7.5.7}
         logging:
             driver: json-file
             options:
