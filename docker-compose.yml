@@ -122,7 +122,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.277.4}:${CONTAINER_TAG:-27f514135554e7eb23775449555ba619076c3c4af88b0813a069ac06b8a91b97}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.289.1}:${CONTAINER_TAG:-b2a32be269abf2521d079955ae97604609bec6e5ab27612b225ea6a9f6aafb52}
         logging:
             driver: json-file
             options:
