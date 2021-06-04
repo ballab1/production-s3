@@ -1,4 +1,0 @@
-server {
-    server_name     kafkahq;
-    include conf.d/kafkahq.redirect; 
-}

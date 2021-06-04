@@ -1,5 +1,0 @@
-server {
-    server_name photoprism;
-    underscores_in_headers on;
-    include conf.d/photoprism.redirect; 
-} 

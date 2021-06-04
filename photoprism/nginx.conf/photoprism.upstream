@@ -1,3 +1,0 @@
-upstream photoprism {
-    server photoprism:2342;
-} 
