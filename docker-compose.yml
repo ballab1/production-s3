@@ -248,7 +248,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-7e3465df6898d1403aefedb13393544b37a158b2db16332b86bd5a4ce94b9d7d}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-fa24ff3c9b5ccc908d07084604635226979fc6a6b16a66ea40ef55caa0a71227}
         logging:
             driver: json-file
             options:
@@ -300,7 +300,7 @@ services:
             WEB_USER_ID: ${CFG_USER:?}
             WEB_USER_PASS_FILE: /run/secrets/web_user.pwd
         hostname: nginx.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.20.0}:${CONTAINER_TAG:-13a4fd4d2eea1c5db6fec557dafb17eed1fd2ae6685f8ccd6cf6f9201866e6ae}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.20.1}:${CONTAINER_TAG:-47f6a49d856b324acdfe0484822869863ce68a61d84f1a1dc7b35fa1b318457a}
         logging:
             driver: json-file
             options:
@@ -351,7 +351,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.0}:${CONTAINER_TAG:-01bedd01e1f6152314fac2f1d092cb8648ea38df451ea8d36de1da1414d9bdd8}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.1}:${CONTAINER_TAG:-246d345a8e034d25fb93b939371c58dcf6fd721bb36edc9365ef7fbbb69a7948}
         logging:
             driver: json-file
             options:
@@ -442,7 +442,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-4bddff8d43de9549bd333662c20bc7b3a6f43847ea44556a99d375a522fed975}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-214859b7cda7ae1712b592a7610253cf8e8bd6c56b42e9967db1fde476beaca2}
         logging:
             driver: json-file
             options:
