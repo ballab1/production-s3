@@ -49,7 +49,7 @@ services:
             GRAFANA_DBPASS_FILE: /run/secrets/grafana_admin.pwd
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-8.0.6}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-8.1.0}
         logging:
             driver: json-file
             options:
