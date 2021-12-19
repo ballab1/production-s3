@@ -85,7 +85,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: hubot.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-21ea85ecf2259c5788f9faba6503f27e197d9251a79009afb8be15d293156c07}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/hubot:${CONTAINER_TAG:-eaee74089498a4778fb860a50f66c1f2b5464b1837ce4efcc97fe1e19be1b583}
         logging:
             driver: json-file
             options:
@@ -122,7 +122,7 @@ services:
             JENKINS_GITHUB_NAME: ${CFG_NAME:?}
             JENKINS_OPTS: "--prefix=/jenkins"
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.319.1}:${CONTAINER_TAG:-5496a6b6063c552c8c4ca9e8c5be22d595c85a67f09f9d9d2830225fdad05e00}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.319.1}:${CONTAINER_TAG:-c707ea309ff517d12a22cc9c7c89188181652fcb72ec56f76ffde854026872bc}
         logging:
             driver: json-file
             options:
@@ -248,7 +248,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-71196048fd917b7afdbd2a683e81fe0e00a3c65706d103c8177e5b3509716b46}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-007d08c3ae39d2409f8364d3aa7d0a0f4b7e6d55218e18d1baa804d9d853fd36}
         logging:
             driver: json-file
             options:
@@ -351,7 +351,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.1}:${CONTAINER_TAG:-9e9cfa54a45ac3644261c6ee2ae841b15e16de61323a43e9f3fc3783ae37a028}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.1}:${CONTAINER_TAG:-b01d5ecd3cf060f78c351d9f45569df9cfa9a8df0ad6f568f17635b07f0f3c16}
         logging:
             driver: json-file
             options:
@@ -420,7 +420,7 @@ services:
             SMEE_TARGET: http://jenkins:8080/jenkins/generic-webhook-trigger/invoke
             SMEE_URL: https://smee.io/F9gFiEeTza0Po4Rd
         hostname: smee.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-fccfac86faa0fec708e8033c4ac9e2800e60ec8468496f0a3ac08500902931c6}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/smee:${CONTAINER_TAG:-4a5fd9921616e19947b973abd5b82831b740627535545c50b3d6cec0a40c1506}
         logging:
             driver: json-file
             options:
@@ -442,7 +442,7 @@ services:
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         hostname: supervisorm.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-9864e0d370a039cf4e7f3149cce391c636007edc114c75e61d9fcd98ee492d30}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-882a5c0ed0ed53ab440cea533df2e5b1c3b9fcb2f230f1cf2573841fb50b7f8e}
         logging:
             driver: json-file
             options:
@@ -471,7 +471,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-0b3d1ab86410320c980bf9abb5eb8ea2a05f08477fe8179f8735780d77763dd7}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-df3d8c0f03c82ac9e10e931fed6c17b983ed3a6ee876c90ce64bb6b3d6021cf8}
         logging:
             driver: json-file
             options:
