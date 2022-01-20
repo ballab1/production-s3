@@ -77,9 +77,61 @@
     width: 360px;
   }
 </style>
+<script>
+var STATIC_JSON = '{
+  "docker" : {
+     "systems": [ { "name":"ubuntu-s2", "ip":"10.3.1.12" },
+                  { "name":"ubuntu-s3", "ip":"10.3.1.6" },
+                  { "name":"ubuntu-s4", "ip":"10.3.1.10"},
+                  { "name":"ubuntu-s5", "ip":"10.3.1.14"},
+                  { "name":"ubuntu-s6", "ip":"10.3.1.15"},
+                  { "name":"ubuntu-s7", "ip":"10.3.1.16"},
+                  { "name":"ubuntu-s8", "ip":"10.3.1.17"}
+                ],
+     "title": "Docker Rest Interface",
+     "params": [ {"param": "${ip}", "title": "${system}" }  ],
+     "list": [  { "url": "http://${ip}:4243/containers/json", "title": "Containers" },
+                { "url": "http://${ip}:4243/images/json", "title": "Images" },
+                { "url": "http://${ip}:4243/networks", "title": "Networks" },
+                { "url": "http://${ip}:4243/volumes", "title": "Volumes" },
+                { "url": "http://${ip}:4243/plugins", "title": "Plugins" },
+                { "url": "http://${ip}:4243/version", "title": "System version" },
+                { "url": "http://${ip}:4243/system/df", "title": "Data usage" }
+             ]
+  },
+  "webAdmin" : {
+     "title": "WebAdmin",
+     "params": [ {"param": "10.3.1.12", "title": "ubuntu-s2" },
+                 {"param": "10.3.1.6", "title": "ubuntu-s3" },
+                 {"param": "10.3.1.10", "title": "ubuntu-s4" },
+                 {"param": "10.3.1.14", "title": "ubuntu-s5" },
+                 {"param": "10.3.1.15", "title": "ubuntu-s6" },
+                 {"param": "10.3.1.16", "title": "ubuntu-s7" },
+                 {"param": "10.3.1.17", "title": "ubuntu-s8" }
+              ],
+     "list": [  { "url": "https://${param}:10000" } ]
+  },
+  "supervisord" : {
+     "title": "supervisord",
+     "params": [ {"param": "9001", "title": "nagios" },
+                 {"param": "9002", "title": "phpmyadmin" },
+                 {"param": "9004", "title": "hubot" },
+                 {"param": "9005", "title": "nginx" },
+                 {"param": "9003", "title": "supervisorm" }
+              ],
+     "list": [  { "url": "https://10.3.1.6:${param}" } ]
+  },
+  "k8s": {
+     "title": "kubernetes",
+     "params": "${K8S_PARAMS}",
+     "list": [  { "url": "https://${param}" } ]
+   }
+}'
+</script>
+<script type="text/javascript" src="/services_ips.js"></script>
 </head>
 
-<body class="all">
+<body onload='init()'><div class="all">
   <div class="table center">
 
     <div class="row">
@@ -96,7 +148,7 @@
         <ul>
           <li><a href="/recipes/index.html">Recipes</a></li>
           <li><a href="/versions/index.html">Versions</a></li>
-          <li><a href="https://10.3.1.4/photo">Ballantyne Photo Album</a></li>
+          <li><a href="https://nas/photo">Ballantyne Photo Album</a></li>
           <li><a href="/grafana">Grafana</a></li>
           <li><a href="/jenkins">Jenkins</a></li>
           <li><a href="/nagios">Nagios</a></li>
@@ -107,13 +159,13 @@
       </div>
       <div class="box w360">
         <ul>
-          <li><a href="https://10.3.1.10">s4</a></li>
-          <li><a href="http://10.3.1.15:5601">s6: Kibana</a></li>
+          <li><a href="http://192.168.1.100">bridge: Motorola</a></li>
+          <li><a href="http://10.3.1.1/start.htm">router: Netgear R7000</a></li>
+          <li><a href="http://10.3.1.2">printer: Epson WF-4830</a></li>
+          <li><a href="http://10.3.1.7">tp: TP Link switch</a></li>
           <li><a href="http://10.3.1.4:5000">nas: Synology</a></li>
           <li><a href="http://10.3.1.5/UI">wdmycloud: WD My Cloud</a></li>
-          <li><a href="http://10.3.1.1/start.htm">router: Main router</a></li>
-          <li><a href="http://10.3.1.2">HP Officejet 4500</a></li>
-          <li><a href="http://10.3.1.7">tp: TP Link switch</a></li>
+          <li><a href="https://10.3.1.10">s4</a></li>
         </ul>
       </div>
       <div class="box w360">
@@ -133,15 +185,17 @@
   <div class="table center all">
     <div class="row">
       <div class="box">&nbsp;</div>
-      <div class="box w170">
+      <div class="box w180">
         <div class="subtitle">
           Kubernetes
         </div>
         <div class="box">
           <ul>
-            <li><a href="https://10.152.183.226/">Dashboard</a></li>
-            <li><a href="https://10.3.1.14:16443/api/v1/namespaces/kube-system/services/kibana-logging/proxy/app/kibana">Kibana</a></li>
-            <li><a href="http://10.152.183.143:3000">Grafana</a></li>
+            <li><a href="https://10.152.183.251/">kubernetes-dashboard</a></li>
+            <li><a href="http://10.152.183.68:9093/">alertmanager-main</a></li>
+            <li><a href="http://10.152.183.214:3000/">grafana</a></li>
+            <li><a href="http://10.152.183.21:9090/">prometheus-k8s</a></li>
+            <li><a href="http://10.152.183.156:5601/">kibana-logging</a></li>
           </ul>
         </div>
       </div>
