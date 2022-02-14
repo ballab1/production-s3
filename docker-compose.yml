@@ -49,7 +49,7 @@ services:
             GRAFANA_DBPASS_FILE: /run/secrets/grafana_admin.pwd
             TZ: "America/New_York"
         hostname: grafana.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-8.3.3}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/grafana:${GRAFANA_VERSION:-8.5.0-51177pre}
         logging:
             driver: json-file
             options:
@@ -125,7 +125,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.319.2}:${CONTAINER_TAG:-900224085464cac76ade297c20fde3019d536ee86772e2a4aa61c2d79c13420d}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.319.3}:${CONTAINER_TAG:-4445b2608d99e182aeed78bf628152719213f3da4c900f1e8c566693571effb3}
         logging:
             driver: json-file
             options:
@@ -355,7 +355,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.1}:${CONTAINER_TAG:-bf5953aa4bd850dc8db32baf9185b98df7cc0f7d6488c96ecc529e4fc1e6018a}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.2}:${CONTAINER_TAG:-7a7c5e08dc31c839e7177d677408449c6cb91e0406c4f89a2ab49559a7460c77}
         logging:
             driver: json-file
             options:
