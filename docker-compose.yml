@@ -17,7 +17,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.319.3}:${CONTAINER_TAG:-4445b2608d99e182aeed78bf628152719213f3da4c900f1e8c566693571effb3}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.332.1}:${CONTAINER_TAG:-81f8c268d6c4865f85de8a95020a402e80f7e755166cd1e0fc62d42af8a9c576}
         logging:
             driver: json-file
             options:
@@ -214,7 +214,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.2}:${CONTAINER_TAG:-7a7c5e08dc31c839e7177d677408449c6cb91e0406c4f89a2ab49559a7460c77}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.1.3}:${CONTAINER_TAG:-a38b723038898171204c0dd56603a1245180425d9c93e7eaae49c06f1b68d82d}
         logging:
             driver: json-file
             options:
@@ -236,33 +236,33 @@ services:
             - ./phpmyadmin/log:/var/log
 #            - ./phpmyadmin/etc:/etc/phpmyadmin
 
-    supervisorm:
-        container_name: supervisorm
-        dns: 10.3.1.4
-        dns_search:
-            - ubuntu.home
-            - home
-        environment:
-            DEBUG_TRACE: ${DEBUG_TRACE:-0}
-            SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
-            SUPERVISORD_USER: ${CFG_USER:?}
-        hostname: supervisorm.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-b7f4a5bd63ecd47dd56904b432a7e68a21090b1f560c40a83ff01d1ba0d78936}
-        logging:
-            driver: json-file
-            options:
-                max-file: "3"
-                max-size: "10m"
-        networks:
-            - support-net
-        ports:
-            - "8008:80"
-            - "9008:9001"
-        restart: unless-stopped
-        secrets:
-            - supervisord.pwd
-        volumes:
-            - ./supervisorm/log:/var/log
+#   supervisorm:
+#       container_name: supervisorm
+#       dns: 10.3.1.4
+#       dns_search:
+#           - ubuntu.home
+#           - home
+#       environment:
+#           DEBUG_TRACE: ${DEBUG_TRACE:-0}
+#           SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
+#           SUPERVISORD_USER: ${CFG_USER:?}
+#       hostname: supervisorm.s3.home
+#       image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-b7f4a5bd63ecd47dd56904b432a7e68a21090b1f560c40a83ff01d1ba0d78936}
+#       logging:
+#           driver: json-file
+#           options:
+#               max-file: "3"
+#               max-size: "10m"
+#       networks:
+#           - support-net
+#       ports:
+#           - "8008:80"
+#           - "9008:9001"
+#       restart: unless-stopped
+#       secrets:
+#           - supervisord.pwd
+#       volumes:
+#           - ./supervisorm/log:/var/log
 
 
     webdav:
@@ -276,7 +276,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-8f5810b39d6836db2de9675e46a3cab516febd7e92080d1b7b0b884ba3696537}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-c28f6eb7ac5981d280bb332366b1a66fe6063eba419283f1ec8b1df6d33295f9}
         logging:
             driver: json-file
             options:
