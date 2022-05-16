@@ -16,7 +16,7 @@ environment:
 thirdparty_versions:
     CADVISOR_VERSION: 'v0.36.0'           # https://console.cloud.google.com/gcr/images/google-containers/GLOBAL/cadvisor?gcrImageListsize=30
     DREGISTRY_FE_VERSION: 'v2'            # https://hub.docker.com/r/konradkleine/docker-registry-frontend
-    GRAFANA_VERSION: '8.4.5'              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
+    GRAFANA_VERSION: '8.5.0'              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
     METRICBEAT_VERSION: '7.11.1'
     MYSQL_VERSION: '5.7.23'               # https://hub.docker.com/_/mysql
 #    PGADMIN4_VERSION: '5.2'            # https://hub.docker.com/r/dpage/pgadmin4
@@ -27,7 +27,7 @@ thirdparty_versions:
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: 8d29b7a388acd8f2998263f85e1d28ca792d5d01
+    commit: 53f557ffac049a36b25b7600e9a505c6d8c0b62e
     branch: master
 
 default_args:

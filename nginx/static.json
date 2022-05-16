@@ -1,0 +1,50 @@
+
+var STATIC_JSON = {
+  "docker" : {
+     "systems": [ { "name":"ubuntu-s2", "ip":"10.3.1.12" },
+                  { "name":"ubuntu-s3", "ip":"10.3.1.6" },
+                  { "name":"ubuntu-s4", "ip":"10.3.1.10"},
+                  { "name":"ubuntu-s5", "ip":"10.3.1.14"},
+                  { "name":"ubuntu-s6", "ip":"10.3.1.15"},
+                  { "name":"ubuntu-s7", "ip":"10.3.1.16"},
+                  { "name":"ubuntu-s8", "ip":"10.3.1.17"}
+                ],
+     "title": "Docker Rest Interface",
+     "params": [ {"param": "${ip}", "title": "${system}" }  ],
+     "list": [  { "url": "http://${ip}:4243/containers/json", "title": "Containers" },
+                { "url": "http://${ip}:4243/images/json", "title": "Images" },
+                { "url": "http://${ip}:4243/networks", "title": "Networks" },
+                { "url": "http://${ip}:4243/volumes", "title": "Volumes" },
+                { "url": "http://${ip}:4243/plugins", "title": "Plugins" },
+                { "url": "http://${ip}:4243/version", "title": "System version" },
+                { "url": "http://${ip}:4243/system/df", "title": "Data usage" }
+             ]
+  },
+  "webAdmin" : {
+     "title": "WebAdmin",
+     "params": [ {"param": "10.3.1.12", "title": "ubuntu-s2" },
+                 {"param": "10.3.1.6", "title": "ubuntu-s3" },
+                 {"param": "10.3.1.10", "title": "ubuntu-s4" },
+                 {"param": "10.3.1.14", "title": "ubuntu-s5" },
+                 {"param": "10.3.1.15", "title": "ubuntu-s6" },
+                 {"param": "10.3.1.16", "title": "ubuntu-s7" },
+                 {"param": "10.3.1.17", "title": "ubuntu-s8" }
+              ],
+     "list": [  { "url": "https://${param}:10000" } ]
+  },
+  "supervisord" : {
+     "title": "supervisord",
+     "params": [ {"param": "9001", "title": "nagios" },
+                 {"param": "9002", "title": "phpmyadmin" },
+                 {"param": "9004", "title": "hubot" },
+                 {"param": "9005", "title": "nginx" },
+                 {"param": "9003", "title": "supervisorm" }
+              ],
+     "list": [  { "url": "https://10.3.1.6:${param}" } ]
+  },
+  "k8s": {
+     "title": "kubernetes",
+     "params": "${K8S_PARAMS}",
+     "list": [  { "url": "https://${param}" } ]
+   }
+}

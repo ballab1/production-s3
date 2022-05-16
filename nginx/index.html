@@ -80,13 +80,13 @@
 <script>
 var STATIC_JSON = '{
   "docker" : {
-     "systems": [ { "name":"ubuntu-s2", "ip":"10.3.1.12" },
-                  { "name":"ubuntu-s3", "ip":"10.3.1.6" },
-                  { "name":"ubuntu-s4", "ip":"10.3.1.10"},
-                  { "name":"ubuntu-s5", "ip":"10.3.1.14"},
-                  { "name":"ubuntu-s6", "ip":"10.3.1.15"},
-                  { "name":"ubuntu-s7", "ip":"10.3.1.16"},
-                  { "name":"ubuntu-s8", "ip":"10.3.1.17"}
+     "systems": [ { "name":"ubuntu-s2", "ip":"10.3.1.9" },
+                  { "name":"ubuntu-s3", "ip":"10.3.1.10" },
+                  { "name":"ubuntu-s4", "ip":"10.3.1.11"},
+                  { "name":"ubuntu-s5", "ip":"10.3.1.12"},
+                  { "name":"ubuntu-s6", "ip":"10.3.1.13"},
+                  { "name":"ubuntu-s7", "ip":"10.3.1.14"},
+                  { "name":"ubuntu-s8", "ip":"10.3.1.15"}
                 ],
      "title": "Docker Rest Interface",
      "params": [ {"param": "${ip}", "title": "${system}" }  ],
@@ -101,13 +101,13 @@ var STATIC_JSON = '{
   },
   "webAdmin" : {
      "title": "WebAdmin",
-     "params": [ {"param": "10.3.1.12", "title": "ubuntu-s2" },
-                 {"param": "10.3.1.6", "title": "ubuntu-s3" },
-                 {"param": "10.3.1.10", "title": "ubuntu-s4" },
-                 {"param": "10.3.1.14", "title": "ubuntu-s5" },
-                 {"param": "10.3.1.15", "title": "ubuntu-s6" },
-                 {"param": "10.3.1.16", "title": "ubuntu-s7" },
-                 {"param": "10.3.1.17", "title": "ubuntu-s8" }
+     "params": [ {"param": "10.3.1.9", "title": "ubuntu-s2" },
+                 {"param": "10.3.1.10", "title": "ubuntu-s3" },
+                 {"param": "10.3.1.11", "title": "ubuntu-s4" },
+                 {"param": "10.3.1.12", "title": "ubuntu-s5" },
+                 {"param": "10.3.1.13", "title": "ubuntu-s6" },
+                 {"param": "10.3.1.14", "title": "ubuntu-s7" },
+                 {"param": "10.3.1.15", "title": "ubuntu-s8" }
               ],
      "list": [  { "url": "https://${param}:10000" } ]
   },
@@ -148,7 +148,7 @@ var STATIC_JSON = '{
         <ul>
           <li><a href="/recipes/index.html">Recipes</a></li>
           <li><a href="/versions/index.html">Versions</a></li>
-          <li><a href="https://nas/photo">Ballantyne Photo Album</a></li>
+          <li><a href="https://nas.home/photo">Ballantyne Photo Album</a></li>
           <li><a href="/grafana">Grafana</a></li>
           <li><a href="/jenkins">Jenkins</a></li>
           <li><a href="/nagios">Nagios</a></li>
@@ -159,20 +159,20 @@ var STATIC_JSON = '{
       <div class="box w360">
         <ul>
           <li><a href="http://192.168.1.100">bridge: Motorola</a></li>
-          <li><a href="http://10.3.1.1/start.htm">router: Netgear R7000</a></li>
-          <li><a href="http://10.3.1.2">printer: Epson WF-4830</a></li>
-          <li><a href="http://10.3.1.7">tp: TP Link switch</a></li>
-          <li><a href="http://10.3.1.4:5000">nas: Synology</a></li>
-          <li><a href="http://10.3.1.5/UI">wdmycloud: WD My Cloud</a></li>
-          <li><a href="https://10.3.1.6/test.html">s3 new</a></li>
+          <li><a href="http://router.home/start.htm">router: Netgear R7000</a></li>
+          <li><a href="http://printer.home">printer: Epson WF-4830</a></li>
+          <li><a href="http://tplink.home">tp: TP Link switch</a></li>
+          <li><a href="http://nas.home:5000">nas: Synology</a></li>
+          <li><a href="http://wdmycloud.home/UI">wdmycloud: WD My Cloud</a></li>
+          <li><a href="https://s3.ubuntu.home/test.html">s3 new</a></li>
         </ul>
       </div>
       <div class="box w360">
         <ul>
           <li><a href="https://smee.io/F9gFiEeTza0Po4Rd">ext: SMEE</a></li>
           <li><a href="http://soho-ball.slack.com">ext: Slack</a></li>
-          <li><a href="http://10.3.1.12:5000/v2/_catalog">s2: Docker Registry</a></li>
-          <li><a href="https://10.3.1.15:14500">s6: Wireshark</a></li>
+          <li><a href="http://s2.ubuntu.home:5000/v2/_catalog">s2: Docker Registry</a></li>
+          <li><a href="https://s6.ubuntu.home:14500">s6: Wireshark</a></li>
         </ul>
       </div>
       <div class="box">&nbsp;</div>
@@ -204,13 +204,13 @@ var STATIC_JSON = '{
         </div>
         <div class="box">
           <ul>
-            <li><a href="https://10.3.1.12:10000">ubuntu-s2</a></li>
-            <li><a href="https://10.3.1.6:10000">ubuntu-s3</a></li>
-            <li><a href="https://10.3.1.10:10000">ubuntu-s4</a></li>
-            <li><a href="https://10.3.1.14:10000">ubuntu-s5</a></li>
-            <li><a href="https://10.3.1.15:10000">ubuntu-s6</a></li>
-            <li><a href="https://10.3.1.16:10000">ubuntu-s7</a></li>
-            <li><a href="https://10.3.1.17:10000">ubuntu-s8</a></li>
+            <li><a href="https://s2.ubuntu.home:10000">ubuntu-s2</a></li>
+            <li><a href="https://s3.ubuntu.home:10000">ubuntu-s3</a></li>
+            <li><a href="https://s4.ubuntu.home:10000">ubuntu-s4</a></li>
+            <li><a href="https://s5.ubuntu.home:10000">ubuntu-s5</a></li>
+            <li><a href="https://s6.ubuntu.home:10000">ubuntu-s6</a></li>
+            <li><a href="https://s7.ubuntu.home:10000">ubuntu-s7</a></li>
+            <li><a href="https://s8.ubuntu.home:10000">ubuntu-s8</a></li>
           </ul>
         </div>
       </div>
@@ -220,11 +220,11 @@ var STATIC_JSON = '{
         </div>
         <div class="box">
           <ul>
-            <li><a href="http://10.3.1.6:9001">s3: nagios</a></li>
-            <li><a href="http://10.3.1.6:9002">s3: phpmyadmin</a></li>
-            <li><a href="http://10.3.1.6:9004">s3: hubot</a></li>
-            <li><a href="http://10.3.1.6:9005">s3: nginx</a></li>
-            <li><a href="http://10.3.1.6:9005">s3: supervisorm</a></li>
+            <li><a href="http://s3.ubuntu.home:9001">s3: nagios</a></li>
+            <li><a href="http://s3.ubuntu.home:9002">s3: phpmyadmin</a></li>
+            <li><a href="http://s3.ubuntu.home:9004">s3: hubot</a></li>
+            <li><a href="http://s3.ubuntu.home:9005">s3: nginx</a></li>
+            <li><a href="http://s3.ubuntu.home:9005">s3: supervisorm</a></li>
           </ul>
         </div>
       </div>
@@ -253,13 +253,13 @@ var STATIC_JSON = '{
         </div>
         <div class="box">
           <ul>
-            <li><a href="http://10.3.1.6:4243/containers/json">Containers</a></li>
-            <li><a href="http://10.3.1.6:4243/images/json">Images</a></li>
-            <li><a href="http://10.3.1.6:4243/networks">Networks</a></li>
-            <li><a href="http://10.3.1.6:4243/volumes">Volumes</a></li>
-            <li><a href="http://10.3.1.6:4243/plugins">Plugins</a></li>
-            <li><a href="http://10.3.1.6:4243/version">System version</a></li>
-            <li><a href="http://10.3.1.6:4243/system/df">Data usage</a></li>
+            <li><a href="http://s3.ubuntu.home:4243/containers/json">Containers</a></li>
+            <li><a href="http://s3.ubuntu.home:4243/images/json">Images</a></li>
+            <li><a href="http://s3.ubuntu.home:4243/networks">Networks</a></li>
+            <li><a href="http://s3.ubuntu.home:4243/volumes">Volumes</a></li>
+            <li><a href="http://s3.ubuntu.home:4243/plugins">Plugins</a></li>
+            <li><a href="http://s3.ubuntu.home:4243/version">System version</a></li>
+            <li><a href="http://s3.ubuntu.home:4243/system/df">Data usage</a></li>
           </ul>
         </div>
       </div>
@@ -269,13 +269,13 @@ var STATIC_JSON = '{
         </div>
         <div class="box">
           <ul>
-            <li><a href="http://10.3.1.10:4243/containers/json">Containers</a></li>
-            <li><a href="http://10.3.1.10:4243/images/json">Images</a></li>
-            <li><a href="http://10.3.1.10:4243/networks">Networks</a></li>
-            <li><a href="http://10.3.1.10:4243/volumes">Volumes</a></li>
-            <li><a href="http://10.3.1.10:4243/plugins">Plugins</a></li>
-            <li><a href="http://10.3.1.10:4243/version">System version</a></li>
-            <li><a href="http://10.3.1.10:4243/system/df">Data usage</a></li>
+            <li><a href="http://s4.ubuntu.home:4243/containers/json">Containers</a></li>
+            <li><a href="http://s4.ubuntu.home:4243/images/json">Images</a></li>
+            <li><a href="http://s4.ubuntu.home:4243/networks">Networks</a></li>
+            <li><a href="http://s4.ubuntu.home:4243/volumes">Volumes</a></li>
+            <li><a href="http://s4.ubuntu.home:4243/plugins">Plugins</a></li>
+            <li><a href="http://s4.ubuntu.home:4243/version">System version</a></li>
+            <li><a href="http://s4.ubuntu.home:4243/system/df">Data usage</a></li>
           </ul>
         </div>
       </div>
@@ -285,13 +285,13 @@ var STATIC_JSON = '{
         </div>
         <div class="box">
           <ul>
-            <li><a href="http://10.3.1.14:4243/containers/json">Containers</a></li>
-            <li><a href="http://10.3.1.14:4243/images/json">Images</a></li>
-            <li><a href="http://10.3.1.14:4243/networks">Networks</a></li>
-            <li><a href="http://10.3.1.14:4243/volumes">Volumes</a></li>
-            <li><a href="http://10.3.1.14:4243/plugins">Plugins</a></li>
-            <li><a href="http://10.3.1.14:4243/version">System version</a></li>
-            <li><a href="http://10.3.1.14:4243/system/df">Data usage</a></li>
+            <li><a href="http://s5.ubuntu.home:4243/containers/json">Containers</a></li>
+            <li><a href="http://s5.ubuntu.home:4243/images/json">Images</a></li>
+            <li><a href="http://s5.ubuntu.home:4243/networks">Networks</a></li>
+            <li><a href="http://s5.ubuntu.home:4243/volumes">Volumes</a></li>
+            <li><a href="http://s5.ubuntu.home:4243/plugins">Plugins</a></li>
+            <li><a href="http://s5.ubuntu.home:4243/version">System version</a></li>
+            <li><a href="http://s5.ubuntu.home:4243/system/df">Data usage</a></li>
           </ul>
         </div>
       </div>
@@ -301,13 +301,13 @@ var STATIC_JSON = '{
         </div>
         <div class="box">
           <ul>
-            <li><a href="http://10.3.1.15:4243/containers/json">Containers</a></li>
-            <li><a href="http://10.3.1.15:4243/images/json">Images</a></li>
-            <li><a href="http://10.3.1.15:4243/networks">Networks</a></li>
-            <li><a href="http://10.3.1.15:4243/volumes">Volumes</a></li>
-            <li><a href="http://10.3.1.15:4243/plugins">Plugins</a></li>
-            <li><a href="http://10.3.1.15:4243/version">System version</a></li>
-            <li><a href="http://10.3.1.15:4243/system/df">Data usage</a></li>
+            <li><a href="http://s6.ubuntu.home:4243/containers/json">Containers</a></li>
+            <li><a href="http://s6.ubuntu.home:4243/images/json">Images</a></li>
+            <li><a href="http://s6.ubuntu.home:4243/networks">Networks</a></li>
+            <li><a href="http://s6.ubuntu.home:4243/volumes">Volumes</a></li>
+            <li><a href="http://s6.ubuntu.home:4243/plugins">Plugins</a></li>
+            <li><a href="http://s6.ubuntu.home:4243/version">System version</a></li>
+            <li><a href="http://s6.ubuntu.home:4243/system/df">Data usage</a></li>
           </ul>
         </div>
       </div>
@@ -317,13 +317,13 @@ var STATIC_JSON = '{
         </div>
         <div class="box">
           <ul>
-            <li><a href="http://10.3.1.16:4243/containers/json">Containers</a></li>
-            <li><a href="http://10.3.1.16:4243/images/json">Images</a></li>
-            <li><a href="http://10.3.1.16:4243/networks">Networks</a></li>
-            <li><a href="http://10.3.1.16:4243/volumes">Volumes</a></li>
-            <li><a href="http://10.3.1.16:4243/plugins">Plugins</a></li>
-            <li><a href="http://10.3.1.16:4243/version">System version</a></li>
-            <li><a href="http://10.3.1.16:4243/system/df">Data usage</a></li>
+            <li><a href="http://s7.ubuntu.home:4243/containers/json">Containers</a></li>
+            <li><a href="http://s7.ubuntu.home:4243/images/json">Images</a></li>
+            <li><a href="http://s7.ubuntu.home:4243/networks">Networks</a></li>
+            <li><a href="http://s7.ubuntu.home:4243/volumes">Volumes</a></li>
+            <li><a href="http://s7.ubuntu.home:4243/plugins">Plugins</a></li>
+            <li><a href="http://s7.ubuntu.home:4243/version">System version</a></li>
+            <li><a href="http://s7.ubuntu.home:4243/system/df">Data usage</a></li>
           </ul>
         </div>
       </div>
@@ -333,13 +333,13 @@ var STATIC_JSON = '{
         </div>
         <div class="box">
           <ul>
-            <li><a href="http://10.3.1.17:4243/containers/json">Containers</a></li>
-            <li><a href="http://10.3.1.17:4243/images/json">Images</a></li>
-            <li><a href="http://10.3.1.17:4243/networks">Networks</a></li>
-            <li><a href="http://10.3.1.17:4243/volumes">Volumes</a></li>
-            <li><a href="http://10.3.1.17:4243/plugins">Plugins</a></li>
-            <li><a href="http://10.3.1.17:4243/version">System version</a></li>
-            <li><a href="http://10.3.1.17:4243/system/df">Data usage</a></li>
+            <li><a href="http://s8.ubuntu.home:4243/containers/json">Containers</a></li>
+            <li><a href="http://s8.ubuntu.home:4243/images/json">Images</a></li>
+            <li><a href="http://s8.ubuntu.home:4243/networks">Networks</a></li>
+            <li><a href="http://s8.ubuntu.home:4243/volumes">Volumes</a></li>
+            <li><a href="http://s8.ubuntu.home:4243/plugins">Plugins</a></li>
+            <li><a href="http://s8.ubuntu.home:4243/version">System version</a></li>
+            <li><a href="http://s8.ubuntu.home:4243/system/df">Data usage</a></li>
           </ul>
         </div>
       </div>

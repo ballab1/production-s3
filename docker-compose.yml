@@ -17,7 +17,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.332.1}:${CONTAINER_TAG:-f321d8a69e70c51870c1e9a7c7e05b79fb3ad63af4bb83e04c2f5be8d80a6c28}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.332.2}:${CONTAINER_TAG:-b02299a87fdc3ec552c9d0f09f48b39c6e88c8ace055793a0ce351d59c76c2a3}
         logging:
             driver: json-file
             options:
@@ -101,8 +101,8 @@ services:
 #            NCONF_DEBUG_GENERATE: 5          # [1=ERROR|2=WARN|3=INFO|4=DEBUG|5=TRACE] 
 #            NCONF_DEBUG_MODE: 1              # [0|1] 
 #            NGINX_DEBUG: 1
-            NGINX_LOG_ACCESS: 'syslog:server=10.3.1.15:514,tag=nginx_access json'
-            NGINX_LOG_ERRORS: 'syslog:server=10.3.1.15:514,tag=nginx_error notice'
+            NGINX_LOG_ACCESS: 'syslog:server=10.3.1.4:514,tag=nginx_access json'
+            NGINX_LOG_ERRORS: 'syslog:server=10.3.1.4:514,tag=nginx_error notice'
 #            PHP_LOGGING: 1
 #            PNP4NAGIOS_LOGLEVEL: 4
             PWD_PROTECTED: 'true'
@@ -111,7 +111,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.6}:${CONTAINER_TAG:-33e143774cb1f677d82cc68f8d5ac9ed3ed083637a586e113b63c3e22c8ef183}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.7}:${CONTAINER_TAG:-ca7c12911435a2888e921ea9ed502e2361d0771a6501c6cf019146d6bd304f91}
         logging:
             driver: json-file
             options:
@@ -156,8 +156,8 @@ services:
             DEBUG_TRACE: ${DEBUG_TRACE:-0}
 #            NGINX_DEBUG: 1
 #            PWD_PROTECTED: 'false'
-            NGINX_LOG_ACCESS: 'syslog:server=10.3.1.15:514,tag=nginx_access json'
-            NGINX_LOG_ERRORS: 'syslog:server=10.3.1.15:514,tag=nginx_error notice'
+            NGINX_LOG_ACCESS: 'syslog:server=10.3.1.4:514,tag=nginx_access json'
+            NGINX_LOG_ERRORS: 'syslog:server=10.3.1.4:514,tag=nginx_error notice'
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
             WEB_USER_ID: ${CFG_USER:?}
@@ -208,8 +208,8 @@ services:
             PMA_PORT: 3306
             PMA_USER: ${CFG_USER:?}
             PMA_VERBOSE: 1
-#            NGINX_LOG_ACCESS: 'syslog:server=10.3.1.15:514,tag=nginx_access json'
-#            NGINX_LOG_ERRORS: 'syslog:server=10.3.1.15:514,tag=nginx_error notice'
+#            NGINX_LOG_ACCESS: 'syslog:server=10.3.1.4:514,tag=nginx_access json'
+#            NGINX_LOG_ERRORS: 'syslog:server=10.3.1.4:514,tag=nginx_error notice'
             SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
@@ -235,34 +235,6 @@ services:
         volumes:
             - ./phpmyadmin/log:/var/log
 #            - ./phpmyadmin/etc:/etc/phpmyadmin
-
-#   supervisorm:
-#       container_name: supervisorm
-#       dns: 10.3.1.4
-#       dns_search:
-#           - ubuntu.home
-#           - home
-#       environment:
-#           DEBUG_TRACE: ${DEBUG_TRACE:-0}
-#           SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
-#           SUPERVISORD_USER: ${CFG_USER:?}
-#       hostname: supervisorm.s3.home
-#       image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/cesi/${CESI_VERSION:-2.7.1}:${CONTAINER_TAG:-b7f4a5bd63ecd47dd56904b432a7e68a21090b1f560c40a83ff01d1ba0d78936}
-#       logging:
-#           driver: json-file
-#           options:
-#               max-file: "3"
-#               max-size: "10m"
-#       networks:
-#           - support-net
-#       ports:
-#           - "8008:80"
-#           - "9008:9001"
-#       restart: unless-stopped
-#       secrets:
-#           - supervisord.pwd
-#       volumes:
-#           - ./supervisorm/log:/var/log
 
 
     webdav:
@@ -307,8 +279,6 @@ networks:
 secrets:
    github.credentials:
      file: .secrets/secrets/credentials.github
-   grafana_admin.pwd:
-     file: .secrets/secrets/grafana_admin.pwd
    mysql.pwd:
      file: .secrets/secrets/bobb.pwd
    mysql_root.pwd:
@@ -317,12 +287,10 @@ secrets:
      file: .secrets/secrets/bobb.pwd
    pma.pwd:
      file: .secrets/secrets/bobb.pwd
-   photoprism.pwd:
+   supervisord.pwd:
      file: .secrets/secrets/bobb.pwd
    slack.token:
      file: .secrets/secrets/hubot_token.slack
-   supervisord.pwd:      
-     file: .secrets/secrets/bobb.pwd
    web_user.pwd:
      file: .secrets/secrets/bobb.pwd
    webdav.pwd:

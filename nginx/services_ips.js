@@ -1,48 +1,100 @@
-var SERVICES_JSON = '/services_ips.json';
-
-var displayJSON;
-var orgJSON;
-
-function init() {
-}
+var SERVICES_JSON;
 
 function init2() {
-  document.getElementById('x1').innerHTML = 'Loading ...';
+}
+
+function init() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = getIndexJsonCB;
   xhttp.open("GET", 'services_ips.json', true);
   xhttp.setRequestHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   xhttp.send();
+
+  // update 'div' elemnts from STATIC_JSON
 }
 
 function getIndexJsonCB ()  {
   if (this.readyState != 4) return;
   if (this.status == 200) {
-    orgJSON = JSON.parse(this.responseText);
-    orgJSON = orgJSON.sort(function(a, b) {
+    SERVICES_JSON = JSON.parse(this.responseText);
+    SERVICES_JSON = SERVICES_JSON.sort(function(a, b) {
       if (a.text < b.text)
         return -1;
       if (a.text > b.text)
         return 1;
       return 0;
     });
-    displayVersions(orgJSON);
+    updateIps();
   }
   else {
-    document.getElementById('x1').innerHTML = 'There was an issue loading the recipie index file "index.json"';
+    document.getElementById('services_ips').innerHTML = 'There was an issue loading the service_ips JSON "service_ips.json"';
   }
 }
 
-function displayVersions(json) {
-  var x1 = document.getElementById('x1');
-  x1.innerHTML = '';
+
+function updateIps() {
+  var div = document.getElementById('services_ips');
+  var id = null;
+  var elm = null
+
+  function check(value, index, array) {
+	if (elm && value.title == elm.id) {
+      elm.href = (value.port == 443) ? 'https://' + value.host : 'http://' + value.host + ':' + value.port;
+      return value;
+    }
+    return null
+  }
+
+  var elms = div.getElementsByTagName('a')
+  for (let el in elms) {
+    elm = elms[el];
+    SERVICES_JSON.filter(check);
+  }
+}
+
+function showDockerRestApi () {
+  var host = this.host.value;
+  var x1 = document.getElementById('test');
+  var elms = x1.getElementsByTagName('a')
+  for (let i = 0; i < elms.length; i++) {
+    elm = elms[i];
+
+    var href = elm.href;
+    var offs = href.indexOf(":4243/");
+    href = 'http://' + host + href.substr(offs);
+    elm.href = href;
+  }
+}
+
+function xxx() {
   var table = document.createElement('div');
   table.className = 'table center';
-  table.id = 'main';
-  var old = document.getElementById('main');
+  table.id = 'main'+id;
+  var old = document.getElementById(table.id);
   if (old)
     x1.removeChild( old );
   x1.appendChild( table );
+
+  var form = document.createElement('form');
+  form.action = 'showContent('+id+')'
+  var lbl = document.createElement('label');
+
+  lbl.for = 'host';
+  lbl.appendChild(document.createTextNode('Select host'));
+//  lbl.text = 'Select host';
+
+  form.appendChild(lbl);
+  var sel = document.createElement('select');
+  sel.id = 'host';
+  sel.name = 'host';
+
+  var option = document.createElement('option');
+  option.value = "volvo";
+  option.text = 'Volvo';
+  sel.appendChild(option);
+
+  form.appendChild(sel);
+
 
   for (var i = 0; i < json.length;) {
     var row = document.createElement('div');
@@ -50,65 +102,4 @@ function displayVersions(json) {
     table.appendChild(row);
     showVersion(json[i++], row);
   }
-  displayJSON = json
-}
-
-function getLatest() {
-}
-
-function getLatestRelease(url) {
-
-  return null;
-}
-
-function showVersion(item, parent) {
-  var div = document.createElement('div');
-  div.className = 'box left';
-  var a = document.createElement('a');
-  a.href = item.url;
-  a.title = item.name;
-  a.appendChild( document.createTextNode(item.name) );
-  div.appendChild(a);
-  parent.appendChild(div);
-
-  div = document.createElement('div');
-  div.className = 'box wspace';
-  parent.appendChild(div);
-
-  div = document.createElement('div');
-  div.className = 'box version';
-
-  var id;
-  var release = getLatestRelease(item.url);
-  if (release) {
-       id = document.createElement('a');
-       id.href = item.url;
-       id.title = release;
-       id.appendChild( document.createTextNode(release) );
-  }
-  else {
-      id = document.createTextNode(' ');
-  }
-  div.appendChild(id);
-  parent.appendChild(div);
-
-  div = document.createElement('div');
-  div.className = 'box wspace';
-  parent.appendChild(div);
-
-  div = document.createElement('div');
-  div.className = 'box left';
-  id = document.createTextNode(item.id);
-  div.appendChild(id);
-  parent.appendChild(div);
-
-  div = document.createElement('div');
-  div.className = 'box wspace';
-  parent.appendChild(div);
-
-  div = document.createElement('div');
-  div.className = 'box version';
-  txt = document.createTextNode(item.version);
-  div.appendChild(txt);
-  parent.appendChild(div);
 }
