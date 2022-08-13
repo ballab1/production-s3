@@ -1,5 +1,5 @@
 completion_msg:
-        - "If this setup includes a web server, please open the following URL in your browser: https://$(hostname -f)"
+        - "If this setup includes a web server, please open the following URL in your browser: https://$(hostname -f)/jenkins"
  
 container_os: alpine
 
@@ -27,7 +27,7 @@ thirdparty_versions:
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: 3993e51ec4c2c4a15b9740559284c0a62ef66227
+    commit: 64a68dd42c1b8e6a04118dc5a06631abed918fea
     branch: master
 
 default_args:
