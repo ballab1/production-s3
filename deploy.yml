@@ -14,20 +14,18 @@ environment:
 #    - grafana
 
 thirdparty_versions:
-    CADVISOR_VERSION: 'v0.36.0'           # https://console.cloud.google.com/gcr/images/google-containers/GLOBAL/cadvisor?gcrImageListsize=30
+#    CADVISOR_VERSION: 'v0.36.0'           # https://console.cloud.google.com/gcr/images/google-containers/GLOBAL/cadvisor?gcrImageListsize=30
     DREGISTRY_FE_VERSION: 'v2'            # https://hub.docker.com/r/konradkleine/docker-registry-frontend
-    GRAFANA_VERSION: '8.5.0'              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
-    METRICBEAT_VERSION: '7.11.1'
+    GRAFANA_VERSION: '9.0.7'              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
+#    METRICBEAT_VERSION: '7.11.1'
     MYSQL_VERSION: '5.7.23'               # https://hub.docker.com/_/mysql
 #    PGADMIN4_VERSION: '5.2'            # https://hub.docker.com/r/dpage/pgadmin4
 #    PHOTOPRISM_VERSION: '20200204'      # https://hub.docker.com/r/photoprism/photoprism
-#    JENKINS_VERSION: '2.249.3'
-
 
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: 64a68dd42c1b8e6a04118dc5a06631abed918fea
+    commit: dd755244b93bd955230eaa0f4254149719b57e5f
     branch: master
 
 default_args:
