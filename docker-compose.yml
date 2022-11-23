@@ -17,7 +17,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.361.3}:${CONTAINER_TAG:-0de754066d5d6322056c906c9f464f9b162771218e44e7560338442f27eccb2b}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.361.4}:${CONTAINER_TAG:-000dbc806d1ac930c5e92acd544e50064fe432e25666530156b97117ac9b77be}
         logging:
             driver: json-file
             options:
@@ -111,7 +111,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.7}:${CONTAINER_TAG:-8e652a45d501e16994f9680dd3202f6760f20ead7fbab97fac247c51c53a7271}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.7}:${CONTAINER_TAG:-3d10a467a32b1e39bd6af3c652abcb5c223d8494f0e41934433bb7c59e031f93}
         logging:
             driver: json-file
             options:
@@ -163,7 +163,7 @@ services:
             WEB_USER_ID: ${CFG_USER:?}
             WEB_USER_PASS_FILE: /run/secrets/web_user.pwd
         hostname: nginx.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.22.0}:${CONTAINER_TAG:-d9c69890761a7fc58301e6243b80a8627d15a6d143936717adab482e8518490d}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.22.1}:${CONTAINER_TAG:-977a217d491c561e7f11ba6bc2755bc2c5ea2b8e0f295f436cf259479e25f7d2}
         logging:
             driver: json-file
             options:
@@ -214,7 +214,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.2.0}:${CONTAINER_TAG:-19792f9b2ec2fb2c7801edf862b17fc15cd16109b73e20df007b6eeedfa472d3}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.2.0}:${CONTAINER_TAG:-6da44e3e661a3a86cf2e30159b06670b69aa1c49e76b9df402c1210030b040f9}
         logging:
             driver: json-file
             options:
