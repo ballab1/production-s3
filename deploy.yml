@@ -25,8 +25,8 @@ thirdparty_versions:
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: 8ce44a0db585c6d93b0fea4df3fa8cf6cf5ec90a
-    branch: master
+    commit: 64ba3de7b3f49d750830815bb86c9ea82e63d5f3
+    branch: main
 
 default_args:
     cmd: 'deploy.restart'
