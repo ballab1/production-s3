@@ -111,7 +111,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.10}:${CONTAINER_TAG:-3f99272c7bb173bcc620627f026db041fbe7dbbc5d07d536fa48eebb2cf45664}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.11}:${CONTAINER_TAG:-be5ac9fc53a628e6e5b5beca94f913e0303cdb4085168dd5c10068659f74595d}
         logging:
             driver: json-file
             options:
@@ -163,7 +163,7 @@ services:
             WEB_USER_ID: ${CFG_USER:?}
             WEB_USER_PASS_FILE: /run/secrets/web_user.pwd
         hostname: nginx.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.22.1}:${CONTAINER_TAG:-c4c4e66c1236cddd7c856e44b0081cb5427c6476d173db07aef7a40e1ad3d7e8}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.24.0}:${CONTAINER_TAG:-a577c2e45b9bfe59753f4fe85bfadb5d0bacf3834ae23805a1ae89fa1bdcdc96}
         logging:
             driver: json-file
             options:
@@ -214,7 +214,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.2.1}:${CONTAINER_TAG:-54b98a06c1d7b6d64be89ef48670fef0f3ba593afe60b9a4f36f1e88e4cb69be}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.2.1}:${CONTAINER_TAG:-e54aad4f0ef8302fde38598765cbb8143ce831c789a5fbabb6ca1748ba2f268b}
         logging:
             driver: json-file
             options:
