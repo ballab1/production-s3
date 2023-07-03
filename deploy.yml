@@ -16,16 +16,16 @@ environment:
 thirdparty_versions:
 #    CADVISOR_VERSION: 'v0.36.0'           # https://console.cloud.google.com/gcr/images/google-containers/GLOBAL/cadvisor?gcrImageListsize=30
     DREGISTRY_FE_VERSION: 'v2'            # https://hub.docker.com/r/konradkleine/docker-registry-frontend
-    GRAFANA_VERSION: '9.0.7'              # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
+    GRAFANA_VERSION: '10.0.2'             # https://hub.docker.com/r/grafana/grafana  (https://grafana.com/grafana/download)
 #    METRICBEAT_VERSION: '7.11.1'
     MYSQL_VERSION: '5.7.23'               # https://hub.docker.com/_/mysql
-#    PGADMIN4_VERSION: '5.2'            # https://hub.docker.com/r/dpage/pgadmin4
+#    PGADMIN4_VERSION: '7.4'            # https://hub.docker.com/r/dpage/pgadmin4
 #    PHOTOPRISM_VERSION: '20200204'      # https://hub.docker.com/r/photoprism/photoprism
 
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: c4cc6e10710bd801c841b80b2fdbb82af2c95ac9
+    commit: 9e032ee6a24ddd535086fa1fe2631d79e2ea3252
     branch: main
 
 default_args:

@@ -17,7 +17,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.401.1}:${CONTAINER_TAG:-7ccacf7d981a2072d3effffda16613e2869e7a24ab0882a4b20c5b66ac67f85e}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.401.2}:${CONTAINER_TAG:-87244de7470a00fe836a83cc3979b729e403b8b2ef913471261bc7fb2a10d38c}
         logging:
             driver: json-file
             options:
@@ -111,7 +111,7 @@ services:
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
         hostname: nagios.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.11}:${CONTAINER_TAG:-c5a50f74b377fb1251397442f564e371f79fa3fbfe6d668353547cb88ccfbc35}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nagios/${NAGIOS_VERSION:-4.4.11}:${CONTAINER_TAG:-673da3f1d840886c1c7c7a0a4f74a2dfe503d98c29b10cf1c86bf7153732ff36}
         logging:
             driver: json-file
             options:
@@ -163,7 +163,7 @@ services:
             WEB_USER_ID: ${CFG_USER:?}
             WEB_USER_PASS_FILE: /run/secrets/web_user.pwd
         hostname: nginx.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.24.0}:${CONTAINER_TAG:-2a2843cb6abd811794905fc03f66af6618acd01e6f3c95445295050f02f7e383}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.24.0}:${CONTAINER_TAG:-3c818b3c9f299cae311a398e7b73ea294a1277e83c0ca4aded8b24aa340cccff}
         logging:
             driver: json-file
             options:
@@ -214,7 +214,7 @@ services:
             SUPERVISORD_USER: ${CFG_USER:?}
             USER: www-data
         hostname: phpmyadmin.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.2.1}:${CONTAINER_TAG:-baf20723a96001ef2cbd8e62a56d6d4cb341f4e3cff75c66e12f1698fe26c674}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/phpmyadmin/${PHPMYADMIN_VERSION:-5.2.1}:${CONTAINER_TAG:-b9c7de181a85bbc21aecff96721cbd0e3653d926f1196299d2b8d49b02245f82}
         logging:
             driver: json-file
             options:
@@ -248,7 +248,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-678623b2e7347b7d2bf35df531fd1abebe424395a193713c0c368e2c56682dda}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-e8189b1f8337e63c422f6eb48d8fba6e8f14a45006d60774416889a1a23f5206}
         logging:
             driver: json-file
             options:
