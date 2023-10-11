@@ -25,10 +25,10 @@ thirdparty_versions:
 versions:
     repo: https://github.com/ballab1/versions
     dir: ${WORKSPACE_DIR}/.versions
-    commit: 9e032ee6a24ddd535086fa1fe2631d79e2ea3252
+    commit: a00b68bc24592ec1841c5a0d9f40cd2e632398e0
     branch: main
 
 default_args:
     cmd: 'deploy.restart'
-    latest: 'HEAD'
-    container_tag: 'dev'
+    latest: HEAD
+    container_tag: dev
