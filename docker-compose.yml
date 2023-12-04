@@ -17,7 +17,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.426.1}:${CONTAINER_TAG:-254b14a6a679f16f85f76017b13e3010932762063280d0be9cf4a084a77748c3}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.426.1}:${CONTAINER_TAG:-09d812e72690e9e340d51d0cdd591c53338d86798964a6077341707b6fec7278}
         logging:
             driver: json-file
             options:
@@ -163,7 +163,7 @@ services:
             WEB_USER_ID: ${CFG_USER:?}
             WEB_USER_PASS_FILE: /run/secrets/web_user.pwd
         hostname: nginx.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.24.0}:${CONTAINER_TAG:-4e466be35696701d71fc86c63540db9aeb0bb316c23e2edfc7ed2e01ad274add}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/nginx-proxy/${NGINX_VERSION:-1.24.0}:${CONTAINER_TAG:-8ac1459f0f0d5cc65c6be680e698dfa520dd7b7547c73dd60a062ab72b94c55f}
         logging:
             driver: json-file
             options:
@@ -248,7 +248,7 @@ services:
             WEBDAV_USER: ${CFG_USER:?}
             WEBDAV_PASS_FILE: /run/secrets/webdav.pwd
         hostname: webdav.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-fb773f2b83c6900c7f80a10cee7bae0ad231a07d97b1e059bca1b64f69939757}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/webdav:${CONTAINER_TAG:-f15a2a27302cfc43be0ff26b13b2a79d8d1a7fe992e1a59a0a828b0733ea4cc9}
         logging:
             driver: json-file
             options:
