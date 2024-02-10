@@ -17,7 +17,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.426.2}:${CONTAINER_TAG:-048105f29ad4529680201cc5b00b3393811679a583b20c9b662c5aceb9d5590a}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.426.3}:${CONTAINER_TAG:-6cbe4117d64e2cd6a9c109a84a382b90264bd7acea96050921b04a02dbdba768}
         logging:
             driver: json-file
             options:
@@ -56,7 +56,7 @@ services:
             MYSQL_USER: ${CFG_USER:?}
             TZ: America/New_York
         hostname: mysql.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}thirdparty/mysql:${MYSQL_VERSION:-5.7.23}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}docker.io/mysql:${MYSQL_VERSION:-5.7.23}
         logging:
             driver: json-file
             options:
@@ -98,15 +98,15 @@ services:
             NCONF_DBNAME: nconf
             NCONF_DBPASS_FILE: /run/secrets/mysql.pwd
             NCONF_DBUSER: nconf
-#            NCONF_DEBUG_GENERATE: 5          # [1=ERROR|2=WARN|3=INFO|4=DEBUG|5=TRACE] 
-#            NCONF_DEBUG_MODE: 1              # [0|1] 
+#            NCONF_DEBUG_GENERATE: 5          # [1=ERROR|2=WARN|3=INFO|4=DEBUG|5=TRACE]
+#            NCONF_DEBUG_MODE: 1              # [0|1]
 #            NGINX_DEBUG: 1
             NGINX_LOG_ACCESS: 'syslog:server=10.3.1.4:514,tag=nginx_access json'
             NGINX_LOG_ERRORS: 'syslog:server=10.3.1.4:514,tag=nginx_error notice'
 #            PHP_LOGGING: 1
 #            PNP4NAGIOS_LOGLEVEL: 4
             PWD_PROTECTED: 'true'
-            SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd         
+            SUPERVISORD_PASS_FILE: /run/secrets/supervisord.pwd
             SUPERVISORD_USER: ${CFG_USER:?}
         extra_hosts:
             - "docker-host:${HOST_IP:?}"
@@ -266,7 +266,7 @@ services:
             - ~:/webdav/home:ro
             - /:/webdav/root:ro
             - ../logs:/webdav/logs:ro
-            - ./webdav/log:/var/log 
+            - ./webdav/log:/var/log
 
 
 networks:
