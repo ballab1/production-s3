@@ -15,7 +15,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.452.1}:${CONTAINER_TAG:-ad73e40552f64717738b455998d22772d7c822de365786754df823417164eb6e}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.452.2}:${CONTAINER_TAG:-00f3a6524a9c815f7c5fda1a00d215d3d3db4889bbd9d8f3c1b76e3357af4afd}
         logging:
             driver: json-file
             options:
