@@ -15,7 +15,7 @@ services:
             DOCKER_CERT_PATH: /etc/certs
             DOCKER_TLS_VERIFY: 1
         hostname: jenkins.s3.home
-        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.504.1}:${CONTAINER_TAG:-fed2839d13d18ca6b6513b30218f8edf9d6fbf9747daf419badaef36a4b613c8}
+        image: ${DOCKER_REGISTRY:-s2.ubuntu.home:5000/}${CONTAINER_OS:-alpine}/jenkins/${JENKINS_VERSION:-2.504.1}:${CONTAINER_TAG:-b79b5c14469dfb9fd86602c651aa671b0c0f6757e94ce934bb59e39204ba49be}
         logging:
             driver: json-file
             options:
@@ -77,6 +77,8 @@ services:
             - web_user.pwd
             - server.crt
             - server.key
+            - root.crt
+            - root.key
             - dhparam.pem
         volumes:
             - ./nginx/log:/var/log
@@ -142,9 +144,13 @@ secrets:
      file: .secrets/secrets/bobb.pwd
    webdav.pwd:
      file: .secrets/secrets/bobb.pwd
+   root.crt:
+     file: .secrets/ssl/SohoBall_CA.crt
+   root.key:
+     file: .secrets/ssl/SohoBall_CA.key
    server.crt:
-     file: .secrets/ssl/server.crt
+     file: .secrets/ssl/SohoBall-Server.crt
    server.key:
-     file: .secrets/ssl/server.key
+     file: .secrets/ssl/SohoBall-Server.key
    dhparam.pem:
      file: .secrets/ssl/dhparam.pem
