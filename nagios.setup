@@ -18,12 +18,12 @@ declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
 isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
 if [ ! -f "$isIinitialized" ]; then
 
-    # perform initialization 
-    mkdir -p "$workspace_dir" ||: 
+    # perform initialization
+    mkdir -p "$workspace_dir" ||:
 
     if [ ! -f "$NagiosConfig" ]; then
         mkdir -p "${workspace_dir}/archives" ||:
-        [ -e "${config_dir}/NagiosConfig.tgz" ] && cp "${config_dir}/NagiosConfig.tgz" "$NagiosConfig" 
+        [ -e "${config_dir}/NagiosConfig.tgz" ] && cp "${config_dir}/NagiosConfig.tgz" "$NagiosConfig"
     fi
 
     declare dumps_dir="${WORKSPACE_DIR}/mysql/loader/dumps"
@@ -32,11 +32,11 @@ if [ ! -f "$isIinitialized" ]; then
         cp "${config_dir}/nconf.sql" "${dumps_dir}/nconf.sql"
     fi
 
-    declare -r mysql_root_password="$(deploy.passwordSecret 'mysql' 'MYSQL_ROOT_PASSWORD' )"
-    declare -r nconf_dbpass="$(deploy.passwordSecret 'nagios' 'NCONF_DBPASS' )"
+    declare -r mysql_root_password="$(deploy::passwordSecret 'mysql' 'MYSQL_ROOT_PASSWORD' )"
+    declare -r nconf_dbpass="$(deploy::passwordSecret 'nagios' 'NCONF_DBPASS' )"
 
     # determine nconf dbuser
-    declare -r dc_json="$(lib.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
+    declare -r dc_json="$(lib::yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
     declare nconf_dbuser=$(jq --compact-output --monochrome-output --raw-output '.services.nagios.environment.NCONF_DBUSER' <<< "$dc_json")
     nconf_dbuser="$(eval echo "$nconf_dbuser")"
 
@@ -62,14 +62,14 @@ NCONF_DBUSER
 fi
 
 # perform common
-if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
+if deploy::isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
 fi
 
 if [ "${config_dir}/NagiosConfig.tgz" -nt "$NagiosConfig" ]; then
     echo "    Updating $NagiosConfig" >&2
-    sudo cp "${config_dir}/NagiosConfig.tgz" "$NagiosConfig" 
+    sudo cp "${config_dir}/NagiosConfig.tgz" "$NagiosConfig"
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
 fi
 exit 0

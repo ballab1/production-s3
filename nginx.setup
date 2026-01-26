@@ -19,8 +19,8 @@ declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
 isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
 if [ ! -f "$isIinitialized" ]; then
 
-    # perform initialization 
-    mkdir -p "$workspace_dir" ||: 
+    # perform initialization
+    mkdir -p "$workspace_dir" ||:
 
     if [ ! -e "${www_dir}/index.html" ]; then
         mkdir -p "$www_dir" ||:
@@ -31,7 +31,7 @@ if [ ! -f "$isIinitialized" ]; then
 
     mkdir -p "$secrets_dir" ||:
 
-    declare -r dc_json="$(lib.yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
+    declare -r dc_json="$(lib::yamlToJson "${WORKSPACE_DIR}/docker-compose.yml")"
     declare -A CERTS=()
     for key in 'dhparam.pem' 'server.key' 'server.crt' 'server.csr'; do
         CERTS["$key"]=${WORKSPACE_DIR}/$(jq --compact-output --monochrome-output --raw-output 'try .secrets."'$key'".file' <<< "$dc_json")
@@ -42,7 +42,7 @@ if [ ! -f "$isIinitialized" ]; then
 
     # ensure we have self signed certs (incase they are not include in secrets dir
     if [ ! -e "${CERTS['dhparam.pem']}" ] || [ ! -e "${CERTS['server.key']}" ] || [ ! -e "${CERTS['server.crt']}" ]; then
-        term.log '>> GENERATING SSL CERT\n' 'lt_magenta'
+        term::log '>> GENERATING SSL CERT\n' 'lt_magenta'
 
         declare tmp=$(mktemp -d)
         openssl genrsa -des3 -passout pass:wxyz -out "${tmp}/server.pass.key" 2048
@@ -60,7 +60,7 @@ if [ ! -f "$isIinitialized" ]; then
         openssl x509 -req -days 3650 -in client.csr -CA root.pem -CAkey root.key -set_serial 01 -out client.pem
 
         rm -rf "$tmp"
-        term.log '>> GENERATING SSL CERT ... DONE\n' 'lt_magenta'
+        term::log '>> GENERATING SSL CERT ... DONE\n' 'lt_magenta'
     fi
 
     touch "$isIinitialized"
@@ -68,7 +68,7 @@ fi
 
 
 # perform common
-if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
+if deploy::isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
 fi
@@ -78,6 +78,6 @@ if [ -d "$www_dir" ]; then
     sudo cp -ru "${config_dir}/"* "${www_dir}/"
     [ -d "${www_dir}/nginx.conf" ] && sudo rm -rf "${www_dir}/nginx.conf"
 
-    deploy.replaceIpAddresses "${www_dir}/index.html" "$(environ.ipAddress)"
+    deploy::replaceIpAddresses "${www_dir}/index.html" "$(environ::ipAddress)"
 fi
 exit 0

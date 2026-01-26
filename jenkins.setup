@@ -26,7 +26,7 @@ function initialize_jenkins_home()
     fi
 
     local -r host_ip=$(environ.ipAddress)
- 
+
     while read -r xml; do
 
         sudo sed -i -e "s|10\\.1\\.3\\.\\d{1:3}|${host_ip}|g" "$xml"
@@ -58,14 +58,14 @@ declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
 isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
 if [ ! -f "$isIinitialized" ]; then
 
-    # perform initialization 
+    # perform initialization
     initialize_jenkins_home
 
     touch "$isIinitialized"
 fi
 
 # perform common
-if deploy.isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
+if deploy::isValidService 'nginx' && [ -d "${config_dir}/nginx.conf" ]; then
     sudo mkdir -p "${WORKSPACE_DIR}/nginx/conf.d/"
     sudo cp -ru "${config_dir}/nginx.conf"/* "${WORKSPACE_DIR}/nginx/conf.d/"
     [ -d "${workspace_dir}/nginx.conf" ] && sudo rm -rf "${workspace_dir}/nginx.conf"
